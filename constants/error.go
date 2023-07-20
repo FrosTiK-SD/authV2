@@ -1,0 +1,4 @@
+package constants
+
+const ERROR_INCORRENT_BODY = "INCORRENT_BODY"
+const ERROR_MONGO_ERROR = "MONGO_ERROR"
