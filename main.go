@@ -18,7 +18,7 @@ import (
 )
 
 var config = &firebase.Config{ProjectID: os.Getenv("OATH_PROJECT_ID")}
-var app, err = firebase.NewApp(context.Background(), config, option.WithCredentialsJSON([]byte(os.Getenv("GCP_CREDENTIALS"))))
+var app, err = firebase.NewApp(context.Background(), config, option.WithCredentialsJSON([]byte(os.Getenv("FIREBASE_SERVICE_ACCOUNT"))))
 
 func main() {
 	r := gin.Default()
