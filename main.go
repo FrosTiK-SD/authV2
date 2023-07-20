@@ -49,5 +49,10 @@ func main() {
 
 	r.GET("/api/token/verify", handler.HandlerVerifyIdToken)
 
-	r.Run(":8081") // listen and serve on 0.0.0.0:8080
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = ":8081"
+	}
+
+	r.Run(port) // listen and serve on 0.0.0.0:8080
 }
