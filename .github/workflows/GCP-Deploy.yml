@@ -53,7 +53,7 @@ env:
   PROJECT_ID: tpc-portal # TODO: update Google Cloud project id
   GAR_LOCATION: asia-south2 # TODO: update Artifact Registry location
   REPOSITORY: tpc-portal # TODO: update Artifact Registry repository name
-  SERVICE: authV2 # TODO: update Cloud Run service name
+  SERVICE: authv2 # TODO: update Cloud Run service name
   REGION: asia-south2 # TODO: update Cloud Run service region
 
 jobs:
