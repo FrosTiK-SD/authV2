@@ -1,34 +1,25 @@
-FROM golang:1.20 as builder
+FROM golang:1.20
 
 ARG ATLAS_URI
+ARG FIREBASE_PROJECT_ID
 
 ENV APP_HOME /go/src/exam
 ENV ATLAS_URI ${ATLAS_URI}
-ENV PORT 8080
+ENV FIREBASE_PROJECT_ID ${FIREBASE_PROJECT_ID}
+ENV REDIS_HOST "redis"
+ENV GIN_MODE=release
 
-RUN echo ${ATLAS_URI}
+RUN echo $ATLAS_URI
+RUN echo $REDIS_HOST
+RUN echo $FIREBASE_PROJECT_ID
 
 WORKDIR "$APP_HOME"
 
 COPY . .
 
 RUN go mod download
-RUN go build -o exam
+RUN go build -o authv2
 
-# copy build to a clean image
-FROM golang:1.20
+EXPOSE 8080
 
-ARG ATLAS_URI
-
-ENV APP_HOME /go/src/exam
-ENV PORT 8080
-ENV ATLAS_URI ${ATLAS_URI}
-
-RUN mkdir -p "$APP_HOME"
-WORKDIR "$APP_HOME"
-
-COPY --from=builder "$APP_HOME"/exam $APP_HOME
-
-EXPOSE $PORT
-
-CMD ["./exam"]
+CMD ["./authv2"]

@@ -1,47 +1,41 @@
 package handler
 
 import (
-	"context"
-
-	"firebase.google.com/go/auth"
 	"frostik.com/auth/controller"
 	"github.com/gin-gonic/gin"
+	"github.com/go-redis/cache/v9"
+	"github.com/redis/go-redis/v9"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type Handler struct {
-	Auth        *auth.Client
-	MongoClient *mongo.Client
+	MongoClient     *mongo.Client
+	UserRedis       *redis.Client
+	UserCacheClient *cache.Cache
 }
 
 func (h *Handler) HandlerVerifyIdToken(ctx *gin.Context) {
 	idToken := ctx.GetHeader("token")
 
-	token, err := h.Auth.VerifyIDToken(ctx, idToken)
+	email, err := controller.VerifyToken(ctx, h.UserCacheClient, idToken)
+
 	if err != nil {
 		ctx.JSON(200, gin.H{
-			"message": "UNAUTHENTICATED",
+			"student": nil,
+			"error":   err,
 		})
-		return
-	}
-	firebaseUser, err := h.Auth.GetUser(context.Background(), token.UID)
-	if err != nil {
+	} else {
+		student := controller.GetStudentByEmail(ctx, h.MongoClient, h.UserCacheClient, email)
 		ctx.JSON(200, gin.H{
-			"message": "User does not exist",
+			"data":  student,
+			"error": nil,
 		})
-		return
 	}
+}
 
-	email := firebaseUser.Email
-	user := controller.GetStudentByEmail(ctx, h.MongoClient, &email)
-
+func (h *Handler) InvalidateCache(ctx *gin.Context) {
+	h.UserCacheClient.Delete(ctx, "GCP_JWKS")
 	ctx.JSON(200, gin.H{
-		"message": "Token verified successfully",
-		"token":   token,
-		"email":   firebaseUser,
-		"user":    user,
-		"data": gin.H{
-			"data": user,
-		},
+		"message": "Successfully invalidated cache",
 	})
 }
