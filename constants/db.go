@@ -12,9 +12,9 @@ const COLLECTION_ATTENDANCE = "attendances"
 
 const FIREBASE_PROJECT_ID = "FIREBASE_PROJECT_ID"
 
-const REDIS_HOST = "REDIS_HOST"
-const REDIS_CACHING_LIMIT = 100000
-const REDIS_CACHING_DURATION = time.Hour * 24 * 30
+const CACHING_DURATION = 20 * time.Minute
+const CACHE_CONTROL_HEADER = "Cache-Control"
+const NO_CACHE = "no-cache"
 
-// Keys of Redis
-const REDIS_GCP_JWKS = "GCP_JWKS"
+// Keys of Cache
+const GCP_JWKS = "GCP_JWKS"

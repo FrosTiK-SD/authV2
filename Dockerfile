@@ -3,21 +3,19 @@ FROM golang:1.20
 ARG ATLAS_URI
 ARG FIREBASE_PROJECT_ID
 
-ENV APP_HOME /go/src/exam
+ENV APP_HOME /go/src/authv2
 ENV ATLAS_URI ${ATLAS_URI}
 ENV FIREBASE_PROJECT_ID ${FIREBASE_PROJECT_ID}
-ENV REDIS_HOST "redis"
 ENV GIN_MODE=release
-
-RUN echo $ATLAS_URI
-RUN echo $REDIS_HOST
-RUN echo $FIREBASE_PROJECT_ID
 
 WORKDIR "$APP_HOME"
 
-COPY . .
+COPY go.mod .
+COPY go.sum .
 
 RUN go mod download
+
+COPY . .
 RUN go build -o authv2
 
 EXPOSE 8080

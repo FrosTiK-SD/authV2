@@ -1,23 +1,29 @@
 package handler
 
 import (
+	"fmt"
+
+	"frostik.com/auth/constants"
 	"frostik.com/auth/controller"
+	"github.com/allegro/bigcache/v3"
 	"github.com/gin-gonic/gin"
-	"github.com/go-redis/cache/v9"
-	"github.com/redis/go-redis/v9"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type Handler struct {
 	MongoClient     *mongo.Client
-	UserRedis       *redis.Client
-	UserCacheClient *cache.Cache
+	UserCacheClient *bigcache.BigCache
 }
 
 func (h *Handler) HandlerVerifyIdToken(ctx *gin.Context) {
 	idToken := ctx.GetHeader("token")
+	fmt.Println(ctx.GetHeader("cache-control"))
+	noCache := false
+	if ctx.GetHeader("cache-control") == constants.NO_CACHE {
+		noCache = true
+	}
 
-	email, err := controller.VerifyToken(ctx, h.UserCacheClient, idToken)
+	email, err := controller.VerifyToken(h.UserCacheClient, idToken, noCache)
 
 	if err != nil {
 		ctx.JSON(200, gin.H{
@@ -25,7 +31,7 @@ func (h *Handler) HandlerVerifyIdToken(ctx *gin.Context) {
 			"error":   err,
 		})
 	} else {
-		student := controller.GetStudentByEmail(ctx, h.MongoClient, h.UserCacheClient, email)
+		student := controller.GetStudentByEmail(ctx, h.MongoClient, h.UserCacheClient, email, noCache)
 		ctx.JSON(200, gin.H{
 			"data":  student,
 			"error": nil,
@@ -34,7 +40,7 @@ func (h *Handler) HandlerVerifyIdToken(ctx *gin.Context) {
 }
 
 func (h *Handler) InvalidateCache(ctx *gin.Context) {
-	h.UserCacheClient.Delete(ctx, "GCP_JWKS")
+	h.UserCacheClient.Delete("GCP_JWKS")
 	ctx.JSON(200, gin.H{
 		"message": "Successfully invalidated cache",
 	})

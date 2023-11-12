@@ -9,10 +9,9 @@ import (
 	"frostik.com/auth/constants"
 	"frostik.com/auth/handler"
 	"frostik.com/auth/util"
+	"github.com/allegro/bigcache/v3"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
-	"github.com/go-redis/cache/v9"
-	"github.com/redis/go-redis/v9"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -20,14 +19,7 @@ import (
 func main() {
 	r := gin.Default()
 
-	// Connect to Redis
-	userRedisClient := redis.NewClient(&redis.Options{
-		Addr: os.Getenv(constants.REDIS_HOST) + ":6379",
-	})
-	cacheClient := cache.New(&cache.Options{
-		Redis:      userRedisClient,
-		LocalCache: cache.NewTinyLFU(constants.REDIS_CACHING_LIMIT, constants.REDIS_CACHING_DURATION),
-	})
+	cacheClient, _ := bigcache.New(context.Background(), bigcache.DefaultConfig(constants.CACHING_DURATION))
 
 	// Connect to MongoDB
 	serverAPI := options.ServerAPI(options.ServerAPIVersion1)
@@ -47,7 +39,6 @@ func main() {
 
 	handler := &handler.Handler{
 		MongoClient:     mongoClient,
-		UserRedis:       userRedisClient,
 		UserCacheClient: cacheClient,
 	}
 

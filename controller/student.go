@@ -1,23 +1,29 @@
 package controller
 
 import (
+	"encoding/json"
 	"fmt"
-	"time"
 
 	"frostik.com/auth/constants"
 	"frostik.com/auth/model"
+	"github.com/allegro/bigcache/v3"
 	"github.com/gin-gonic/gin"
-	"github.com/go-redis/cache/v9"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-func GetStudentByEmail(ctx *gin.Context, mongoClient *mongo.Client, cacheClient *cache.Cache, email *string) *model.Student {
+func GetStudentByEmail(ctx *gin.Context, mongoClient *mongo.Client, cacheClient *bigcache.BigCache, email *string, noCache bool) *model.Student {
 	var student model.Student
+	var studentBytes []byte
+
 	// Check if copy is there in the cache
-	if err := cacheClient.Get(ctx, *email, &student); err == nil {
-		fmt.Println("Successfully retreived user details from cache")
-		return &student
+	if !noCache {
+		studentBytes, _ := cacheClient.Get(*email)
+		fmt.Println(string(studentBytes))
+		if err := json.Unmarshal(studentBytes, &student); err == nil {
+			fmt.Println("Retreiving the student data from the cache")
+			return &student
+		}
 	}
 
 	// Query to DB
@@ -26,13 +32,9 @@ func GetStudentByEmail(ctx *gin.Context, mongoClient *mongo.Client, cacheClient 
 		"email": email,
 	}).Decode(&student)
 
-	// Set to redis
-	if err := cacheClient.Set(&cache.Item{
-		Ctx:   ctx,
-		Key:   *email,
-		Value: student,
-		TTL:   time.Hour,
-	}); err == nil {
+	// Set to bigCache
+	studentBytes, _ = json.Marshal(student)
+	if err := cacheClient.Set(*email, studentBytes); err == nil {
 		fmt.Println("Successfully set UserDetails in cache")
 	}
 	return &student

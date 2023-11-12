@@ -9,22 +9,27 @@ import (
 
 	"frostik.com/auth/constants"
 	"frostik.com/auth/util"
-	"github.com/gin-gonic/gin"
-	"github.com/go-redis/cache/v9"
+	"github.com/allegro/bigcache/v3"
 	"github.com/lestrrat-go/jwx/jwk"
 	"github.com/lestrrat-go/jwx/jwt"
 )
 
-func getJWKs(ctx *gin.Context, cacheClient *cache.Cache) (*jwk.Set, *string) {
+func getJWKs(cacheClient *bigcache.BigCache, noCache bool) (*jwk.Set, *string) {
 	// Check if copy is there in the cache
 	var jwkString string
-	if err := cacheClient.Get(ctx, constants.REDIS_GCP_JWKS, &jwkString); err == nil {
-		fmt.Println("Successfully fetched JWKs from cache")
-		jwkSet, err := jwk.ParseString(jwkString)
-		if err != nil {
-			return nil, &constants.ERROR_PARSING_JWK
-		} else {
-			return &jwkSet, nil
+	var jwkBytes []byte
+
+	if !noCache {
+		jwkBytes, err := cacheClient.Get(constants.GCP_JWKS)
+		if err == nil {
+			fmt.Println("Successfully fetched JWKs from cache")
+			jwkString = string(jwkBytes)
+			jwkSet, err := jwk.ParseString(jwkString)
+			if err != nil {
+				return nil, &constants.ERROR_PARSING_JWK
+			} else {
+				return &jwkSet, nil
+			}
 		}
 	}
 
@@ -36,7 +41,7 @@ func getJWKs(ctx *gin.Context, cacheClient *cache.Cache) (*jwk.Set, *string) {
 	fmt.Println("Fetched JWKs from GCP")
 
 	// Convert to bytes and them read it as a string
-	jwkBytes, err := io.ReadAll(jwks.Body)
+	jwkBytes, err = io.ReadAll(jwks.Body)
 	if err != nil {
 		return nil, &constants.ERROR_CONVERT_JWT_TO_BYTES
 	}
@@ -48,20 +53,15 @@ func getJWKs(ctx *gin.Context, cacheClient *cache.Cache) (*jwk.Set, *string) {
 	}
 
 	// Set the JWKs in the cache
-	if err = cacheClient.Set(&cache.Item{
-		Ctx:   ctx,
-		Key:   constants.REDIS_GCP_JWKS,
-		Value: jwkString,
-		TTL:   time.Hour,
-	}); err == nil {
+	if err = cacheClient.Set(constants.GCP_JWKS, []byte(jwkString)); err == nil {
 		fmt.Println("Successfully set JWKs in cache")
 	}
 
 	return &jwkSet, nil
 }
 
-func VerifyToken(ctx *gin.Context, cache *cache.Cache, idToken string) (*string, *string) {
-	jwkSet, jwkParsingError := getJWKs(ctx, cache)
+func VerifyToken(cacheClient *bigcache.BigCache, idToken string, noCache bool) (*string, *string) {
+	jwkSet, jwkParsingError := getJWKs(cacheClient, noCache)
 	if jwkParsingError != nil {
 		return nil, jwkParsingError
 	}
