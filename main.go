@@ -45,10 +45,10 @@ func main() {
 	r.GET("/api/token/student/verify", handler.HandlerVerifyIdToken)
 	r.GET("/api/token/invalidate_cache", handler.InvalidateCache)
 
-	port := os.Getenv("PORT")
+	port := "" + os.Getenv("PORT")
 	if port == "" {
-		port = ":8080"
+		port = "8080"
 	}
 
-	r.Run(port)
+	r.Run(":" + port)
 }
