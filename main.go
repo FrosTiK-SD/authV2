@@ -2,34 +2,30 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"os"
 
-	firebase "firebase.google.com/go"
 	"frostik.com/auth/constants"
 	"frostik.com/auth/handler"
 	"frostik.com/auth/util"
+	"github.com/allegro/bigcache/v3"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
-
-	"google.golang.org/api/option"
 )
-
-var config = &firebase.Config{ProjectID: os.Getenv("OATH_PROJECT_ID")}
-var app, err = firebase.NewApp(context.Background(), config, option.WithCredentialsJSON([]byte(os.Getenv("FIREBASE_SERVICE_ACCOUNT"))))
 
 func main() {
 	r := gin.Default()
-	if err != nil {
-		log.Fatalf("error initializing app: %v\n", err)
-	}
+
+	cacheClient, _ := bigcache.New(context.Background(), bigcache.DefaultConfig(constants.CACHING_DURATION))
 
 	// Connect to MongoDB
 	serverAPI := options.ServerAPI(options.ServerAPIVersion1)
 	mongoClient, err := mongo.Connect(context.Background(), options.Client().ApplyURI(os.Getenv(constants.CONNECTION_STRING)).SetServerAPIOptions(serverAPI))
 	if err != nil {
+		fmt.Println(os.Getenv(constants.CONNECTION_STRING))
 		log.Fatalf("Unable to Connect to MongoDB: %v\n", err)
 	} else {
 		log.Println("Connected to MongoDB")
@@ -37,22 +33,22 @@ func main() {
 
 	r.Use(cors.New(util.DefaultCors()))
 
-	client, err := app.Auth(context.Background())
 	if err != nil {
 		log.Fatalf("error getting Auth client: %v\n", err)
 	}
 
 	handler := &handler.Handler{
-		Auth:        client,
-		MongoClient: mongoClient,
+		MongoClient:     mongoClient,
+		UserCacheClient: cacheClient,
 	}
 
-	r.GET("/api/token/verify", handler.HandlerVerifyIdToken)
+	r.GET("/api/token/student/verify", handler.HandlerVerifyIdToken)
+	r.GET("/api/token/invalidate_cache", handler.InvalidateCache)
 
 	port := os.Getenv("PORT")
 	if port == "" {
-		port = ":8081"
+		port = ":8080"
 	}
 
-	r.Run(port) // listen and serve on 0.0.0.0:8080
+	r.Run(port)
 }

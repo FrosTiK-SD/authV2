@@ -1,47 +1,47 @@
 package handler
 
 import (
-	"context"
+	"fmt"
 
-	"firebase.google.com/go/auth"
+	"frostik.com/auth/constants"
 	"frostik.com/auth/controller"
+	"github.com/allegro/bigcache/v3"
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type Handler struct {
-	Auth        *auth.Client
-	MongoClient *mongo.Client
+	MongoClient     *mongo.Client
+	UserCacheClient *bigcache.BigCache
 }
 
 func (h *Handler) HandlerVerifyIdToken(ctx *gin.Context) {
 	idToken := ctx.GetHeader("token")
-
-	token, err := h.Auth.VerifyIDToken(ctx, idToken)
-	if err != nil {
-		ctx.JSON(200, gin.H{
-			"message": "UNAUTHENTICATED",
-		})
-		return
-	}
-	firebaseUser, err := h.Auth.GetUser(context.Background(), token.UID)
-	if err != nil {
-		ctx.JSON(200, gin.H{
-			"message": "User does not exist",
-		})
-		return
+	fmt.Println(ctx.GetHeader("cache-control"))
+	noCache := false
+	if ctx.GetHeader("cache-control") == constants.NO_CACHE {
+		noCache = true
 	}
 
-	email := firebaseUser.Email
-	user := controller.GetStudentByEmail(ctx, h.MongoClient, &email)
+	email, err := controller.VerifyToken(h.UserCacheClient, idToken, noCache)
 
+	if err != nil {
+		ctx.JSON(200, gin.H{
+			"student": nil,
+			"error":   err,
+		})
+	} else {
+		student := controller.GetStudentByEmail(ctx, h.MongoClient, h.UserCacheClient, email, noCache)
+		ctx.JSON(200, gin.H{
+			"data":  student,
+			"error": nil,
+		})
+	}
+}
+
+func (h *Handler) InvalidateCache(ctx *gin.Context) {
+	h.UserCacheClient.Delete("GCP_JWKS")
 	ctx.JSON(200, gin.H{
-		"message": "Token verified successfully",
-		"token":   token,
-		"email":   firebaseUser,
-		"user":    user,
-		"data": gin.H{
-			"data": user,
-		},
+		"message": "Successfully invalidated cache",
 	})
 }

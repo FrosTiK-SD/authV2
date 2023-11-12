@@ -121,6 +121,7 @@ jobs:
           # NOTE: You can also set env variables here:
           env_vars: |
             ATLAS_URI=${{ secrets.MONGO_CONNECTION_URL }}
+            FIREBASE_PROJECT_ID=${{ secrets.FIREBASE_PROJECT_ID }}
 
       # If required, use the Cloud Run url output in later steps
       - name: Show Output
