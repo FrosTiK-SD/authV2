@@ -47,7 +47,7 @@ func GetStudentByEmail(ctx *gin.Context, mongoClient *mongo.Client, cacheClient 
 	studentPopulated.Groups = groupDetails
 
 	// Set to bigCache
-	studentBytes, _ := json.Marshal(student)
+	studentBytes, _ := json.Marshal(studentPopulated)
 	if err := cacheClient.Set(*email, studentBytes); err == nil {
 		fmt.Println("Successfully set UserDetails in cache")
 	}
