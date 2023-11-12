@@ -1,29 +1,28 @@
 package handler
 
 import (
-	"fmt"
-
 	"frostik.com/auth/constants"
 	"frostik.com/auth/controller"
 	"github.com/allegro/bigcache/v3"
 	"github.com/gin-gonic/gin"
+	"github.com/lestrrat-go/jwx/v2/jwk"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type Handler struct {
 	MongoClient     *mongo.Client
 	UserCacheClient *bigcache.BigCache
+	JwkSet          *jwk.Set
 }
 
 func (h *Handler) HandlerVerifyIdToken(ctx *gin.Context) {
 	idToken := ctx.GetHeader("token")
-	fmt.Println(ctx.GetHeader("cache-control"))
 	noCache := false
 	if ctx.GetHeader("cache-control") == constants.NO_CACHE {
 		noCache = true
 	}
 
-	email, err := controller.VerifyToken(h.UserCacheClient, idToken, noCache)
+	email, err := controller.VerifyToken(h.UserCacheClient, idToken, h.JwkSet, noCache)
 
 	if err != nil {
 		ctx.JSON(200, gin.H{

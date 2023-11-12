@@ -7,6 +7,7 @@ import (
 	"os"
 
 	"frostik.com/auth/constants"
+	"frostik.com/auth/controller"
 	"frostik.com/auth/handler"
 	"frostik.com/auth/util"
 	"github.com/allegro/bigcache/v3"
@@ -19,7 +20,14 @@ import (
 func main() {
 	r := gin.Default()
 
+	// Initialize BigCache
 	cacheClient, _ := bigcache.New(context.Background(), bigcache.DefaultConfig(constants.CACHING_DURATION))
+
+	// Initialie default JWKs
+	defaultJwkSet, jwkSetRetrieveError := controller.GetJWKs(cacheClient, true)
+	if jwkSetRetrieveError != nil {
+		fmt.Println("Error retrieving JWKs")
+	}
 
 	// Connect to MongoDB
 	serverAPI := options.ServerAPI(options.ServerAPIVersion1)
@@ -40,6 +48,7 @@ func main() {
 	handler := &handler.Handler{
 		MongoClient:     mongoClient,
 		UserCacheClient: cacheClient,
+		JwkSet:          defaultJwkSet,
 	}
 
 	r.GET("/api/token/student/verify", handler.HandlerVerifyIdToken)
