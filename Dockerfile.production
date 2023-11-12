@@ -31,6 +31,4 @@ WORKDIR "$APP_HOME"
 
 COPY --from=builder "$APP_HOME"/authv2 $APP_HOME
 
-EXPOSE $PORT
-
 CMD ["./authv2"]
