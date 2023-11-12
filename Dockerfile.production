@@ -11,12 +11,14 @@ ENV GIN_MODE=release
 WORKDIR "$APP_HOME"
 
 COPY . .
-
+ENV CGO_ENABLED=0
+ENV GOOS=linux
 RUN go mod download
-RUN go build -o authv2
+RUN go build -a -o authv2
 
 # copy build to a clean image
-FROM golang:1.20
+FROM alpine:3.16.7
+
 
 ARG ATLAS_URI
 ARG FIREBASE_PROJECT_ID
