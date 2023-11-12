@@ -10,11 +10,11 @@ import (
 	"frostik.com/auth/constants"
 	"frostik.com/auth/util"
 	"github.com/allegro/bigcache/v3"
-	"github.com/lestrrat-go/jwx/jwk"
-	"github.com/lestrrat-go/jwx/jwt"
+	"github.com/lestrrat-go/jwx/v2/jwk"
+	"github.com/lestrrat-go/jwx/v2/jwt"
 )
 
-func getJWKs(cacheClient *bigcache.BigCache, noCache bool) (*jwk.Set, *string) {
+func GetJWKs(cacheClient *bigcache.BigCache, noCache bool) (*jwk.Set, *string) {
 	// Check if copy is there in the cache
 	var jwkString string
 	var jwkBytes []byte
@@ -60,10 +60,14 @@ func getJWKs(cacheClient *bigcache.BigCache, noCache bool) (*jwk.Set, *string) {
 	return &jwkSet, nil
 }
 
-func VerifyToken(cacheClient *bigcache.BigCache, idToken string, noCache bool) (*string, *string) {
-	jwkSet, jwkParsingError := getJWKs(cacheClient, noCache)
-	if jwkParsingError != nil {
-		return nil, jwkParsingError
+func VerifyToken(cacheClient *bigcache.BigCache, idToken string, defaultJwkSet *jwk.Set, noCache bool) (*string, *string) {
+	jwkSet := defaultJwkSet
+	if !noCache {
+		newJwkSet, jwkParsingError := GetJWKs(cacheClient, noCache)
+		if jwkParsingError != nil {
+			return nil, jwkParsingError
+		}
+		jwkSet = newJwkSet
 	}
 
 	// Verify the token
