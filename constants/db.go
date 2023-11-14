@@ -19,3 +19,7 @@ const NO_CACHE = "no-cache"
 
 // Keys of Cache
 const GCP_JWKS = "GCP_JWKS"
+
+// Operation Types
+var DB_FINDONE = "DB_FINDONE"
+var DB_FIND = "DB_FIND"
