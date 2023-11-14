@@ -51,7 +51,7 @@ func main() {
 		JwkSet:          defaultJwkSet,
 	}
 
-	r.GET("/api/token/student/verify", handler.HandlerVerifyIdToken)
+	r.GET("/api/token/student/verify", handler.HandlerVerifyStudentIdToken)
 	r.GET("/api/token/invalidate_cache", handler.InvalidateCache)
 
 	port := "" + os.Getenv("PORT")

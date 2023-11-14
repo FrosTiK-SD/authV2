@@ -15,7 +15,7 @@ type Handler struct {
 	JwkSet          *jwk.Set
 }
 
-func (h *Handler) HandlerVerifyIdToken(ctx *gin.Context) {
+func (h *Handler) HandlerVerifyStudentIdToken(ctx *gin.Context) {
 	idToken := ctx.GetHeader("token")
 	noCache := false
 	if ctx.GetHeader("cache-control") == constants.NO_CACHE {
@@ -30,10 +30,10 @@ func (h *Handler) HandlerVerifyIdToken(ctx *gin.Context) {
 			"error":   err,
 		})
 	} else {
-		student := controller.GetStudentByEmail(ctx, h.MongoClient, h.UserCacheClient, email, noCache)
+		student, err := controller.GetUserByEmail(ctx, h.MongoClient, h.UserCacheClient, email, &constants.ROLE_STUDENT, noCache)
 		ctx.JSON(200, gin.H{
 			"data":  student,
-			"error": nil,
+			"error": err,
 		})
 	}
 }
