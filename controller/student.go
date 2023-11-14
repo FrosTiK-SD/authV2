@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"frostik.com/auth/constants"
+	"frostik.com/auth/db"
 	"frostik.com/auth/mapper"
 	"frostik.com/auth/model"
 	"frostik.com/auth/util"
@@ -30,9 +31,9 @@ func GetUserByEmail(ctx *gin.Context, mongoClient *mongo.Client, cacheClient *bi
 
 	// Query to DB
 	fmt.Println("Queriying the DB for User Details")
-	mongoClient.Database(constants.DB).Collection(constants.COLLECTION_STUDENT).FindOne(ctx, bson.M{
+	db.FindOne[model.Student](ctx, mongoClient, cacheClient, constants.COLLECTION_STUDENT, bson.M{
 		"email": *email,
-	}).Decode(&student)
+	}, &student, noCache)
 	studentPopulated = mapper.TransformStudentToStudentPopulated(student)
 
 	var groupIds = []primitive.ObjectID{}
@@ -41,10 +42,9 @@ func GetUserByEmail(ctx *gin.Context, mongoClient *mongo.Client, cacheClient *bi
 		groupIds = append(groupIds, id)
 	}
 
-	cursor, _ := mongoClient.Database(constants.DB).Collection(constants.COLLECTION_GROUP).Find(ctx, bson.M{
+	groupDetails, _ = db.Find[model.Group](ctx, mongoClient, cacheClient, constants.COLLECTION_GROUP, bson.M{
 		"_id": bson.M{"$in": groupIds},
-	})
-	cursor.All(ctx, &groupDetails)
+	}, noCache)
 	studentPopulated.Groups = groupDetails
 
 	// Now check if it is actually a student by the ROLES
