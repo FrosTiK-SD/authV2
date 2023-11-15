@@ -23,6 +23,7 @@ func resetCache(cacheClient bigcache.BigCache) {
 func FindOne[Result any](ctx *gin.Context, mongoClient *mongo.Client, cacheClient *bigcache.BigCache, collectionName string, query bson.M, result *Result, noCache bool) {
 	key := getKey(collectionName, constants.DB_FINDONE, query)
 	var resultBytes []byte
+	var resultInterface map[string]interface{}
 
 	// First Check if it is present in the cache
 	if !noCache {
@@ -34,11 +35,14 @@ func FindOne[Result any](ctx *gin.Context, mongoClient *mongo.Client, cacheClien
 	}
 
 	// Query to DB
-	mongoClient.Database(constants.DB).Collection(collectionName).FindOne(ctx, query).Decode(&result)
+	mongoClient.Database(constants.DB).Collection(collectionName).FindOne(ctx, query).Decode(&resultInterface)
+
+	resultBody, _ := json.Marshal(resultInterface)
+	json.Unmarshal(resultBody, &result)
 
 	// Set to cache
 	resultBytes, _ = json.Marshal(result)
-	if err := cacheClient.Set(key, resultBytes); err == nil {
+	if err := DBCacheSet(cacheClient, key, resultBytes); err == nil {
 		fmt.Println("Successfully set DB call in cache with key ", key)
 	}
 }
@@ -47,6 +51,7 @@ func Find[Result any](ctx *gin.Context, mongoClient *mongo.Client, cacheClient *
 	key := getKey(collectionName, constants.DB_FIND, query)
 	var resultBytes []byte
 	var result []Result
+	var resultInterface []map[string]interface{}
 
 	// First Check if it is present in the cache
 	if !noCache {
@@ -63,11 +68,14 @@ func Find[Result any](ctx *gin.Context, mongoClient *mongo.Client, cacheClient *
 	if err != nil {
 		return nil, err
 	}
-	cursor.All(ctx, &result)
+	cursor.All(ctx, &resultInterface)
+
+	resultBody, _ := json.Marshal(resultInterface)
+	json.Unmarshal(resultBody, &result)
 
 	// Set to cache
 	resultBytes, _ = json.Marshal(result)
-	if err := cacheClient.Set(key, resultBytes); err == nil {
+	if err := DBCacheSet(cacheClient, key, resultBytes); err == nil {
 		fmt.Println("Successfully set DB call in cache with key ", key)
 	}
 

@@ -23,3 +23,4 @@ const GCP_JWKS = "GCP_JWKS"
 // Operation Types
 var DB_FINDONE = "DB_FINDONE"
 var DB_FIND = "DB_FIND"
+var KEY_STORE = "KEY_STORE"
