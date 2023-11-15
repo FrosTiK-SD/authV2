@@ -7,7 +7,6 @@ import (
 	"frostik.com/auth/constants"
 	"github.com/allegro/bigcache/v3"
 	"github.com/gin-gonic/gin"
-	"github.com/mitchellh/mapstructure"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 )
@@ -17,8 +16,8 @@ func getKey(collectionName string, operation string, query bson.M) string {
 }
 
 // Should be called after every write operation on a cluster
-func resetCache(cacheClient *bigcache.BigCache, clusterName string) {
-	DBCacheReset(cacheClient, clusterName)
+func resetCache(cacheClient bigcache.BigCache, clusterName string) {
+	DBCacheReset(&cacheClient, clusterName)
 }
 
 func FindOne[Result any](ctx *gin.Context, mongoClient *mongo.Client, cacheClient *bigcache.BigCache, collectionName string, query bson.M, result *Result, noCache bool) {
@@ -30,6 +29,7 @@ func FindOne[Result any](ctx *gin.Context, mongoClient *mongo.Client, cacheClien
 	if !noCache {
 		resultBytes, _ := cacheClient.Get(key)
 		if err := json.Unmarshal(resultBytes, &result); err == nil {
+			fmt.Println("Retreiving DB call from the cache with cache key ", key)
 			return
 		}
 	}
@@ -37,11 +37,14 @@ func FindOne[Result any](ctx *gin.Context, mongoClient *mongo.Client, cacheClien
 	// Query to DB
 	mongoClient.Database(constants.DB).Collection(collectionName).FindOne(ctx, query).Decode(&resultInterface)
 
-	mapstructure.Decode(resultInterface, &result)
+	resultBody, _ := json.Marshal(resultInterface)
+	json.Unmarshal(resultBody, &result)
 
 	// Set to cache
 	resultBytes, _ = json.Marshal(result)
-	DBCacheSet(cacheClient, key, resultBytes)
+	if err := DBCacheSet(cacheClient, key, resultBytes); err == nil {
+		fmt.Println("Successfully set DB call in cache with key ", key)
+	}
 }
 
 func Find[Result any](ctx *gin.Context, mongoClient *mongo.Client, cacheClient *bigcache.BigCache, collectionName string, query bson.M, noCache bool) ([]Result, error) {
@@ -54,6 +57,7 @@ func Find[Result any](ctx *gin.Context, mongoClient *mongo.Client, cacheClient *
 	if !noCache {
 		resultBytes, _ := cacheClient.Get(key)
 		if err := json.Unmarshal(resultBytes, &result); err == nil {
+			fmt.Println("Retreiving DB call from the cache with cache key ", key)
 			return result, nil
 		}
 	}
@@ -66,11 +70,14 @@ func Find[Result any](ctx *gin.Context, mongoClient *mongo.Client, cacheClient *
 	}
 	cursor.All(ctx, &resultInterface)
 
-	mapstructure.Decode(resultInterface, &result)
+	resultBody, _ := json.Marshal(resultInterface)
+	json.Unmarshal(resultBody, &result)
 
 	// Set to cache
 	resultBytes, _ = json.Marshal(result)
-	DBCacheSet(cacheClient, key, resultBytes)
+	if err := DBCacheSet(cacheClient, key, resultBytes); err == nil {
+		fmt.Println("Successfully set DB call in cache with key ", key)
+	}
 
 	return result, nil
 }
