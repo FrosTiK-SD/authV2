@@ -15,9 +15,9 @@ func getKey(collectionName string, operation string, query bson.M) string {
 	return fmt.Sprintf("%s | %s | %v", collectionName, constants.DB_FINDONE, query)
 }
 
-// Should be called after every write operation
-func resetCache(cacheClient bigcache.BigCache) {
-	cacheClient.Reset()
+// Should be called after every write operation on a cluster
+func resetCache(cacheClient bigcache.BigCache, clusterName string) {
+	DBCacheReset(&cacheClient, clusterName)
 }
 
 func FindOne[Result any](ctx *gin.Context, mongoClient *mongo.Client, cacheClient *bigcache.BigCache, collectionName string, query bson.M, result *Result, noCache bool) {

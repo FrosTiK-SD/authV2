@@ -1,13 +1,10 @@
 package mapper
 
 import (
-	"fmt"
-
 	"frostik.com/auth/model"
 )
 
 func TransformStudentToStudentPopulated(student model.Student) model.StudentPopulated {
-	fmt.Println(student.CompaniesAlloted)
 	return model.StudentPopulated{
 		ID:               student.ID,
 		Batch:            student.Batch,
