@@ -5,7 +5,7 @@ import (
 )
 
 type Student struct {
-	ID               primitive.ObjectID   `json:"_id" bson:"_id"`
+	ID               primitive.ObjectID   `json:"_id" bson:"_id" mapstructure:"_id"`
 	Groups           []primitive.ObjectID `json:"groups" bson:"groups"`
 	CompaniesAlloted []string             `json:"companiesAlloted" bson:"companiesAlloted"`
 	Batch            int                  `json:"batch" bson:"batch"`

@@ -25,6 +25,7 @@ require (
 	github.com/lestrrat-go/jwx v1.2.26 // indirect
 	github.com/lestrrat-go/jwx/v2 v2.0.16 // indirect
 	github.com/lestrrat-go/option v1.0.1 // indirect
+	github.com/mitchellh/mapstructure v1.5.0 // indirect
 	github.com/montanaflynn/stats v0.0.0-20171201202039-1bf9dbcd8cbe // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/redis/go-redis/v9 v9.3.0 // indirect

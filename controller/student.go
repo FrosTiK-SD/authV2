@@ -3,6 +3,7 @@ package controller
 import (
 	"encoding/json"
 	"fmt"
+	"sort"
 	"strings"
 
 	"frostik.com/auth/constants"
@@ -22,6 +23,7 @@ func getAliasEmailList(email string) []string {
 	aliasEmailList = append(aliasEmailList, email)
 	aliasEmailList = append(aliasEmailList, strings.ReplaceAll(email, "iitbhu.ac.in", "itbhu.ac.in"))
 	aliasEmailList = append(aliasEmailList, strings.ReplaceAll(email, "itbhu.ac.in", "iitbhu.ac.in"))
+	sort.Strings(aliasEmailList)
 	return aliasEmailList
 }
 

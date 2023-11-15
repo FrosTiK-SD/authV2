@@ -33,7 +33,6 @@ func main() {
 	serverAPI := options.ServerAPI(options.ServerAPIVersion1)
 	mongoClient, err := mongo.Connect(context.Background(), options.Client().ApplyURI(os.Getenv(constants.CONNECTION_STRING)).SetServerAPIOptions(serverAPI))
 	if err != nil {
-		fmt.Println(os.Getenv(constants.CONNECTION_STRING))
 		log.Fatalf("Unable to Connect to MongoDB: %v\n", err)
 	} else {
 		log.Println("Connected to MongoDB")
