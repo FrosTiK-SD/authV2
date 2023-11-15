@@ -6,6 +6,8 @@ import (
 
 type Student struct {
 	ID               primitive.ObjectID   `json:"_id" bson:"_id"`
+	Groups           []primitive.ObjectID `json:"groups" bson:"groups"`
+	CompaniesAlloted []string             `json:"companiesAlloted" bson:"companiesAlloted"`
 	Batch            int                  `json:"batch" bson:"batch"`
 	RollNo           int                  `json:"rollNo" bson:"rollNo"`
 	FirstName        string               `json:"firstName" bson:"firstName"`
@@ -35,7 +37,7 @@ type Student struct {
 	TotalBacklogs    int                  `json:"totalBacklogs" bson:"totalBacklogs"`
 	XBoard           string               `json:"xBoard" bson:"xBoard"`
 	XYear            string               `json:"xYear" bson:"xYear"`
-	XPercentage      int                  `json:"xPercentage" bson:"xPercentage"`
+	XPercentage      float64              `json:"xPercentage" bson:"xPercentage"`
 	XInstitute       string               `json:"xInstitute" bson:"xInstitute"`
 	XiiBoard         string               `json:"xiiBoard" bson:"xiiBoard"`
 	XiiYear          string               `json:"xiiYear" bson:"xiiYear"`
@@ -46,8 +48,7 @@ type Student struct {
 	SemesterThree    float64              `json:"semesterThree" bson:"semesterThree"`
 	SemesterFour     float64              `json:"semesterFour" bson:"semesterFour"`
 	SemesterFive     float64              `json:"semesterFive" bson:"semesterFive"`
-	SemesterSix      int                  `json:"semesterSix" bson:"semesterSix"`
-	Groups           []primitive.ObjectID `json:"groups" bson:"groups"`
+	SemesterSix      float64              `json:"semesterSix" bson:"semesterSix"`
 	UpdatedAt        string               `json:"updatedAt" bson:"updatedAt"`
 }
 
@@ -88,7 +89,7 @@ type StudentPopulated struct {
 	TotalBacklogs    int                `json:"totalBacklogs" bson:"totalBacklogs"`
 	XBoard           string             `json:"xBoard" bson:"xBoard"`
 	XYear            string             `json:"xYear" bson:"xYear"`
-	XPercentage      int                `json:"xPercentage" bson:"xPercentage"`
+	XPercentage      float64            `json:"xPercentage" bson:"xPercentage"`
 	XInstitute       string             `json:"xInstitute" bson:"xInstitute"`
 	XiiBoard         string             `json:"xiiBoard" bson:"xiiBoard"`
 	XiiYear          string             `json:"xiiYear" bson:"xiiYear"`
@@ -99,7 +100,8 @@ type StudentPopulated struct {
 	SemesterThree    float64            `json:"semesterThree" bson:"semesterThree"`
 	SemesterFour     float64            `json:"semesterFour" bson:"semesterFour"`
 	SemesterFive     float64            `json:"semesterFive" bson:"semesterFive"`
-	SemesterSix      int                `json:"semesterSix" bson:"semesterSix"`
+	SemesterSix      float64            `json:"semesterSix" bson:"semesterSix"`
 	Groups           []Group            `json:"groups" bson:"groups"`
 	UpdatedAt        string             `json:"updatedAt" bson:"updatedAt"`
+	CompaniesAlloted []string           `json:"companiesAlloted" bson:"companiesAlloted"`
 }

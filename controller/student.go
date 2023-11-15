@@ -3,6 +3,7 @@ package controller
 import (
 	"encoding/json"
 	"fmt"
+	"strings"
 
 	"frostik.com/auth/constants"
 	"frostik.com/auth/db"
@@ -15,6 +16,14 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
+
+func getAliasEmailList(email string) []string {
+	var aliasEmailList []string
+	aliasEmailList = append(aliasEmailList, email)
+	aliasEmailList = append(aliasEmailList, strings.ReplaceAll(email, "iitbhu.ac.in", "itbhu.ac.in"))
+	aliasEmailList = append(aliasEmailList, strings.ReplaceAll(email, "itbhu.ac.in", "iitbhu.ac.in"))
+	return aliasEmailList
+}
 
 func GetUserByEmail(ctx *gin.Context, mongoClient *mongo.Client, cacheClient *bigcache.BigCache, email *string, role *string, noCache bool) (*model.StudentPopulated, *string) {
 	var student model.Student
@@ -29,10 +38,13 @@ func GetUserByEmail(ctx *gin.Context, mongoClient *mongo.Client, cacheClient *bi
 		}
 	}
 
+	// Gets the alias emails
+	emailList := getAliasEmailList(*email)
+
 	// Query to DB
 	fmt.Println("Queriying the DB for User Details")
 	db.FindOne[model.Student](ctx, mongoClient, cacheClient, constants.COLLECTION_STUDENT, bson.M{
-		"email": *email,
+		"email": bson.M{"$in": emailList},
 	}, &student, noCache)
 	studentPopulated = mapper.TransformStudentToStudentPopulated(student)
 
