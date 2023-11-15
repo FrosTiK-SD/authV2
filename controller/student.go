@@ -7,15 +7,13 @@ import (
 	"strings"
 
 	"frostik.com/auth/constants"
-	"frostik.com/auth/db"
 	"frostik.com/auth/mapper"
 	"frostik.com/auth/model"
 	"frostik.com/auth/util"
-	"github.com/allegro/bigcache/v3"
-	"github.com/gin-gonic/gin"
+	db "github.com/FrosTiK-SD/mongik/db"
+	models "github.com/FrosTiK-SD/mongik/models"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
-	"go.mongodb.org/mongo-driver/mongo"
 )
 
 func getAliasEmailList(email string) []string {
@@ -27,13 +25,13 @@ func getAliasEmailList(email string) []string {
 	return aliasEmailList
 }
 
-func GetUserByEmail(ctx *gin.Context, mongoClient *mongo.Client, cacheClient *bigcache.BigCache, email *string, role *string, noCache bool) (*model.StudentPopulated, *string) {
+func GetUserByEmail(mongikClient *models.Mongik, email *string, role *string, noCache bool) (*model.StudentPopulated, *string) {
 	var student model.Student
 	var studentPopulated model.StudentPopulated
 
 	// Check if copy is there in the cache
 	if !noCache {
-		studentBytes, _ := cacheClient.Get(*email)
+		studentBytes, _ := mongikClient.CacheClient.Get(*email)
 		if err := json.Unmarshal(studentBytes, &studentPopulated); err == nil {
 			fmt.Println("Retreiving the student data from the cache")
 			return &studentPopulated, nil
@@ -45,7 +43,7 @@ func GetUserByEmail(ctx *gin.Context, mongoClient *mongo.Client, cacheClient *bi
 
 	// Query to DB
 	fmt.Println("Queriying the DB for User Details")
-	db.FindOne[model.Student](ctx, mongoClient, cacheClient, constants.COLLECTION_STUDENT, bson.M{
+	db.FindOne[model.Student](mongikClient, constants.DB, constants.COLLECTION_STUDENT, bson.M{
 		"email": bson.M{"$in": emailList},
 	}, &student, noCache)
 	studentPopulated = mapper.TransformStudentToStudentPopulated(student)
@@ -56,7 +54,7 @@ func GetUserByEmail(ctx *gin.Context, mongoClient *mongo.Client, cacheClient *bi
 		groupIds = append(groupIds, id)
 	}
 
-	groupDetails, _ = db.Find[model.Group](ctx, mongoClient, cacheClient, constants.COLLECTION_GROUP, bson.M{
+	groupDetails, _ = db.Find[model.Group](mongikClient, constants.DB, constants.COLLECTION_GROUP, bson.M{
 		"_id": bson.M{"$in": groupIds},
 	}, noCache)
 	studentPopulated.Groups = groupDetails
@@ -68,7 +66,7 @@ func GetUserByEmail(ctx *gin.Context, mongoClient *mongo.Client, cacheClient *bi
 
 	// Set to bigCache
 	studentBytes, _ := json.Marshal(studentPopulated)
-	if err := cacheClient.Set(*email, studentBytes); err == nil {
+	if err := mongikClient.CacheClient.Set(*email, studentBytes); err == nil {
 		fmt.Println("Successfully set UserDetails in cache")
 	}
 	return &studentPopulated, nil
