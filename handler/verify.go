@@ -20,18 +20,20 @@ func (h *Handler) HandlerVerifyStudentIdToken(ctx *gin.Context) {
 		noCache = true
 	}
 
-	email, err := controller.VerifyToken(h.MongikClient.CacheClient, idToken, h.JwkSet, noCache)
+	email, exp, err := controller.VerifyToken(h.MongikClient.CacheClient, idToken, h.JwkSet, noCache)
 
 	if err != nil {
 		ctx.JSON(200, gin.H{
 			"student": nil,
+			"expire":  exp,
 			"error":   err,
 		})
 	} else {
 		student, err := controller.GetUserByEmail(h.MongikClient, email, &constants.ROLE_STUDENT, noCache)
 		ctx.JSON(200, gin.H{
-			"data":  student,
-			"error": err,
+			"data":   student,
+			"error":  err,
+			"expire": exp,
 		})
 	}
 }
