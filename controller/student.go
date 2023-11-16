@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"encoding/json"
 	"fmt"
 	"sort"
 	"strings"
@@ -11,8 +10,11 @@ import (
 	"frostik.com/auth/util"
 	db "github.com/FrosTiK-SD/mongik/db"
 	models "github.com/FrosTiK-SD/mongik/models"
+	jsoniter "github.com/json-iterator/go"
 	"go.mongodb.org/mongo-driver/bson"
 )
+
+var json = jsoniter.ConfigCompatibleWithStandardLibrary
 
 func getAliasEmailList(email string) []string {
 	var aliasEmailList []string

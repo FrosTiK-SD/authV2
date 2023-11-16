@@ -3,7 +3,7 @@ module frostik.com/auth
 go 1.21.1
 
 require (
-	github.com/FrosTiK-SD/mongik v0.1.4
+	github.com/FrosTiK-SD/mongik v0.1.5
 	github.com/allegro/bigcache/v3 v3.1.0
 	github.com/gin-gonic/gin v1.9.0
 	github.com/lestrrat-go/jwx/v2 v2.0.16

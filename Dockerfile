@@ -16,7 +16,7 @@ COPY go.sum .
 RUN go mod download
 
 COPY . .
-RUN go build -o authv2
+RUN go build -tags=jsoniter -o authv2 
 
 EXPOSE 8080
 
