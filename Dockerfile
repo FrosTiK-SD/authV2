@@ -1,4 +1,4 @@
-FROM golang:1.20
+FROM golang:1.21.4
 
 ARG ATLAS_URI
 ARG FIREBASE_PROJECT_ID
@@ -16,7 +16,7 @@ COPY go.sum .
 RUN go mod download
 
 COPY . .
-RUN go build -o authv2
+RUN go build -tags=jsoniter -o authv2 
 
 EXPOSE 8080
 

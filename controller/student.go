@@ -1,20 +1,20 @@
 package controller
 
 import (
-	"encoding/json"
 	"fmt"
 	"sort"
 	"strings"
 
 	"frostik.com/auth/constants"
-	"frostik.com/auth/mapper"
 	"frostik.com/auth/model"
 	"frostik.com/auth/util"
 	db "github.com/FrosTiK-SD/mongik/db"
 	models "github.com/FrosTiK-SD/mongik/models"
+	jsoniter "github.com/json-iterator/go"
 	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 )
+
+var json = jsoniter.ConfigCompatibleWithStandardLibrary
 
 func getAliasEmailList(email string) []string {
 	var aliasEmailList []string
@@ -26,7 +26,6 @@ func getAliasEmailList(email string) []string {
 }
 
 func GetUserByEmail(mongikClient *models.Mongik, email *string, role *string, noCache bool) (*model.StudentPopulated, *string) {
-	var student model.Student
 	var studentPopulated model.StudentPopulated
 
 	// Check if copy is there in the cache
@@ -43,24 +42,19 @@ func GetUserByEmail(mongikClient *models.Mongik, email *string, role *string, no
 
 	// Query to DB
 	fmt.Println("Queriying the DB for User Details")
-	db.FindOne[model.Student](mongikClient, constants.DB, constants.COLLECTION_STUDENT, bson.M{
-		"email": bson.M{"$in": emailList},
-	}, &student, noCache)
-	studentPopulated = mapper.TransformStudentToStudentPopulated(student)
-
-	var groupIds = []primitive.ObjectID{}
-	var groupDetails = []model.Group{}
-	for _, id := range student.Groups {
-		groupIds = append(groupIds, id)
-	}
-
-	groupDetails, _ = db.Find[model.Group](mongikClient, constants.DB, constants.COLLECTION_GROUP, bson.M{
-		"_id": bson.M{"$in": groupIds},
-	}, noCache)
-	studentPopulated.Groups = groupDetails
+	studentPopulated, _ = db.AggregateOne[model.StudentPopulated](mongikClient, constants.DB, constants.COLLECTION_STUDENT, []bson.M{{
+		"$match": bson.M{"email": bson.M{"$in": emailList}},
+	}, {
+		"$lookup": bson.M{
+			"from":         constants.COLLECTION_GROUP,
+			"localField":   "groups",
+			"foreignField": "_id",
+			"as":           "groups",
+		},
+	}}, noCache)
 
 	// Now check if it is actually a student by the ROLES
-	if !util.CheckRoleExists(&groupDetails, *role) {
+	if !util.CheckRoleExists(&studentPopulated.Groups, *role) {
 		return nil, &constants.ERROR_NOT_A_STUDENT
 	}
 

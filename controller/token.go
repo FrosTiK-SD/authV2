@@ -60,12 +60,12 @@ func GetJWKs(cacheClient *bigcache.BigCache, noCache bool) (*jwk.Set, *string) {
 	return &jwkSet, nil
 }
 
-func VerifyToken(cacheClient *bigcache.BigCache, idToken string, defaultJwkSet *jwk.Set, noCache bool) (*string, *string) {
+func VerifyToken(cacheClient *bigcache.BigCache, idToken string, defaultJwkSet *jwk.Set, noCache bool) (*string, *time.Time, *string) {
 	jwkSet := defaultJwkSet
 	if !noCache {
 		newJwkSet, jwkParsingError := GetJWKs(cacheClient, noCache)
 		if jwkParsingError != nil {
-			return nil, jwkParsingError
+			return nil, nil, jwkParsingError
 		}
 		jwkSet = newJwkSet
 	}
@@ -73,21 +73,22 @@ func VerifyToken(cacheClient *bigcache.BigCache, idToken string, defaultJwkSet *
 	// Verify the token
 	rawJWT, err := jwt.Parse([]byte(idToken), jwt.WithKeySet(*jwkSet))
 	if err != nil {
-		return nil, &constants.ERROR_TOKEN_SIGNATURE_INVALID
+		return nil, nil, &constants.ERROR_TOKEN_SIGNATURE_INVALID
 	}
+	exp := rawJWT.Expiration()
 
 	// Validations
-	if time.Now().Sub(rawJWT.IssuedAt()) < 0 || time.Now().Sub(rawJWT.Expiration()) > 0 || rawJWT.Subject() == "" || rawJWT.Issuer() != fmt.Sprintf("https://securetoken.google.com/%s", os.Getenv(constants.FIREBASE_PROJECT_ID)) || !util.ArrayContains(rawJWT.Audience(), os.Getenv(constants.FIREBASE_PROJECT_ID)) {
-		return nil, &constants.ERROR_INVALID_TOKEN
+	if time.Now().Sub(rawJWT.IssuedAt()) < 0 || time.Now().Sub(exp) > 0 || rawJWT.Subject() == "" || rawJWT.Issuer() != fmt.Sprintf("https://securetoken.google.com/%s", os.Getenv(constants.FIREBASE_PROJECT_ID)) || !util.ArrayContains(rawJWT.Audience(), os.Getenv(constants.FIREBASE_PROJECT_ID)) {
+		return nil, &exp, &constants.ERROR_INVALID_TOKEN
 	}
 
 	// Get the email
 	email, found := rawJWT.Get("email")
 	if found == false {
-		return nil, &constants.ERROR_GETTING_EMAIL
+		return nil, &exp, &constants.ERROR_GETTING_EMAIL
 	}
 
 	emailString := fmt.Sprintf("%v", email)
 
-	return &emailString, nil
+	return &emailString, &exp, nil
 }

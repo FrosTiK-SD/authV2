@@ -1,4 +1,4 @@
-FROM golang:1.20 as builder
+FROM golang:1.21.4 as builder
 
 ARG ATLAS_URI
 ARG FIREBASE_PROJECT_ID
@@ -13,10 +13,10 @@ WORKDIR "$APP_HOME"
 COPY . .
 
 RUN go mod download
-RUN go build -o authv2
+RUN go build -tags=jsoniter -o authv2
 
 # copy build to a clean image
-FROM golang:1.20
+FROM golang:1.21.4
 
 ARG ATLAS_URI
 ARG FIREBASE_PROJECT_ID
