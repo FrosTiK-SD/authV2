@@ -3,7 +3,7 @@ module frostik.com/auth
 go 1.21.1
 
 require (
-	github.com/FrosTiK-SD/mongik v0.1.5
+	github.com/FrosTiK-SD/mongik v0.1.17
 	github.com/allegro/bigcache/v3 v3.1.0
 	github.com/gin-gonic/gin v1.9.0
 	github.com/lestrrat-go/jwx/v2 v2.0.16
@@ -11,7 +11,9 @@ require (
 )
 
 require (
+	github.com/cespare/xxhash/v2 v2.2.0 // indirect
 	github.com/decred/dcrd/dcrec/secp256k1/v4 v4.2.0 // indirect
+	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
 	github.com/golang/snappy v0.0.3 // indirect
 	github.com/klauspost/compress v1.13.6 // indirect
 	github.com/lestrrat-go/blackmagic v1.0.2 // indirect
@@ -20,6 +22,7 @@ require (
 	github.com/lestrrat-go/iter v1.0.2 // indirect
 	github.com/lestrrat-go/option v1.0.1 // indirect
 	github.com/montanaflynn/stats v0.0.0-20171201202039-1bf9dbcd8cbe // indirect
+	github.com/redis/go-redis/v9 v9.4.0 // indirect
 	github.com/segmentio/asm v1.2.0 // indirect
 	github.com/xdg-go/pbkdf2 v1.0.0 // indirect
 	github.com/xdg-go/scram v1.1.2 // indirect
