@@ -28,15 +28,6 @@ func getAliasEmailList(email string) []string {
 func GetUserByEmail(mongikClient *models.Mongik, email *string, role *string, noCache bool) (*model.StudentPopulated, *string) {
 	var studentPopulated model.StudentPopulated
 
-	// Check if copy is there in the cache
-	if !noCache {
-		studentBytes, _ := mongikClient.CacheClient.Get(*email)
-		if err := json.Unmarshal(studentBytes, &studentPopulated); err == nil {
-			fmt.Println("Retreiving the student data from the cache")
-			return &studentPopulated, nil
-		}
-	}
-
 	// Gets the alias emails
 	emailList := getAliasEmailList(*email)
 
@@ -58,10 +49,5 @@ func GetUserByEmail(mongikClient *models.Mongik, email *string, role *string, no
 		return nil, &constants.ERROR_NOT_A_STUDENT
 	}
 
-	// Set to bigCache
-	studentBytes, _ := json.Marshal(studentPopulated)
-	if err := mongikClient.CacheClient.Set(*email, studentBytes); err == nil {
-		fmt.Println("Successfully set UserDetails in cache")
-	}
 	return &studentPopulated, nil
 }
