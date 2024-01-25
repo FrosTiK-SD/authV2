@@ -4,6 +4,7 @@ import (
 	"frostik.com/auth/constants"
 	"frostik.com/auth/controller"
 	models "github.com/FrosTiK-SD/mongik/models"
+	"github.com/allegro/bigcache/v3"
 	"github.com/gin-gonic/gin"
 	"github.com/lestrrat-go/jwx/v2/jwk"
 )
@@ -11,6 +12,7 @@ import (
 type Handler struct {
 	MongikClient *models.Mongik
 	JwkSet       *jwk.Set
+	BigCache     *bigcache.BigCache
 }
 
 func (h *Handler) HandlerVerifyStudentIdToken(ctx *gin.Context) {
@@ -20,7 +22,7 @@ func (h *Handler) HandlerVerifyStudentIdToken(ctx *gin.Context) {
 		noCache = true
 	}
 
-	email, exp, err := controller.VerifyToken(h.MongikClient.CacheClient, idToken, h.JwkSet, noCache)
+	email, exp, err := controller.VerifyToken(h.BigCache, idToken, h.JwkSet, noCache)
 
 	if err != nil {
 		ctx.JSON(200, gin.H{
