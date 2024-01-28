@@ -4,9 +4,9 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/FrosTiK-SD/authV2/constants"
-	"github.com/FrosTiK-SD/authV2/model"
-	"github.com/FrosTiK-SD/authV2/util"
+	"github.com/FrosTiK-SD/auth/constants"
+	"github.com/FrosTiK-SD/auth/model"
+	"github.com/FrosTiK-SD/auth/util"
 	db "github.com/FrosTiK-SD/mongik/db"
 	models "github.com/FrosTiK-SD/mongik/models"
 	jsoniter "github.com/json-iterator/go"

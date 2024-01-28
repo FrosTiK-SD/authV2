@@ -1,8 +1,8 @@
 package handler
 
 import (
-	"github.com/FrosTiK-SD/authV2/controller"
-	"github.com/FrosTiK-SD/authV2/model"
+	"github.com/FrosTiK-SD/auth/controller"
+	"github.com/FrosTiK-SD/auth/model"
 	mongik "github.com/FrosTiK-SD/mongik/models"
 	"github.com/lestrrat-go/jwx/v2/jwk"
 )
