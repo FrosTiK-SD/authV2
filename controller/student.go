@@ -1,13 +1,12 @@
 package controller
 
 import (
-	"fmt"
 	"sort"
 	"strings"
 
-	"frostik.com/auth/constants"
-	"frostik.com/auth/model"
-	"frostik.com/auth/util"
+	"github.com/FrosTiK-SD/authV2/constants"
+	"github.com/FrosTiK-SD/authV2/model"
+	"github.com/FrosTiK-SD/authV2/util"
 	db "github.com/FrosTiK-SD/mongik/db"
 	models "github.com/FrosTiK-SD/mongik/models"
 	jsoniter "github.com/json-iterator/go"
@@ -32,7 +31,6 @@ func GetUserByEmail(mongikClient *models.Mongik, email *string, role *string, no
 	emailList := getAliasEmailList(*email)
 
 	// Query to DB
-	fmt.Println("Queriying the DB for User Details")
 	studentPopulated, _ = db.AggregateOne[model.StudentPopulated](mongikClient, constants.DB, constants.COLLECTION_STUDENT, []bson.M{{
 		"$match": bson.M{"email": bson.M{"$in": emailList}},
 	}, {

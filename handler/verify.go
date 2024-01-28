@@ -1,19 +1,11 @@
 package handler
 
 import (
-	"frostik.com/auth/constants"
-	"frostik.com/auth/controller"
-	models "github.com/FrosTiK-SD/mongik/models"
-	"github.com/allegro/bigcache/v3"
-	"github.com/gin-gonic/gin"
-	"github.com/lestrrat-go/jwx/v2/jwk"
-)
+	"github.com/FrosTiK-SD/authV2/constants"
+	"github.com/FrosTiK-SD/authV2/controller"
 
-type Handler struct {
-	MongikClient *models.Mongik
-	JwkSet       *jwk.Set
-	BigCache     *bigcache.BigCache
-}
+	"github.com/gin-gonic/gin"
+)
 
 func (h *Handler) HandlerVerifyStudentIdToken(ctx *gin.Context) {
 	idToken := ctx.GetHeader("token")
@@ -22,7 +14,7 @@ func (h *Handler) HandlerVerifyStudentIdToken(ctx *gin.Context) {
 		noCache = true
 	}
 
-	email, exp, err := controller.VerifyToken(h.BigCache, idToken, h.JwkSet, noCache)
+	email, exp, err := controller.VerifyToken(h.MongikClient.CacheClient, idToken, h.JwkSet, noCache)
 
 	if err != nil {
 		ctx.JSON(200, gin.H{
@@ -32,12 +24,17 @@ func (h *Handler) HandlerVerifyStudentIdToken(ctx *gin.Context) {
 		})
 	} else {
 		student, err := controller.GetUserByEmail(h.MongikClient, email, &constants.ROLE_STUDENT, noCache)
-		ctx.JSON(200, gin.H{
-			"data":   student,
-			"error":  err,
-			"expire": exp,
-		})
+		if h.Config.Mode == MIDDLEWARE {
+			h.Session.Student = student
+		} else {
+			ctx.JSON(200, gin.H{
+				"data":   student,
+				"error":  err,
+				"expire": exp,
+			})
+		}
 	}
+
 }
 
 func (h *Handler) InvalidateCache(ctx *gin.Context) {
