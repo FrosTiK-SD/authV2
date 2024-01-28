@@ -1,4 +1,4 @@
-module github.com/FrosTiK-SD/authV2
+module github.com/FrosTiK-SD/auth
 
 go 1.21.1
 
