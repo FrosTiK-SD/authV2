@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"github.com/FrosTiK-SD/authV2/constants"
 	"github.com/gin-gonic/gin"
 )
 
@@ -21,7 +22,7 @@ func (h *Handler) GinVerifyStudent(ctx *gin.Context) {
 	student := currentHandler.Session.Student
 
 	if student != nil {
-		ctx.Set("student", student)
+		ctx.Set(constants.SESSION_STUDENT, student)
 		ctx.Next()
 	}
 }
