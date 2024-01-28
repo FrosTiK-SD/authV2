@@ -24,5 +24,7 @@ func (h *Handler) GinVerifyStudent(ctx *gin.Context) {
 	if student != nil {
 		ctx.Set(constants.SESSION_STUDENT, student)
 		ctx.Next()
+	} else {
+		ctx.Abort()
 	}
 }
