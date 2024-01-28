@@ -1,18 +1,16 @@
 package main
 
 import (
-	"context"
 	"fmt"
 	"os"
 
-	"frostik.com/auth/constants"
-	"frostik.com/auth/controller"
-	"frostik.com/auth/handler"
-	"frostik.com/auth/util"
+	"github.com/FrosTiK-SD/authV2/constants"
+	"github.com/FrosTiK-SD/authV2/controller"
+	"github.com/FrosTiK-SD/authV2/handler"
+	"github.com/FrosTiK-SD/authV2/util"
 	"github.com/FrosTiK-SD/mongik"
 	mongikConstants "github.com/FrosTiK-SD/mongik/constants"
 	mongikModels "github.com/FrosTiK-SD/mongik/models"
-	"github.com/allegro/bigcache/v3"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
@@ -30,10 +28,8 @@ func main() {
 		},
 	})
 
-	cacheClient, _ := bigcache.New(context.Background(), bigcache.DefaultConfig(constants.CACHING_DURATION))
-
 	// Initialie default JWKs
-	defaultJwkSet, jwkSetRetrieveError := controller.GetJWKs(cacheClient, true)
+	defaultJwkSet, jwkSetRetrieveError := controller.GetJWKs(mongikClient.CacheClient, true)
 	if jwkSetRetrieveError != nil {
 		fmt.Println("Error retrieving JWKs")
 	}
@@ -42,8 +38,11 @@ func main() {
 
 	handler := &handler.Handler{
 		MongikClient: mongikClient,
-		BigCache:     cacheClient,
 		JwkSet:       defaultJwkSet,
+		Config: handler.Config{
+			Mode: handler.HANDLER,
+		},
+		Session: &handler.Session{},
 	}
 
 	r.GET("/api/token/student/verify", handler.HandlerVerifyStudentIdToken)

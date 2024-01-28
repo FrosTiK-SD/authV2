@@ -1,6 +1,6 @@
 package util
 
-import "frostik.com/auth/model"
+import "github.com/FrosTiK-SD/authV2/model"
 
 func CheckRoleExists(groups *[]model.Group, role string) bool {
 	checkRoleStatus := false

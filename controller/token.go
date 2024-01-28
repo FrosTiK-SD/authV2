@@ -7,8 +7,8 @@ import (
 	"os"
 	"time"
 
-	"frostik.com/auth/constants"
-	"frostik.com/auth/util"
+	"github.com/FrosTiK-SD/authV2/constants"
+	"github.com/FrosTiK-SD/authV2/util"
 	"github.com/allegro/bigcache/v3"
 	"github.com/lestrrat-go/jwx/v2/jwk"
 	"github.com/lestrrat-go/jwx/v2/jwt"
