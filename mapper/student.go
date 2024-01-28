@@ -1,7 +1,7 @@
 package mapper
 
 import (
-	"github.com/FrosTiK-SD/authV2/model"
+	"github.com/FrosTiK-SD/auth/model"
 )
 
 func TransformStudentToStudentPopulated(student model.Student) model.StudentPopulated {

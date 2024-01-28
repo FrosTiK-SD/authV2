@@ -1,7 +1,7 @@
 package handler
 
 import (
-	"github.com/FrosTiK-SD/authV2/constants"
+	"github.com/FrosTiK-SD/auth/constants"
 	"github.com/gin-gonic/gin"
 )
 
