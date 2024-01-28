@@ -27,7 +27,7 @@ func (h *Handler) HandlerVerifyStudentIdToken(ctx *gin.Context) {
 		if h.Config.Mode == MIDDLEWARE {
 			h.Session.Student = student
 		} else {
-			ctx.JSON(200, gin.H{
+			ctx.JSON(400, gin.H{
 				"data":   student,
 				"error":  err,
 				"expire": exp,
