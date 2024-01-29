@@ -84,9 +84,16 @@ func (h *Handler) MigrateStudentDataToV1Format(ctx *gin.Context) (int64, error) 
 			return count, errDecode
 		}
 
-		var EndYearOffset = 4
-		if oldStudent.Course == "idd" {
+		var EndYearOffset int
+		switch oldStudent.Course {
+		case "idd":
 			EndYearOffset = 5
+		case "mtech":
+			EndYearOffset = 2
+		case "phd":
+			EndYearOffset = -1
+		default:
+			EndYearOffset = 4
 		}
 
 		category := GetCategoryFromString(oldStudent.Category)
