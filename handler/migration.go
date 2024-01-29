@@ -97,7 +97,7 @@ func (h *Handler) MigrateStudentDataToV2Format(ctx *gin.Context) {
 		case "mtech":
 			EndYearOffset = 2
 		case "phd":
-			EndYearOffset = -1
+			EndYearOffset = 6
 		default:
 			EndYearOffset = 4
 		}
