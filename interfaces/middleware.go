@@ -1,7 +1,9 @@
 package interfaces
 
-import "github.com/FrosTiK-SD/auth/model"
+import (
+	group "github.com/FrosTiK-SD/models/company"
+)
 
 type Groups struct {
-	Groups []model.Group `json:"groups" bson:"groups"`
+	Groups []group.Group `json:"groups" bson:"groups"`
 }

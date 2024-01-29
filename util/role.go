@@ -1,8 +1,10 @@
 package util
 
-import "github.com/FrosTiK-SD/auth/model"
+import (
+	student "github.com/FrosTiK-SD/models/company"
+)
 
-func CheckRoleExists(groups *[]model.Group, role string) bool {
+func CheckRoleExists(groups *[]student.Group, role string) bool {
 	checkRoleStatus := false
 	for _, group := range *groups {
 		if ArrayContains(group.Roles, role) {
