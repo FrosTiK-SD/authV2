@@ -94,7 +94,7 @@ func (h *Handler) MigrateStudentDataToV2FormatType1(ctx *gin.Context) {
 			oldStudent.CompaniesAlloted = []string{}
 		}
 
-		errorArray := []string{}
+		errorArray := []string{"educationGap"}
 		var EndYearOffset int
 		var Course Constant.Course
 
@@ -209,6 +209,7 @@ func (h *Handler) MigrateStudentDataToV2FormatType1(ctx *gin.Context) {
 				ActiveBacklogs: oldStudent.ActiveBacklogs,
 				TotalBacklogs:  oldStudent.TotalBacklogs,
 			},
+			WorkExperience: []Student.WorkExperience{},
 			SocialProfiles: Student.SocialProfiles{
 				LinkedIn: Student.SocialProfile{
 					URL: oldStudent.LinkedIn,
@@ -260,7 +261,7 @@ func (h *Handler) MigrateStudentDataToV2FormatType2(ctx *gin.Context) {
 			oldStudent.CompaniesAlloted = []string{}
 		}
 
-		errorArray := []string{}
+		errorArray := []string{"educationGap"}
 		var EndYearOffset int
 		var Course Constant.Course
 
