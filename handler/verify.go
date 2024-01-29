@@ -50,8 +50,8 @@ func (h *RoleCheckerHandler) CheckRoleInGroup(ctx *gin.Context) {
 	entity, exists := ctx.Get(constants.SESSION)
 	if exists != true {
 		ctx.AbortWithStatusJSON(200, gin.H{
-			"role_exists": false,
-			"error":       "Entity does not exist",
+			"message": constants.ERROR_ROLE_CHECK_FAILED,
+			"error":   "Entity does not exist",
 		})
 		return
 	}
@@ -59,22 +59,23 @@ func (h *RoleCheckerHandler) CheckRoleInGroup(ctx *gin.Context) {
 	entityBytes, err := json.Marshal(entity)
 	if err != nil {
 		ctx.AbortWithStatusJSON(200, gin.H{
-			"role_exists": false,
-			"error":       err,
+			"message": constants.ERROR_ROLE_CHECK_FAILED,
+			"error":   err,
 		})
 		return
 	}
 	err = json.Unmarshal(entityBytes, &entityGroups)
 	if err != nil {
 		ctx.AbortWithStatusJSON(200, gin.H{
-			"role_exists": false,
-			"error":       err,
+			"message": constants.ERROR_ROLE_CHECK_FAILED,
+			"error":   err,
 		})
 		return
 	}
 	if !util.CheckRoleExists(&entityGroups.Groups, h.Role) {
 		ctx.AbortWithStatusJSON(200, gin.H{
-			"role_exists": false,
+			"message": constants.ERROR_ROLE_CHECK_FAILED,
+			"error":   "Role does not exist",
 		})
 	}
 }
