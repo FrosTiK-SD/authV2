@@ -68,11 +68,11 @@ func GetRankFromString(input string, rc Student.ReservationCategory) (Student.Ra
 
 }
 
-func (h *Handler) MigrateStudentDataToV1Format(ctx *gin.Context) (int64, error) {
+func (h *Handler) MigrateStudentDataToV1Format(ctx *gin.Context) {
 	studentCollection := h.MongikClient.MongoClient.Database(Constant.DB).Collection(Constant.StudentCollection)
 	cursor, errFind := studentCollection.Find(ctx, bson.D{{Key: "version", Value: bson.D{{Key: "$exists", Value: false}}}})
 	if errFind != nil {
-		return 0, errFind
+		ctx.AbortWithStatusJSON(400, gin.H{"count": 0, "error": errFind.Error(), "reason": "Find not successfull"})
 	}
 
 	var count int64 = 0
@@ -81,7 +81,7 @@ func (h *Handler) MigrateStudentDataToV1Format(ctx *gin.Context) (int64, error) 
 		var oldStudent model.OldStudent
 
 		if errDecode := cursor.Decode(&oldStudent); errDecode != nil {
-			return count, errDecode
+			ctx.AbortWithStatusJSON(400, gin.H{"count": count, "error": errDecode.Error(), "reason": "Could not decode to struct", "cursor": cursor})
 		}
 
 		var EndYearOffset int
@@ -100,21 +100,12 @@ func (h *Handler) MigrateStudentDataToV1Format(ctx *gin.Context) (int64, error) 
 
 		jeeRank, errJeeRank := GetRankFromString(oldStudent.JeeRank, category)
 		if errJeeRank != nil {
-			return count, errJeeRank
-		}
-		xYear, errXYear := strconv.Atoi(oldStudent.XYear)
-		if errXYear != nil {
-			return count, errXYear
-		}
-
-		xiiYear, errXiiYear := strconv.Atoi(oldStudent.XiiYear)
-		if errXiiYear != nil {
-			return count, errXiiYear
+			ctx.AbortWithStatusJSON(400, gin.H{"count": count, "error": errJeeRank.Error(), "id": oldStudent.ID, "value": oldStudent.JeeRank})
 		}
 
 		dob, errDOB := GetDOBFromString(oldStudent.Dob)
 		if errDOB != nil {
-			return count, errDOB
+			ctx.AbortWithStatusJSON(400, gin.H{"count": count, "error": errDOB.Error(), "id": oldStudent.ID, "value": oldStudent.Dob})
 		}
 
 		newStudent := Student.Student{
@@ -154,13 +145,13 @@ func (h *Handler) MigrateStudentDataToV1Format(ctx *gin.Context) (int64, error) 
 				XthClass: Student.EducationDetails{
 					Certification: oldStudent.XBoard,
 					Institute:     oldStudent.XInstitute,
-					Year:          xYear,
+					Year:          oldStudent.XYear,
 					Score:         float32(oldStudent.XPercentage),
 				},
 				XIIthClass: Student.EducationDetails{
 					Certification: oldStudent.XiiBoard,
 					Institute:     oldStudent.XiiInstitute,
-					Year:          xiiYear,
+					Year:          oldStudent.XYear,
 					Score:         float32(oldStudent.XiiPercentage),
 				},
 				EducationGap: -1,
@@ -197,11 +188,11 @@ func (h *Handler) MigrateStudentDataToV1Format(ctx *gin.Context) (int64, error) 
 		filter := bson.D{{Key: "_id", Value: oldStudent.ID}}
 
 		if _, errUpdate := studentCollection.ReplaceOne(ctx, filter, newStudent); errUpdate != nil {
-			return count, errUpdate
+			ctx.AbortWithStatusJSON(400, gin.H{"count": count, "error": errUpdate.Error(), "id": oldStudent.ID})
 		}
 
 		count = count + 1
 	}
 
-	return count, nil
+	ctx.JSON(200, gin.H{"count": count})
 }
