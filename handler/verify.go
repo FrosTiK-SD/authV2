@@ -3,6 +3,8 @@ package handler
 import (
 	"github.com/FrosTiK-SD/auth/constants"
 	"github.com/FrosTiK-SD/auth/controller"
+	"github.com/FrosTiK-SD/auth/interfaces"
+	"github.com/FrosTiK-SD/auth/util"
 
 	"github.com/gin-gonic/gin"
 )
@@ -42,4 +44,25 @@ func (h *Handler) InvalidateCache(ctx *gin.Context) {
 	ctx.JSON(200, gin.H{
 		"message": "Successfully invalidated cache",
 	})
+}
+
+func (h *RoleCheckerHandler) CheckRoleInGroup(ctx *gin.Context) {
+	entity, exists := ctx.Get(constants.SESSION)
+	if exists != true {
+		ctx.JSON(200, gin.H{
+			"role_exists": false,
+			"error":       "Entity does not exist",
+		})
+	} else {
+		entityGroups := entity.(interfaces.Groups)
+		if !util.CheckRoleExists(&entityGroups.Groups, h.Role) {
+			ctx.JSON(200, gin.H{
+				"role_exists": false,
+			})
+		} else {
+			ctx.JSON(200, gin.H{
+				"role_exists": true,
+			})
+		}
+	}
 }

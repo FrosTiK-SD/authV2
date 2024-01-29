@@ -29,6 +29,10 @@ type Config struct {
 	Mode Mode
 }
 
+type RoleCheckerHandler struct {
+	Role string
+}
+
 func NewAuthClient(mongik *mongik.Mongik) *Handler {
 	defaultJwkSet, _ := controller.GetJWKs(mongik.CacheClient, false)
 	return &Handler{
@@ -37,5 +41,11 @@ func NewAuthClient(mongik *mongik.Mongik) *Handler {
 		Config: Config{
 			Mode: MIDDLEWARE,
 		},
+	}
+}
+
+func NewRoleCheckerClient(mongik *mongik.Mongik, role *string) *RoleCheckerHandler {
+	return &RoleCheckerHandler{
+		Role: *role,
 	}
 }
