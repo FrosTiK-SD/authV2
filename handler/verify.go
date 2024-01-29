@@ -1,8 +1,6 @@
 package handler
 
 import (
-	jsoniter "github.com/json-iterator/go"
-
 	"github.com/FrosTiK-SD/auth/constants"
 	"github.com/FrosTiK-SD/auth/controller"
 	"github.com/FrosTiK-SD/auth/interfaces"
@@ -10,8 +8,6 @@ import (
 
 	"github.com/gin-gonic/gin"
 )
-
-var json = jsoniter.ConfigCompatibleWithStandardLibrary
 
 func (h *Handler) HandlerVerifyStudentIdToken(ctx *gin.Context) {
 	idToken := ctx.GetHeader("token")
@@ -58,28 +54,27 @@ func (h *RoleCheckerHandler) CheckRoleInGroup(ctx *gin.Context) {
 			"error":       "Entity does not exist",
 		})
 		return
-	} else {
-		var entityGroups *interfaces.Groups
-		entityBytes, err := json.Marshal(entity)
-		if err != nil {
-			ctx.AbortWithStatusJSON(200, gin.H{
-				"role_exists": false,
-				"error":       err,
-			})
-			return
-		}
-		err = json.Unmarshal(entityBytes, &entityGroups)
-		if err != nil {
-			ctx.AbortWithStatusJSON(200, gin.H{
-				"role_exists": false,
-				"error":       err,
-			})
-			return
-		}
-		if !util.CheckRoleExists(&entityGroups.Groups, h.Role) {
-			ctx.AbortWithStatusJSON(200, gin.H{
-				"role_exists": false,
-			})
-		}
+	}
+	var entityGroups *interfaces.Groups
+	entityBytes, err := json.Marshal(entity)
+	if err != nil {
+		ctx.AbortWithStatusJSON(200, gin.H{
+			"role_exists": false,
+			"error":       err,
+		})
+		return
+	}
+	err = json.Unmarshal(entityBytes, &entityGroups)
+	if err != nil {
+		ctx.AbortWithStatusJSON(200, gin.H{
+			"role_exists": false,
+			"error":       err,
+		})
+		return
+	}
+	if !util.CheckRoleExists(&entityGroups.Groups, h.Role) {
+		ctx.AbortWithStatusJSON(200, gin.H{
+			"role_exists": false,
+		})
 	}
 }

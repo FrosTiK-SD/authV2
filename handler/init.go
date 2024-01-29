@@ -4,10 +4,13 @@ import (
 	"github.com/FrosTiK-SD/auth/controller"
 	"github.com/FrosTiK-SD/auth/model"
 	mongik "github.com/FrosTiK-SD/mongik/models"
+	jsoniter "github.com/json-iterator/go"
 	"github.com/lestrrat-go/jwx/v2/jwk"
 )
 
 type Mode string
+
+var json = jsoniter.ConfigCompatibleWithStandardLibrary
 
 const (
 	HANDLER    Mode = "HANDLER"
