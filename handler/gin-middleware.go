@@ -30,11 +30,6 @@ func (h *Handler) GinVerifyStudent(ctx *gin.Context) {
 }
 
 func (h *RoleCheckerHandler) GinVerifyRole(ctx *gin.Context) {
-
-	currentHandler := RoleCheckerHandler{
-		Role: h.Role,
-	}
-	
-	currentHandler.CheckRoleInGroup(ctx)
+	h.CheckRoleInGroup(ctx)
 	ctx.Next()
 }
