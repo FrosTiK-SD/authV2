@@ -4,7 +4,7 @@ import (
 	"github.com/FrosTiK-SD/auth/model"
 )
 
-func TransformStudentToStudentPopulated(student model.Student) model.StudentPopulated {
+func TransformStudentToStudentPopulated(student model.OldStudent) model.StudentPopulated {
 	return model.StudentPopulated{
 		ID:               student.ID,
 		Batch:            student.Batch,

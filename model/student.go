@@ -4,7 +4,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-type Student struct {
+type OldStudent struct {
 	ID               primitive.ObjectID   `json:"_id" bson:"_id"`
 	Groups           []primitive.ObjectID `json:"groups" bson:"groups"`
 	CompaniesAlloted []string             `json:"companiesAlloted" bson:"companiesAlloted"`
@@ -49,6 +49,11 @@ type Student struct {
 	SemesterFour     float64              `json:"semesterFour" bson:"semesterFour"`
 	SemesterFive     float64              `json:"semesterFive" bson:"semesterFive"`
 	SemesterSix      float64              `json:"semesterSix" bson:"semesterSix"`
+	SummerOne        float64              `json:"summerOne" bson:"summerOne"`
+	SummerTwo        float64              `json:"summerTwo" bson:"summerTwo"`
+	SummerThree      float64              `json:"summerThree" bson:"summerThree"`
+	SummerFour       float64              `json:"summerFour" bson:"summerFour"`
+	SummerFive       float64              `json:"summerFive" bson:"summerFive"`
 	UpdatedAt        string               `json:"updatedAt" bson:"updatedAt"`
 }
 
@@ -101,6 +106,11 @@ type StudentPopulated struct {
 	SemesterFour     float64            `json:"semesterFour" bson:"semesterFour"`
 	SemesterFive     float64            `json:"semesterFive" bson:"semesterFive"`
 	SemesterSix      float64            `json:"semesterSix" bson:"semesterSix"`
+	SummerOne        float64            `json:"summerOne" bson:"summerOne"`
+	SummerTwo        float64            `json:"summerTwo" bson:"summerTwo"`
+	SummerThree      float64            `json:"summerThree" bson:"summerThree"`
+	SummerFour       float64            `json:"summerFour" bson:"summerFour"`
+	SummerFive       float64            `json:"summerFive" bson:"summerFive"`
 	Groups           []Group            `json:"groups" bson:"groups"`
 	UpdatedAt        string             `json:"updatedAt" bson:"updatedAt"`
 	CompaniesAlloted []string           `json:"companiesAlloted" bson:"companiesAlloted"`
