@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"fmt"
 	"regexp"
 	"strconv"
 	"strings"
@@ -89,6 +90,11 @@ func (h *Handler) MigrateStudentDataToV2FormatType1(ctx *gin.Context) {
 			continue
 		}
 
+		if oldStudent.CompaniesAlloted == nil {
+			oldStudent.CompaniesAlloted = []string{}
+		}
+
+		errorArray := []string{}
 		var EndYearOffset int
 		var Course Constant.Course
 
@@ -111,23 +117,29 @@ func (h *Handler) MigrateStudentDataToV2FormatType1(ctx *gin.Context) {
 
 		jeeRank, errJeeRank := GetRankFromString(oldStudent.JeeRank, category)
 		if errJeeRank != nil {
-			// ctx.AbortWithStatusJSON(400, gin.H{"count": count, "error": errJeeRank.Error(), "id": oldStudent.ID, "value": oldStudent.JeeRank})
-			// return
+			fmt.Println(errJeeRank)
+			errorArray = append(errorArray, "jeeRank")
 			jeeRank.Rank = -1
 		}
 
 		xYear, xYearError := strconv.Atoi(oldStudent.XYear)
 		if xYearError != nil {
+			fmt.Println(xYearError)
+			errorArray = append(errorArray, "xYear")
 			xYear = -1
 		}
 
 		xiiYear, xiiYearError := strconv.Atoi(oldStudent.XiiYear)
 		if xiiYearError != nil {
+			fmt.Println(xiiYearError)
+			errorArray = append(errorArray, "xiiYear")
 			xiiYear = -1
 		}
 
 		dob, errDOB := GetDOBFromString(oldStudent.Dob)
 		if errDOB != nil {
+			fmt.Println(errDOB)
+			errorArray = append(errorArray, "dob")
 			dob = 0
 		}
 
@@ -169,31 +181,31 @@ func (h *Handler) MigrateStudentDataToV2FormatType1(ctx *gin.Context) {
 					Certification: oldStudent.XBoard,
 					Institute:     oldStudent.XInstitute,
 					Year:          xYear,
-					Score:         float32(oldStudent.XPercentage),
+					Score:         oldStudent.XPercentage,
 				},
 				XIIthClass: Student.EducationDetails{
 					Certification: oldStudent.XiiBoard,
 					Institute:     oldStudent.XiiInstitute,
 					Year:          xiiYear,
-					Score:         float32(oldStudent.XiiPercentage),
+					Score:         oldStudent.XiiPercentage,
 				},
 				EducationGap: -1,
 				SemesterDetails: Student.SemesterSPI{
-					One:   float32(oldStudent.SemesterOne),
-					Two:   float32(oldStudent.SemesterTwo),
-					Three: float32(oldStudent.SemesterThree),
-					Four:  float32(oldStudent.SemesterFour),
-					Five:  float32(oldStudent.SemesterFive),
-					Six:   float32(oldStudent.SemesterSix),
+					One:   oldStudent.SemesterOne,
+					Two:   oldStudent.SemesterTwo,
+					Three: oldStudent.SemesterThree,
+					Four:  oldStudent.SemesterFour,
+					Five:  oldStudent.SemesterFive,
+					Six:   oldStudent.SemesterSix,
 				},
 				SummerTermDetails: Student.SummerTermSPI{
-					One:   float32(oldStudent.SummerOne),
-					Two:   float32(oldStudent.SummerTwo),
-					Three: float32(oldStudent.SummerThree),
-					Four:  float32(oldStudent.SummerFour),
-					Five:  float32(oldStudent.SummerFive),
+					One:   oldStudent.SummerOne,
+					Two:   oldStudent.SummerTwo,
+					Three: oldStudent.SummerThree,
+					Four:  oldStudent.SummerFour,
+					Five:  oldStudent.SummerFive,
 				},
-				CurrentCGPA:    float32(oldStudent.Cgpa),
+				CurrentCGPA:    oldStudent.Cgpa,
 				ActiveBacklogs: oldStudent.ActiveBacklogs,
 				TotalBacklogs:  oldStudent.TotalBacklogs,
 			},
@@ -206,6 +218,7 @@ func (h *Handler) MigrateStudentDataToV2FormatType1(ctx *gin.Context) {
 			StructVersion: 2,
 			CreatedAt:     primitive.NewDateTimeFromTime(time.Now()),
 			UpdatedAt:     primitive.NewDateTimeFromTime(time.Now()),
+			DataErrors:    errorArray,
 		}
 
 		filter := bson.D{{Key: "_id", Value: oldStudent.ID}}
@@ -235,6 +248,7 @@ func (h *Handler) MigrateStudentDataToV2FormatType2(ctx *gin.Context) {
 		var oldStudent model.OldStudentType2
 
 		if errDecode := cursor.Decode(&oldStudent); errDecode != nil {
+			fmt.Println(errDecode.Error())
 			continue
 		}
 
@@ -242,6 +256,11 @@ func (h *Handler) MigrateStudentDataToV2FormatType2(ctx *gin.Context) {
 			continue
 		}
 
+		if oldStudent.CompaniesAlloted == nil {
+			oldStudent.CompaniesAlloted = []string{}
+		}
+
+		errorArray := []string{}
 		var EndYearOffset int
 		var Course Constant.Course
 
@@ -264,11 +283,15 @@ func (h *Handler) MigrateStudentDataToV2FormatType2(ctx *gin.Context) {
 
 		jeeRank, errJeeRank := GetRankFromString(oldStudent.JeeRank, category)
 		if errJeeRank != nil {
+			fmt.Println(errJeeRank)
+			errorArray = append(errorArray, "jeeRank")
 			jeeRank.Rank = -1
 		}
 
 		dob, errDOB := GetDOBFromString(oldStudent.Dob)
 		if errDOB != nil {
+			fmt.Println(errDOB)
+			errorArray = append(errorArray, "dob")
 			dob = 0
 		}
 
@@ -310,34 +333,35 @@ func (h *Handler) MigrateStudentDataToV2FormatType2(ctx *gin.Context) {
 					Certification: oldStudent.XBoard,
 					Institute:     oldStudent.XInstitute,
 					Year:          oldStudent.XYear,
-					Score:         float32(oldStudent.XPercentage),
+					Score:         oldStudent.XPercentage,
 				},
 				XIIthClass: Student.EducationDetails{
 					Certification: oldStudent.XiiBoard,
 					Institute:     oldStudent.XiiInstitute,
 					Year:          oldStudent.XiiYear,
-					Score:         float32(oldStudent.XiiPercentage),
+					Score:         oldStudent.XiiPercentage,
 				},
 				EducationGap: -1,
 				SemesterDetails: Student.SemesterSPI{
-					One:   float32(oldStudent.SemesterOne),
-					Two:   float32(oldStudent.SemesterTwo),
-					Three: float32(oldStudent.SemesterThree),
-					Four:  float32(oldStudent.SemesterFour),
-					Five:  float32(oldStudent.SemesterFive),
-					Six:   float32(oldStudent.SemesterSix),
+					One:   oldStudent.SemesterOne,
+					Two:   oldStudent.SemesterTwo,
+					Three: oldStudent.SemesterThree,
+					Four:  oldStudent.SemesterFour,
+					Five:  oldStudent.SemesterFive,
+					Six:   oldStudent.SemesterSix,
 				},
 				SummerTermDetails: Student.SummerTermSPI{
-					One:   float32(oldStudent.SummerOne),
-					Two:   float32(oldStudent.SummerTwo),
-					Three: float32(oldStudent.SummerThree),
-					Four:  float32(oldStudent.SummerFour),
-					Five:  float32(oldStudent.SummerFive),
+					One:   oldStudent.SummerOne,
+					Two:   oldStudent.SummerTwo,
+					Three: oldStudent.SummerThree,
+					Four:  oldStudent.SummerFour,
+					Five:  oldStudent.SummerFive,
 				},
-				CurrentCGPA:    float32(oldStudent.Cgpa),
+				CurrentCGPA:    oldStudent.Cgpa,
 				ActiveBacklogs: oldStudent.ActiveBacklogs,
 				TotalBacklogs:  oldStudent.TotalBacklogs,
 			},
+			WorkExperience: []Student.WorkExperience{},
 			SocialProfiles: Student.SocialProfiles{
 				LinkedIn: Student.SocialProfile{
 					URL: oldStudent.LinkedIn,
@@ -347,6 +371,7 @@ func (h *Handler) MigrateStudentDataToV2FormatType2(ctx *gin.Context) {
 			StructVersion: 2,
 			CreatedAt:     primitive.NewDateTimeFromTime(time.Now()),
 			UpdatedAt:     primitive.NewDateTimeFromTime(time.Now()),
+			DataErrors:    errorArray,
 		}
 
 		filter := bson.D{{Key: "_id", Value: oldStudent.ID}}
