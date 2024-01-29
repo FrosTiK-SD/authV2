@@ -205,6 +205,18 @@ func (h *Handler) MigrateStudentDataToV2FormatType1(ctx *gin.Context) {
 					Four:  oldStudent.SummerFour,
 					Five:  oldStudent.SummerFive,
 				},
+				UnderGraduate: Student.EducationDetails{
+					Certification: oldStudent.UgIn,
+					Institute:     oldStudent.UgCollege,
+					Year:          oldStudent.UgYear,
+					Score:         oldStudent.UgScore,
+				},
+				PostGraduate: Student.EducationDetails{
+					Certification: oldStudent.PgIn,
+					Institute:     oldStudent.PgCollege,
+					Year:          oldStudent.PgYear,
+					Score:         oldStudent.PgScore,
+				},
 				CurrentCGPA:    oldStudent.Cgpa,
 				ActiveBacklogs: oldStudent.ActiveBacklogs,
 				TotalBacklogs:  oldStudent.TotalBacklogs,
@@ -213,6 +225,18 @@ func (h *Handler) MigrateStudentDataToV2FormatType1(ctx *gin.Context) {
 			SocialProfiles: Student.SocialProfiles{
 				LinkedIn: Student.SocialProfile{
 					URL: oldStudent.LinkedIn,
+				},
+				MicrosoftTeams: Student.SocialProfile{
+					URL: oldStudent.MicrosoftTeams,
+				},
+				Github: Student.SocialProfile{
+					URL: oldStudent.Github,
+				},
+				Kaggle: Student.SocialProfile{
+					URL: oldStudent.Kaggle,
+				},
+				Skype: Student.SocialProfile{
+					URL: oldStudent.Skype,
 				},
 			},
 
@@ -358,6 +382,18 @@ func (h *Handler) MigrateStudentDataToV2FormatType2(ctx *gin.Context) {
 					Four:  oldStudent.SummerFour,
 					Five:  oldStudent.SummerFive,
 				},
+				UnderGraduate: Student.EducationDetails{
+					Certification: oldStudent.UgIn,
+					Institute:     oldStudent.UgCollege,
+					Year:          oldStudent.UgYear,
+					Score:         oldStudent.UgScore,
+				},
+				PostGraduate: Student.EducationDetails{
+					Certification: oldStudent.PgIn,
+					Institute:     oldStudent.PgCollege,
+					Year:          oldStudent.PgYear,
+					Score:         oldStudent.PgScore,
+				},
 				CurrentCGPA:    oldStudent.Cgpa,
 				ActiveBacklogs: oldStudent.ActiveBacklogs,
 				TotalBacklogs:  oldStudent.TotalBacklogs,
@@ -366,6 +402,18 @@ func (h *Handler) MigrateStudentDataToV2FormatType2(ctx *gin.Context) {
 			SocialProfiles: Student.SocialProfiles{
 				LinkedIn: Student.SocialProfile{
 					URL: oldStudent.LinkedIn,
+				},
+				MicrosoftTeams: Student.SocialProfile{
+					URL: oldStudent.MicrosoftTeams,
+				},
+				Github: Student.SocialProfile{
+					URL: oldStudent.Github,
+				},
+				Kaggle: Student.SocialProfile{
+					URL: oldStudent.Kaggle,
+				},
+				Skype: Student.SocialProfile{
+					URL: oldStudent.Skype,
 				},
 			},
 

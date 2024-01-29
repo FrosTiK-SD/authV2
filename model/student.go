@@ -19,6 +19,8 @@ type OldStudentType2 struct {
 	LinkedIn         string               `json:"linkedIn" bson:"linkedIn"`
 	Github           string               `json:"github" bson:"github"`
 	MicrosoftTeams   string               `json:"microsoftTeams" bson:"microsoftTeams"`
+	Kaggle           string               `json:"kaggle" bson:"kaggle"`
+	Skype            string               `json:"skypeId" bson:"skypeId"`
 	Mobile           int64                `json:"mobile" bson:"mobile"`
 	Gender           string               `json:"gender" bson:"gender"`
 	Dob              string               `json:"dob" bson:"dob"`
@@ -43,6 +45,14 @@ type OldStudentType2 struct {
 	XiiYear          int                  `json:"xiiYear" bson:"xiiYear"`
 	XiiPercentage    float64              `json:"xiiPercentage" bson:"xiiPercentage"`
 	XiiInstitute     string               `json:"xiiInstitute" bson:"xiiInstitute"`
+	PgIn             string               `json:"pgIn" bson:"pgIn"`
+	PgCollege        string               `json:"pgCollege" bson:"pgCollege"`
+	PgScore          float64              `json:"pgScore" bson:"pgScore"`
+	PgYear           int                  `json:"pgPassingyear" bson:"pgPassingyear"`
+	UgIn             string               `json:"ugIn" bson:"ugIn"`
+	UgCollege        string               `json:"ugCollege" bson:"ugCollege"`
+	UgScore          float64              `json:"ugScore" bson:"ugScore"`
+	UgYear           int                  `json:"ugPassingyear" bson:"ugPassingyear"`
 	SemesterOne      float64              `json:"semesterOne" bson:"semesterOne"`
 	SemesterTwo      float64              `json:"semesterTwo" bson:"semesterTwo"`
 	SemesterThree    float64              `json:"semesterThree" bson:"semesterThree"`
@@ -72,6 +82,8 @@ type OldStudentType1 struct {
 	LinkedIn         string               `json:"linkedIn" bson:"linkedIn"`
 	Github           string               `json:"github" bson:"github"`
 	MicrosoftTeams   string               `json:"microsoftTeams" bson:"microsoftTeams"`
+	Kaggle           string               `json:"kaggle" bson:"kaggle"`
+	Skype            string               `json:"skypeId" bson:"skypeId"`
 	Mobile           int64                `json:"mobile" bson:"mobile"`
 	Gender           string               `json:"gender" bson:"gender"`
 	Dob              string               `json:"dob" bson:"dob"`
@@ -96,6 +108,14 @@ type OldStudentType1 struct {
 	XiiYear          string               `json:"xiiYear" bson:"xiiYear"`
 	XiiPercentage    float64              `json:"xiiPercentage" bson:"xiiPercentage"`
 	XiiInstitute     string               `json:"xiiInstitute" bson:"xiiInstitute"`
+	PgIn             string               `json:"pgIn" bson:"pgIn"`
+	PgCollege        string               `json:"pgCollege" bson:"pgCollege"`
+	PgScore          float64              `json:"pgScore" bson:"pgScore"`
+	PgYear           int                  `json:"pgPassingyear" bson:"pgPassingyear"`
+	UgIn             string               `json:"ugIn" bson:"ugIn"`
+	UgCollege        string               `json:"ugCollege" bson:"ugCollege"`
+	UgScore          float64              `json:"ugScore" bson:"ugScore"`
+	UgYear           int                  `json:"ugPassingyear" bson:"ugPassingyear"`
 	SemesterOne      float64              `json:"semesterOne" bson:"semesterOne"`
 	SemesterTwo      float64              `json:"semesterTwo" bson:"semesterTwo"`
 	SemesterThree    float64              `json:"semesterThree" bson:"semesterThree"`
