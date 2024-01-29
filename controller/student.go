@@ -7,6 +7,7 @@ import (
 	"github.com/FrosTiK-SD/authV2/constants"
 	"github.com/FrosTiK-SD/authV2/model"
 	"github.com/FrosTiK-SD/authV2/util"
+	NewStudentModel "github.com/FrosTiK-SD/models/student"
 	db "github.com/FrosTiK-SD/mongik/db"
 	models "github.com/FrosTiK-SD/mongik/models"
 	jsoniter "github.com/json-iterator/go"
@@ -48,4 +49,8 @@ func GetUserByEmail(mongikClient *models.Mongik, email *string, role *string, no
 	}
 
 	return &studentPopulated, nil
+}
+
+func RegisterNewUser(mongikClient *models.Mongik, email *string) (*NewStudentModel.Student, error) {
+
 }

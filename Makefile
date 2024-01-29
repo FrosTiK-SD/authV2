@@ -1,6 +1,9 @@
 run local:
 	nodemon --exec go run main.go --signal SIGTERM
 
+dev:
+	find -name "*.go" | entr -r go run .
+
 build:
 	docker build -t authv2 . -f Dockerfile.production && docker run --env-file .env -dp 8081:8080 authv2
 
