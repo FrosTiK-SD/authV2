@@ -17,12 +17,19 @@ func (h *Handler) GinVerifyStudent(ctx *gin.Context) {
 			Mode: MIDDLEWARE,
 		},
 	}
-
+	
 	currentHandler.HandlerVerifyStudentIdToken(ctx)
 	student := currentHandler.Session.Student
 
 	if student != nil {
-		ctx.Set(constants.SESSION_STUDENT, student)
+		ctx.Set(constants.SESSION, student)
 		ctx.Next()
+	} else {
+		ctx.Abort()
 	}
+}
+
+func (h *RoleCheckerHandler) GinVerifyRole(ctx *gin.Context) {
+	h.CheckRoleInGroup(ctx)
+	ctx.Next()
 }
