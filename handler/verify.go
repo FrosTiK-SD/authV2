@@ -1,7 +1,7 @@
 package handler
 
 import (
-	"encoding/json"
+	jsoniter "github.com/json-iterator/go"
 
 	"github.com/FrosTiK-SD/auth/constants"
 	"github.com/FrosTiK-SD/auth/controller"
@@ -10,6 +10,8 @@ import (
 
 	"github.com/gin-gonic/gin"
 )
+
+var json = jsoniter.ConfigCompatibleWithStandardLibrary
 
 func (h *Handler) HandlerVerifyStudentIdToken(ctx *gin.Context) {
 	idToken := ctx.GetHeader("token")
@@ -78,7 +80,6 @@ func (h *RoleCheckerHandler) CheckRoleInGroup(ctx *gin.Context) {
 			ctx.AbortWithStatusJSON(200, gin.H{
 				"role_exists": false,
 			})
-			return
 		}
 	}
 }
