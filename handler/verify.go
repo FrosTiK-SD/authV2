@@ -1,6 +1,8 @@
 package handler
 
 import (
+	"encoding/json"
+
 	"github.com/FrosTiK-SD/auth/constants"
 	"github.com/FrosTiK-SD/auth/controller"
 	"github.com/FrosTiK-SD/auth/interfaces"
@@ -53,16 +55,18 @@ func (h *RoleCheckerHandler) CheckRoleInGroup(ctx *gin.Context) {
 			"role_exists": false,
 			"error":       "Entity does not exist",
 		})
+		ctx.Abort()
 	} else {
-		entityGroups := entity.(interfaces.Groups)
+		var entityGroups *interfaces.Groups
+		entityBytes, _ := json.Marshal(entity)
+		json.Unmarshal(entityBytes, &entityGroups)
 		if !util.CheckRoleExists(&entityGroups.Groups, h.Role) {
 			ctx.JSON(200, gin.H{
 				"role_exists": false,
 			})
+			ctx.Abort()
 		} else {
-			ctx.JSON(200, gin.H{
-				"role_exists": true,
-			})
+			ctx.Next()
 		}
 	}
 }
