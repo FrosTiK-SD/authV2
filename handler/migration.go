@@ -91,15 +91,21 @@ func (h *Handler) MigrateStudentDataToV2Format(ctx *gin.Context) {
 		}
 
 		var EndYearOffset int
+		var Course Constant.Course
+
 		switch oldStudent.Course {
 		case "idd":
 			EndYearOffset = 5
+			Course = Constant.IDD
 		case "mtech":
 			EndYearOffset = 2
+			Course = Constant.MTECH
 		case "phd":
 			EndYearOffset = 6
+			Course = Constant.PHD
 		default:
 			EndYearOffset = 4
+			Course = Constant.BTECH
 		}
 
 		category := GetCategoryFromString(oldStudent.Category)
@@ -141,7 +147,7 @@ func (h *Handler) MigrateStudentDataToV2Format(ctx *gin.Context) {
 			RollNo:         oldStudent.RollNo,
 			InstituteEmail: oldStudent.Email,
 			Department:     oldStudent.Department,
-			Course:         Constant.Course(oldStudent.Course),
+			Course:         Course,
 
 			FirstName: oldStudent.FirstName,
 			LastName:  oldStudent.LastName,
