@@ -51,22 +51,34 @@ func (h *Handler) InvalidateCache(ctx *gin.Context) {
 func (h *RoleCheckerHandler) CheckRoleInGroup(ctx *gin.Context) {
 	entity, exists := ctx.Get(constants.SESSION)
 	if exists != true {
-		ctx.JSON(200, gin.H{
+		ctx.AbortWithStatusJSON(200, gin.H{
 			"role_exists": false,
 			"error":       "Entity does not exist",
 		})
-		ctx.Abort()
+		return
 	} else {
 		var entityGroups *interfaces.Groups
-		entityBytes, _ := json.Marshal(entity)
-		json.Unmarshal(entityBytes, &entityGroups)
+		entityBytes, err := json.Marshal(entity)
+		if err != nil {
+			ctx.AbortWithStatusJSON(200, gin.H{
+				"role_exists": false,
+				"error":       err,
+			})
+			return
+		}
+		err = json.Unmarshal(entityBytes, &entityGroups)
+		if err != nil {
+			ctx.AbortWithStatusJSON(200, gin.H{
+				"role_exists": false,
+				"error":       err,
+			})
+			return
+		}
 		if !util.CheckRoleExists(&entityGroups.Groups, h.Role) {
-			ctx.JSON(200, gin.H{
+			ctx.AbortWithStatusJSON(200, gin.H{
 				"role_exists": false,
 			})
-			ctx.Abort()
-		} else {
-			ctx.Next()
+			return
 		}
 	}
 }
