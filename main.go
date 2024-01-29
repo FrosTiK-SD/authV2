@@ -47,7 +47,8 @@ func main() {
 
 	r.GET("/api/token/student/verify", handler.HandlerVerifyStudentIdToken)
 	r.GET("/api/token/invalidate_cache", handler.InvalidateCache)
-	r.GET("/migrate/student/newformat", handler.MigrateStudentDataToV2Format)
+	r.GET("/migrate/student/newformat/1", handler.MigrateStudentDataToV2FormatType1)
+	r.GET("/migrate/student/newformat/2", handler.MigrateStudentDataToV2FormatType2)
 
 	port := "" + os.Getenv("PORT")
 	if port == "" {
