@@ -94,7 +94,6 @@ func (h *Handler) MigrateStudentDataToV2FormatType1(ctx *gin.Context) {
 			oldStudent.CompaniesAlloted = []string{}
 		}
 
-		errorArray := []string{"educationGap"}
 		var EndYearOffset int
 		var Course Constant.Course
 
@@ -113,6 +112,7 @@ func (h *Handler) MigrateStudentDataToV2FormatType1(ctx *gin.Context) {
 			Course = Constant.BTECH
 		}
 
+		errorArray := []string{}
 		category := GetCategoryFromString(oldStudent.Category)
 
 		jeeRank, errJeeRank := GetRankFromString(oldStudent.JeeRank, category)
@@ -120,6 +120,13 @@ func (h *Handler) MigrateStudentDataToV2FormatType1(ctx *gin.Context) {
 			fmt.Println(errJeeRank)
 			errorArray = append(errorArray, "jeeRank")
 			jeeRank.Rank = -1
+		}
+
+		educationGap, err := strconv.Atoi(regexp.MustCompile(`\d+`).FindString(oldStudent.EducationGap))
+		if err != nil {
+			fmt.Println(educationGap)
+			errorArray = append(errorArray, "educationGap")
+			educationGap = -1
 		}
 
 		xYear, xYearError := strconv.Atoi(oldStudent.XYear)
@@ -189,7 +196,7 @@ func (h *Handler) MigrateStudentDataToV2FormatType1(ctx *gin.Context) {
 					Year:          xiiYear,
 					Score:         oldStudent.XiiPercentage,
 				},
-				EducationGap: -1,
+				EducationGap: educationGap,
 				SemesterDetails: Student.SemesterSPI{
 					One:   oldStudent.SemesterOne,
 					Two:   oldStudent.SemesterTwo,
@@ -285,7 +292,6 @@ func (h *Handler) MigrateStudentDataToV2FormatType2(ctx *gin.Context) {
 			oldStudent.CompaniesAlloted = []string{}
 		}
 
-		errorArray := []string{"educationGap"}
 		var EndYearOffset int
 		var Course Constant.Course
 
@@ -304,6 +310,7 @@ func (h *Handler) MigrateStudentDataToV2FormatType2(ctx *gin.Context) {
 			Course = Constant.BTECH
 		}
 
+		errorArray := []string{}
 		category := GetCategoryFromString(oldStudent.Category)
 
 		jeeRank, errJeeRank := GetRankFromString(oldStudent.JeeRank, category)
@@ -311,6 +318,13 @@ func (h *Handler) MigrateStudentDataToV2FormatType2(ctx *gin.Context) {
 			fmt.Println(errJeeRank)
 			errorArray = append(errorArray, "jeeRank")
 			jeeRank.Rank = -1
+		}
+
+		educationGap, err := strconv.Atoi(regexp.MustCompile(`\d+`).FindString(oldStudent.EducationGap))
+		if err != nil {
+			fmt.Println(educationGap)
+			errorArray = append(errorArray, "educationGap")
+			educationGap = -1
 		}
 
 		dob, errDOB := GetDOBFromString(oldStudent.Dob)
@@ -366,7 +380,7 @@ func (h *Handler) MigrateStudentDataToV2FormatType2(ctx *gin.Context) {
 					Year:          oldStudent.XiiYear,
 					Score:         oldStudent.XiiPercentage,
 				},
-				EducationGap: -1,
+				EducationGap: educationGap,
 				SemesterDetails: Student.SemesterSPI{
 					One:   oldStudent.SemesterOne,
 					Two:   oldStudent.SemesterTwo,
