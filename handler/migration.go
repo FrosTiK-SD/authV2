@@ -26,10 +26,15 @@ func GetDOBFromString(input string) (primitive.DateTime, error) {
 
 func GetCategoryFromString(input string) Student.ReservationCategory {
 	category := Student.ReservationCategory{
-		Category: "GEN",
+		Category: "",
 		IsPWD:    false,
 		IsEWS:    false,
 	}
+
+	if input == "" {
+		return category
+	}
+
 	for _, c := range [4]string{"GEN", "SC", "ST", "OBC-NCL"} {
 		re := regexp.MustCompile("(?i)" + c)
 
@@ -272,6 +277,8 @@ func (h *Handler) MigrateStudentDataToV2(ctx *gin.Context) {
 			UpdatedAt:     primitive.NewDateTimeFromTime(time.Now()),
 			DataErrors:    errorArray,
 		}
+
+		ValidateData(&newStudent)
 
 		filter := bson.D{{Key: "_id", Value: oldStudent.ID}}
 

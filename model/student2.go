@@ -19,24 +19,24 @@ type RankDetails struct {
 }
 
 type SemesterSPI struct {
-	One   float64 `json:"One,omitempty" bson:"One,omitempty"`
-	Two   float64 `json:"Two,omitempty" bson:"Two,omitempty"`
-	Three float64 `json:"Three,omitempty" bson:"Three,omitempty"`
-	Four  float64 `json:"Four,omitempty" bson:"Four,omitempty"`
-	Five  float64 `json:"Five,omitempty" bson:"Five,omitempty"`
-	Six   float64 `json:"Six,omitempty" bson:"Six,omitempty"`
-	Seven float64 `json:"Seven,omitempty" bson:"Seven,omitempty"`
-	Eight float64 `json:"Eight,omitempty" bson:"Eight,omitempty"`
-	Nine  float64 `json:"Nine,omitempty" bson:"Nine,omitempty"`
-	Ten   float64 `json:"Ten,omitempty" bson:"Ten,omitempty"`
+	One   float64 `json:"one" bson:"one"`
+	Two   float64 `json:"two" bson:"two"`
+	Three float64 `json:"three" bson:"three"`
+	Four  float64 `json:"four" bson:"four"`
+	Five  float64 `json:"five" bson:"five"`
+	Six   float64 `json:"six" bson:"six"`
+	Seven float64 `json:"seven" bson:"seven"`
+	Eight float64 `json:"eight" bson:"eight"`
+	Nine  float64 `json:"nine" bson:"nine"`
+	Ten   float64 `json:"ten" bson:"ten"`
 }
 
 type SummerTermSPI struct {
-	One   float64 `json:"One,omitempty" bson:"One,omitempty"`
-	Two   float64 `json:"Two,omitempty" bson:"Two,omitempty"`
-	Three float64 `json:"Three,omitempty" bson:"Three,omitempty"`
-	Four  float64 `json:"Four,omitempty" bson:"Four,omitempty"`
-	Five  float64 `json:"Five,omitempty" bson:"Five,omitempty"`
+	One   float64 `json:"one" bson:"one"`
+	Two   float64 `json:"two" bson:"two"`
+	Three float64 `json:"three" bson:"three"`
+	Four  float64 `json:"four" bson:"four"`
+	Five  float64 `json:"five" bson:"five"`
 }
 
 type EducationDetails struct {
@@ -48,13 +48,13 @@ type EducationDetails struct {
 
 type Academics struct {
 	JEERank           *RankDetails        `json:"jeeRank" bson:"jeeRank"`
-	GATERank          *RankDetails        `json:"gateRank,omitempty" bson:"gateRank,omitempty"`
+	GATERank          *RankDetails        `json:"gateRank" bson:"gateRank"`
 	XthClass          *EducationDetails   `json:"xClass" bson:"xClass"`
 	XIIthClass        *EducationDetails   `json:"xiiClass" bson:"xiiClass"`
-	UnderGraduate     *EducationDetails   `json:"underGraduate,omitempty" bson:"underGraduate,omitempty"`
-	Honours           *string             `json:"honours,omitempty" bson:"honours,omitempty"`
-	PostGraduate      *EducationDetails   `json:"postGraduate,omitempty" bson:"postGraduate,omitempty"`
-	ThesisEndDate     *primitive.DateTime `json:"thesisEndDate,omitempty" bson:"thesisEndDate,omitempty"`
+	UnderGraduate     *EducationDetails   `json:"underGraduate" bson:"underGraduate"`
+	Honours           *string             `json:"honours" bson:"honours"`
+	PostGraduate      *EducationDetails   `json:"postGraduate" bson:"postGraduate"`
+	ThesisEndDate     *primitive.DateTime `json:"thesisEndDate" bson:"thesisEndDate"`
 	EducationGap      int                 `json:"educationGap" bson:"educationGap"`
 	SemesterDetails   SemesterSPI         `json:"semesterSPI" bson:"semesterSPI"`
 	SummerTermDetails SummerTermSPI       `json:"summerTermSPI" bson:"summerTermSPI"`
@@ -73,15 +73,15 @@ type SocialProfile struct {
 
 type SocialProfiles struct {
 	LinkedIn       *SocialProfile `json:"linkedIn" bson:"linkedIn"`
-	Github         *SocialProfile `json:"github,omitempty" bson:"github,omitempty"`
-	MicrosoftTeams *SocialProfile `json:"microsoftTeams,omitempty" bson:"microsoftTeams,omitempty"`
-	Skype          *SocialProfile `json:"skype,omitempty" bson:"skype,omitempty"`
-	GoogleScholar  *SocialProfile `json:"googleScholar,omitempty" bson:"googleScholar,omitempty"`
+	Github         *SocialProfile `json:"github" bson:"github"`
+	MicrosoftTeams *SocialProfile `json:"microsoftTeams" bson:"microsoftTeams"`
+	Skype          *SocialProfile `json:"skype" bson:"skype"`
+	GoogleScholar  *SocialProfile `json:"googleScholar" bson:"googleScholar"`
 
-	Codeforces *SocialProfile `json:"codeforces,omitempty" bson:"codeforces,omitempty"`
-	CodeChef   *SocialProfile `json:"codechef,omitempty" bson:"codechef,omitempty"`
-	LeetCode   *SocialProfile `json:"leetcode,omitempty" bson:"leetcode,omitempty"`
-	Kaggle     *SocialProfile `json:"kaggle,omitempty" bson:"kaggle,omitempty"`
+	Codeforces *SocialProfile `json:"codeforces" bson:"codeforces"`
+	CodeChef   *SocialProfile `json:"codechef" bson:"codechef"`
+	LeetCode   *SocialProfile `json:"leetcode" bson:"leetcode"`
+	Kaggle     *SocialProfile `json:"kaggle" bson:"kaggle"`
 }
 
 type Batch struct {
@@ -91,9 +91,9 @@ type Batch struct {
 
 type ParentsDetails struct {
 	FatherName       string `json:"fatherName" bson:"fatherName"`
-	FatherOccupation string `json:"fatherOccupation,omitempty" bson:"fatherOccupation,omitempty"`
+	FatherOccupation string `json:"fatherOccupation" bson:"fatherOccupation"`
 	MotherName       string `json:"motherName" bson:"motherName"`
-	MotherOccupation string `json:"motherOccupation,omitempty" bson:"motherOccupation,omitempty"`
+	MotherOccupation string `json:"motherOccupation" bson:"motherOccupation"`
 }
 
 type Extras struct {
@@ -121,13 +121,13 @@ type Student struct {
 	InstituteEmail string          `json:"email" bson:"email"`
 	Department     string          `json:"department" bson:"department"`
 	Course         constant.Course `json:"course" bson:"course"`
-	Specialisation *string         `json:"specialisation,omitempty" bson:"specialisation,omitempty"`
+	Specialisation *string         `json:"specialisation" bson:"specialisation"`
 
-	FirstName  string `json:"firstName" bson:"firstName"`
-	MiddleName string `json:"middleName,omitempty" bson:"middleName,omitempty"`
-	LastName   string `json:"lastName" bson:"lastName"`
+	FirstName  string  `json:"firstName" bson:"firstName"`
+	MiddleName *string `json:"middleName" bson:"middleName"`
+	LastName   string  `json:"lastName" bson:"lastName"`
 
-	ProfilePicture   *misc.Attachment     `json:"profilePicture,omitempty" bson:"profilePicture,omitempty"`
+	ProfilePicture   *misc.Attachment     `json:"profilePicture" bson:"profilePicture"`
 	Gender           constant.Gender      `json:"gender" bson:"gender"`
 	DOB              *primitive.DateTime  `json:"dob" bson:"dob"`
 	PermanentAddress string               `json:"permanentAddress" bson:"permanentAddress"`
@@ -143,7 +143,7 @@ type Student struct {
 	SocialProfiles SocialProfiles   `json:"socialProfiles" bson:"socialProfiles"`
 
 	// metadata
-	StructVersion int                    `json:"version,omitempty" bson:"version,omitempty"`
+	StructVersion int                    `json:"version" bson:"version"`
 	UpdatedAt     primitive.DateTime     `json:"updatedAt" bson:"updatedAt"`
 	CreatedAt     primitive.DateTime     `json:"createdAt" bson:"createdAt"`
 	RawKeyStore   map[string]interface{} `json:"raw_key_store" bson:"raw_key_store"`

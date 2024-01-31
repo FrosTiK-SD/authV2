@@ -3,6 +3,8 @@ package handler
 import (
 	"github.com/FrosTiK-SD/auth/constants"
 	"github.com/FrosTiK-SD/auth/controller"
+	"github.com/FrosTiK-SD/auth/model"
+	"github.com/FrosTiK-SD/models/misc"
 
 	"github.com/gin-gonic/gin"
 )
@@ -42,4 +44,74 @@ func (h *Handler) InvalidateCache(ctx *gin.Context) {
 	ctx.JSON(200, gin.H{
 		"message": "Successfully invalidated cache",
 	})
+}
+
+func ValidateEducationDetails(ed **model.EducationDetails) {
+	if *ed != nil && (*ed).Score <= 0 {
+		*ed = nil
+	}
+}
+
+func ValidateRankDetails(rd **model.RankDetails) {
+	if *rd != nil && (*rd).Rank <= 0 {
+		*rd = nil
+	}
+}
+
+func ValidateString(s *string) {
+	if s != nil && *s == "" {
+		s = nil
+	}
+}
+
+func ValidateSocialProfile(sp **model.SocialProfile) {
+	if *sp != nil && (*sp).URL == "" {
+		*sp = nil
+	}
+}
+
+func ValidateAttachment(a *misc.Attachment) {
+	if a != nil && a.URL == "" {
+		a = nil
+	}
+}
+
+func ValidateData(student *model.Student) {
+	ValidateString(student.Specialisation)
+	ValidateString(student.MiddleName)
+	ValidateAttachment(student.ProfilePicture)
+
+	if student.DOB != nil && *student.DOB <= 10 {
+		student.DOB = nil
+	}
+
+	if student.Category.Category == "" {
+		student.Category = nil
+	}
+
+	if student.ParentsDetails.FatherName == "" && student.ParentsDetails.FatherOccupation == "" && student.ParentsDetails.MotherName == "" && student.ParentsDetails.MotherOccupation == "" {
+		student.ParentsDetails = nil
+	}
+
+	ValidateRankDetails(&student.Academics.JEERank)
+	ValidateRankDetails(&student.Academics.GATERank)
+	ValidateEducationDetails(&student.Academics.XthClass)
+	ValidateEducationDetails(&student.Academics.XIIthClass)
+	ValidateEducationDetails(&student.Academics.UnderGraduate)
+	ValidateString(student.Academics.Honours)
+	ValidateEducationDetails(&student.Academics.PostGraduate)
+
+	if student.Academics.ThesisEndDate != nil && *student.Academics.ThesisEndDate <= 0 {
+		student.Academics.ThesisEndDate = nil
+	}
+
+	ValidateSocialProfile(&student.SocialProfiles.LinkedIn)
+	ValidateSocialProfile(&student.SocialProfiles.Github)
+	ValidateSocialProfile(&student.SocialProfiles.MicrosoftTeams)
+	ValidateSocialProfile(&student.SocialProfiles.Skype)
+	ValidateSocialProfile(&student.SocialProfiles.GoogleScholar)
+	ValidateSocialProfile(&student.SocialProfiles.Codeforces)
+	ValidateSocialProfile(&student.SocialProfiles.CodeChef)
+	ValidateSocialProfile(&student.SocialProfiles.LeetCode)
+	ValidateSocialProfile(&student.SocialProfiles.Kaggle)
 }
