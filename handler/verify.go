@@ -70,16 +70,16 @@ func ValidateSocialProfile(sp **model.SocialProfile) {
 	}
 }
 
-func ValidateAttachment(a *misc.Attachment) {
-	if a != nil && a.URL == "" {
-		a = nil
+func ValidateAttachment(a **misc.Attachment) {
+	if *a != nil && (*a).URL == "" {
+		*a = nil
 	}
 }
 
 func ValidateData(student *model.Student) {
 	ValidateString(student.Specialisation)
 	ValidateString(student.MiddleName)
-	ValidateAttachment(student.ProfilePicture)
+	ValidateAttachment(&student.ProfilePicture)
 
 	if student.DOB != nil && *student.DOB <= 10 {
 		student.DOB = nil
