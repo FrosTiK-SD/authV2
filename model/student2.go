@@ -47,20 +47,20 @@ type EducationDetails struct {
 }
 
 type Academics struct {
-	JEERank           *RankDetails        `json:"jeeRank" bson:"jeeRank"`
-	GATERank          *RankDetails        `json:"gateRank" bson:"gateRank"`
-	XthClass          *EducationDetails   `json:"xClass" bson:"xClass"`
-	XIIthClass        *EducationDetails   `json:"xiiClass" bson:"xiiClass"`
-	UnderGraduate     *EducationDetails   `json:"underGraduate" bson:"underGraduate"`
-	Honours           *string             `json:"honours" bson:"honours"`
-	PostGraduate      *EducationDetails   `json:"postGraduate" bson:"postGraduate"`
-	ThesisEndDate     *primitive.DateTime `json:"thesisEndDate" bson:"thesisEndDate"`
-	EducationGap      int                 `json:"educationGap" bson:"educationGap"`
-	SemesterDetails   SemesterSPI         `json:"semesterSPI" bson:"semesterSPI"`
-	SummerTermDetails SummerTermSPI       `json:"summerTermSPI" bson:"summerTermSPI"`
-	CurrentCGPA       float64             `json:"currentCGPA" bson:"currentCGPA"`
-	ActiveBacklogs    int                 `json:"activeBacklogs" bson:"activeBacklogs"`
-	TotalBacklogs     int                 `json:"totalBacklogs" bson:"totalBacklogs"`
+	JEERank        *RankDetails        `json:"jeeRank" bson:"jeeRank"`
+	GATERank       *RankDetails        `json:"gateRank" bson:"gateRank"`
+	XthClass       *EducationDetails   `json:"xClass" bson:"xClass"`
+	XIIthClass     *EducationDetails   `json:"xiiClass" bson:"xiiClass"`
+	UnderGraduate  *EducationDetails   `json:"underGraduate" bson:"underGraduate"`
+	Honours        *string             `json:"honours" bson:"honours"`
+	PostGraduate   *EducationDetails   `json:"postGraduate" bson:"postGraduate"`
+	ThesisEndDate  *primitive.DateTime `json:"thesisEndDate" bson:"thesisEndDate"`
+	EducationGap   int                 `json:"educationGap" bson:"educationGap"`
+	SemesterSPI    SemesterSPI         `json:"semesterSPI" bson:"semesterSPI"`
+	SummerTermSPI  SummerTermSPI       `json:"summerTermSPI" bson:"summerTermSPI"`
+	CurrentCGPA    float64             `json:"currentCGPA" bson:"currentCGPA"`
+	ActiveBacklogs int                 `json:"activeBacklogs" bson:"activeBacklogs"`
+	TotalBacklogs  int                 `json:"totalBacklogs" bson:"totalBacklogs"`
 
 	Verification misc.Verification `json:"verification" bson:"verification"`
 }
@@ -97,7 +97,7 @@ type ParentsDetails struct {
 }
 
 type Extras struct {
-	VideoResume  string            `bson:"videoResume" json:"videoResume"`
+	VideoResume  *string           `bson:"videoResume" json:"videoResume"`
 	Verification misc.Verification `bson:"verification" json:"verification"`
 }
 
@@ -116,19 +116,19 @@ type Student struct {
 	Groups           []primitive.ObjectID `json:"groups" bson:"groups"`
 	CompaniesAlloted []string             `json:"companiesAlloted" bson:"companiesAlloted"`
 
-	Batch          Batch           `json:"batch" bson:"batch"`
-	RollNo         int             `json:"rollNo" bson:"rollNo"`
-	InstituteEmail string          `json:"email" bson:"email"`
-	Department     string          `json:"department" bson:"department"`
-	Course         constant.Course `json:"course" bson:"course"`
-	Specialisation *string         `json:"specialisation" bson:"specialisation"`
+	Batch          *Batch           `json:"batch" bson:"batch"`
+	RollNo         int              `json:"rollNo" bson:"rollNo"`
+	InstituteEmail string           `json:"email" bson:"email"`
+	Department     string           `json:"department" bson:"department"`
+	Course         *constant.Course `json:"course" bson:"course"`
+	Specialisation *string          `json:"specialisation" bson:"specialisation"`
 
 	FirstName  string  `json:"firstName" bson:"firstName"`
 	MiddleName *string `json:"middleName" bson:"middleName"`
 	LastName   string  `json:"lastName" bson:"lastName"`
 
 	ProfilePicture   *misc.Attachment     `json:"profilePicture" bson:"profilePicture"`
-	Gender           constant.Gender      `json:"gender" bson:"gender"`
+	Gender           *constant.Gender     `json:"gender" bson:"gender"`
 	DOB              *primitive.DateTime  `json:"dob" bson:"dob"`
 	PermanentAddress string               `json:"permanentAddress" bson:"permanentAddress"`
 	PresentAddress   string               `json:"presentAddress" bson:"presentAddress"`
@@ -141,6 +141,7 @@ type Student struct {
 	Academics      Academics        `json:"academics" bson:"academics"`
 	WorkExperience []WorkExperience `json:"workExperience" bson:"workExperience"`
 	SocialProfiles SocialProfiles   `json:"socialProfiles" bson:"socialProfiles"`
+	Extras         Extras           `json:"extras" bson:"extras"`
 
 	// metadata
 	StructVersion int                    `json:"version" bson:"version"`

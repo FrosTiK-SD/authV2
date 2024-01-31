@@ -20,6 +20,7 @@ type OldStudent struct {
 	Github           string               `json:"github" bson:"github"`
 	MicrosoftTeams   string               `json:"microsoftTeams" bson:"microsoftTeams"`
 	Kaggle           string               `json:"kaggle" bson:"kaggle"`
+	Kaggel           string               `json:"kaggel" bson:"kaggel"`
 	Skype            string               `json:"skypeId" bson:"skypeId"`
 	Mobile           int64                `json:"mobile" bson:"mobile"`
 	Gender           string               `json:"gender" bson:"gender"`
@@ -51,12 +52,15 @@ type OldStudent struct {
 	UgCollege        string               `json:"ugCollege" bson:"ugCollege"`
 	UgScore          float64              `json:"ugScore" bson:"ugScore"`
 	UgYear           int                  `json:"ugPassingyear" bson:"ugPassingyear"`
+	VideoResume      string               `json:"videoResume" bson:"videoResume"`
 	SemesterOne      float64              `json:"semesterOne" bson:"semesterOne"`
 	SemesterTwo      float64              `json:"semesterTwo" bson:"semesterTwo"`
 	SemesterThree    float64              `json:"semesterThree" bson:"semesterThree"`
 	SemesterFour     float64              `json:"semesterFour" bson:"semesterFour"`
 	SemesterFive     float64              `json:"semesterFive" bson:"semesterFive"`
 	SemesterSix      float64              `json:"semesterSix" bson:"semesterSix"`
+	SemesterSeven    float64              `json:"semesterSeven" bson:"semesterSeven"`
+	SemesterEight    float64              `json:"semesterEight" bson:"semesterEight"`
 	SummerOne        float64              `json:"summerOne" bson:"summerOne"`
 	SummerTwo        float64              `json:"summerTwo" bson:"summerTwo"`
 	SummerThree      float64              `json:"summerThree" bson:"summerThree"`

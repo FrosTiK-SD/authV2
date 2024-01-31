@@ -4,6 +4,7 @@ import (
 	"github.com/FrosTiK-SD/auth/constants"
 	"github.com/FrosTiK-SD/auth/controller"
 	"github.com/FrosTiK-SD/auth/model"
+	constant "github.com/FrosTiK-SD/models/constant"
 	"github.com/FrosTiK-SD/models/misc"
 
 	"github.com/gin-gonic/gin"
@@ -58,9 +59,9 @@ func ValidateRankDetails(rd **model.RankDetails) {
 	}
 }
 
-func ValidateString(s *string) {
-	if s != nil && *s == "" {
-		s = nil
+func ValidateString(s **string) {
+	if *s != nil && *(*s) == "" {
+		*s = nil
 	}
 }
 
@@ -76,10 +77,31 @@ func ValidateAttachment(a **misc.Attachment) {
 	}
 }
 
+func ValidateBatch(b **model.Batch) {
+	if *b != nil && (*b).StartYear <= 0 {
+		*b = nil
+	}
+}
+
+func ValidateGender(g **constant.Gender) {
+	if *g != nil && *(*g) == "" {
+		*g = nil
+	}
+}
+
+func ValidateCourse(c **constant.Course) {
+	if *c != nil && *(*c) == "" {
+		*c = nil
+	}
+}
+
 func ValidateData(student *model.Student) {
-	ValidateString(student.Specialisation)
-	ValidateString(student.MiddleName)
+	ValidateBatch(&student.Batch)
+	ValidateCourse(&student.Course)
+	ValidateString(&student.Specialisation)
+	ValidateString(&student.MiddleName)
 	ValidateAttachment(&student.ProfilePicture)
+	ValidateGender(&student.Gender)
 
 	if student.DOB != nil && *student.DOB <= 10 {
 		student.DOB = nil
@@ -98,7 +120,7 @@ func ValidateData(student *model.Student) {
 	ValidateEducationDetails(&student.Academics.XthClass)
 	ValidateEducationDetails(&student.Academics.XIIthClass)
 	ValidateEducationDetails(&student.Academics.UnderGraduate)
-	ValidateString(student.Academics.Honours)
+	ValidateString(&student.Academics.Honours)
 	ValidateEducationDetails(&student.Academics.PostGraduate)
 
 	if student.Academics.ThesisEndDate != nil && *student.Academics.ThesisEndDate <= 0 {

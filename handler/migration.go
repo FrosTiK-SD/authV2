@@ -124,6 +124,7 @@ func (h *Handler) MigrateStudentDataToV2(ctx *gin.Context) {
 			oldStudent.CompaniesAlloted = []string{}
 		}
 
+		errorArray := []string{}
 		var EndYearOffset int
 		var Course Constant.Course
 
@@ -137,13 +138,24 @@ func (h *Handler) MigrateStudentDataToV2(ctx *gin.Context) {
 		case "phd":
 			EndYearOffset = 6
 			Course = Constant.PHD
-		default:
+		case "btech":
 			EndYearOffset = 4
 			Course = Constant.BTECH
+		default:
+			EndYearOffset = -1
+			Course = Constant.BTECH
+			errorArray = append(errorArray, "course")
 		}
 
-		errorArray := []string{}
 		category := GetCategoryFromString(oldStudent.Category)
+
+		kaggle := ""
+		if oldStudent.Kaggle != "" {
+			kaggle = oldStudent.Kaggle
+		}
+		if oldStudent.Kaggel != "" {
+			kaggle = oldStudent.Kaggel
+		}
 
 		jeeRank, errJeeRank := GetRankFromString(oldStudent.JeeRank, category)
 		if errJeeRank != nil {
@@ -175,24 +187,26 @@ func (h *Handler) MigrateStudentDataToV2(ctx *gin.Context) {
 			dob = 0
 		}
 
+		gender := Constant.Gender(strings.ToLower(oldStudent.Gender))
+
 		newStudent := Student.Student{
 			Id:               oldStudent.ID,
 			Groups:           oldStudent.Groups,
 			CompaniesAlloted: oldStudent.CompaniesAlloted,
 
-			Batch: Student.Batch{
+			Batch: &Student.Batch{
 				StartYear: oldStudent.Batch,
 				EndYear:   oldStudent.Batch + EndYearOffset,
 			},
 			RollNo:         oldStudent.RollNo,
 			InstituteEmail: oldStudent.Email,
 			Department:     oldStudent.Department,
-			Course:         Course,
+			Course:         &Course,
 
 			FirstName: oldStudent.FirstName,
 			LastName:  oldStudent.LastName,
 
-			Gender:           Constant.Gender(strings.ToLower(oldStudent.Gender)),
+			Gender:           &gender,
 			DOB:              &dob,
 			PermanentAddress: oldStudent.PermanentAddress,
 			PresentAddress:   oldStudent.PresentAddress,
@@ -222,15 +236,17 @@ func (h *Handler) MigrateStudentDataToV2(ctx *gin.Context) {
 					Score:         oldStudent.XiiPercentage,
 				},
 				EducationGap: educationGap,
-				SemesterDetails: Student.SemesterSPI{
+				SemesterSPI: Student.SemesterSPI{
 					One:   oldStudent.SemesterOne,
 					Two:   oldStudent.SemesterTwo,
 					Three: oldStudent.SemesterThree,
 					Four:  oldStudent.SemesterFour,
 					Five:  oldStudent.SemesterFive,
 					Six:   oldStudent.SemesterSix,
+					Seven: oldStudent.SemesterSeven,
+					Eight: oldStudent.SemesterEight,
 				},
-				SummerTermDetails: Student.SummerTermSPI{
+				SummerTermSPI: Student.SummerTermSPI{
 					One:   oldStudent.SummerOne,
 					Two:   oldStudent.SummerTwo,
 					Three: oldStudent.SummerThree,
@@ -265,11 +281,14 @@ func (h *Handler) MigrateStudentDataToV2(ctx *gin.Context) {
 					URL: oldStudent.Github,
 				},
 				Kaggle: &Student.SocialProfile{
-					URL: oldStudent.Kaggle,
+					URL: kaggle,
 				},
 				Skype: &Student.SocialProfile{
 					URL: oldStudent.Skype,
 				},
+			},
+			Extras: Student.Extras{
+				VideoResume: &oldStudent.VideoResume,
 			},
 
 			StructVersion: 2,
