@@ -101,7 +101,7 @@ func GetXXIIYear(cursor *mongo.Cursor) (int, int) {
 
 func (h *Handler) MigrateStudentDataToV2(ctx *gin.Context) {
 	studentCollection := h.MongikClient.MongoClient.Database(Constant.DB).Collection(Constant.StudentCollection)
-	cursor, errFind := studentCollection.Find(ctx, bson.D{{Key: "versiont", Value: bson.D{{Key: "$exists", Value: false}}}})
+	cursor, errFind := studentCollection.Find(ctx, bson.D{{Key: "version", Value: bson.D{{Key: "$exists", Value: false}}}})
 	if errFind != nil {
 		ctx.AbortWithStatusJSON(400, gin.H{"count": 0, "error": errFind.Error(), "reason": "Find not successful"})
 		return
