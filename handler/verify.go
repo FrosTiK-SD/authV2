@@ -47,6 +47,12 @@ func (h *Handler) InvalidateCache(ctx *gin.Context) {
 	})
 }
 
+func ValidateFloat64ZeroesToNull(f **float64) {
+	if *f != nil && **f == 0 {
+		*f = nil
+	}
+}
+
 func ValidateEducationDetails(ed **model.EducationDetails) {
 	if *ed != nil && (*ed).Score <= 0 {
 		*ed = nil
@@ -136,4 +142,21 @@ func ValidateData(student *model.Student) {
 	ValidateSocialProfile(&student.SocialProfiles.CodeChef)
 	ValidateSocialProfile(&student.SocialProfiles.LeetCode)
 	ValidateSocialProfile(&student.SocialProfiles.Kaggle)
+
+	ValidateFloat64ZeroesToNull(&student.Academics.SemesterSPI.One)
+	ValidateFloat64ZeroesToNull(&student.Academics.SemesterSPI.Two)
+	ValidateFloat64ZeroesToNull(&student.Academics.SemesterSPI.Three)
+	ValidateFloat64ZeroesToNull(&student.Academics.SemesterSPI.Four)
+	ValidateFloat64ZeroesToNull(&student.Academics.SemesterSPI.Five)
+	ValidateFloat64ZeroesToNull(&student.Academics.SemesterSPI.Six)
+	ValidateFloat64ZeroesToNull(&student.Academics.SemesterSPI.Seven)
+	ValidateFloat64ZeroesToNull(&student.Academics.SemesterSPI.Eight)
+	ValidateFloat64ZeroesToNull(&student.Academics.SemesterSPI.Nine)
+	ValidateFloat64ZeroesToNull(&student.Academics.SemesterSPI.Ten)
+
+	ValidateFloat64ZeroesToNull(&student.Academics.SummerTermSPI.One)
+	ValidateFloat64ZeroesToNull(&student.Academics.SummerTermSPI.Two)
+	ValidateFloat64ZeroesToNull(&student.Academics.SummerTermSPI.Three)
+	ValidateFloat64ZeroesToNull(&student.Academics.SummerTermSPI.Four)
+	ValidateFloat64ZeroesToNull(&student.Academics.SummerTermSPI.Five)
 }

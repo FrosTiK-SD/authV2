@@ -19,24 +19,24 @@ type RankDetails struct {
 }
 
 type SemesterSPI struct {
-	One   float64 `json:"one" bson:"one"`
-	Two   float64 `json:"two" bson:"two"`
-	Three float64 `json:"three" bson:"three"`
-	Four  float64 `json:"four" bson:"four"`
-	Five  float64 `json:"five" bson:"five"`
-	Six   float64 `json:"six" bson:"six"`
-	Seven float64 `json:"seven" bson:"seven"`
-	Eight float64 `json:"eight" bson:"eight"`
-	Nine  float64 `json:"nine" bson:"nine"`
-	Ten   float64 `json:"ten" bson:"ten"`
+	One   *float64 `json:"one" bson:"one"`
+	Two   *float64 `json:"two" bson:"two"`
+	Three *float64 `json:"three" bson:"three"`
+	Four  *float64 `json:"four" bson:"four"`
+	Five  *float64 `json:"five" bson:"five"`
+	Six   *float64 `json:"six" bson:"six"`
+	Seven *float64 `json:"seven" bson:"seven"`
+	Eight *float64 `json:"eight" bson:"eight"`
+	Nine  *float64 `json:"nine" bson:"nine"`
+	Ten   *float64 `json:"ten" bson:"ten"`
 }
 
 type SummerTermSPI struct {
-	One   float64 `json:"one" bson:"one"`
-	Two   float64 `json:"two" bson:"two"`
-	Three float64 `json:"three" bson:"three"`
-	Four  float64 `json:"four" bson:"four"`
-	Five  float64 `json:"five" bson:"five"`
+	One   *float64 `json:"one" bson:"one"`
+	Two   *float64 `json:"two" bson:"two"`
+	Three *float64 `json:"three" bson:"three"`
+	Four  *float64 `json:"four" bson:"four"`
+	Five  *float64 `json:"five" bson:"five"`
 }
 
 type EducationDetails struct {
