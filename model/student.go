@@ -11,7 +11,7 @@ type OldStudent struct {
 	Batch            int                  `json:"batch" bson:"batch"`
 	RollNo           int                  `json:"rollNo" bson:"rollNo"`
 	FirstName        string               `json:"firstName" bson:"firstName"`
-	LastName         string               `json:"lastName" bson:"lastName"`
+	LastName         *string              `json:"lastName" bson:"lastName"`
 	Department       string               `json:"department" bson:"department"`
 	Course           string               `json:"course" bson:"course"`
 	Email            string               `json:"email" bson:"email"`
@@ -50,20 +50,20 @@ type OldStudent struct {
 	UgCollege        string               `json:"ugCollege" bson:"ugCollege"`
 	UgScore          float64              `json:"ugScore" bson:"ugScore"`
 	UgYear           int                  `json:"ugPassingyear" bson:"ugPassingyear"`
-	VideoResume      string               `json:"videoResume" bson:"videoResume"`
-	SemesterOne      float64              `json:"semesterOne" bson:"semesterOne"`
-	SemesterTwo      float64              `json:"semesterTwo" bson:"semesterTwo"`
-	SemesterThree    float64              `json:"semesterThree" bson:"semesterThree"`
-	SemesterFour     float64              `json:"semesterFour" bson:"semesterFour"`
-	SemesterFive     float64              `json:"semesterFive" bson:"semesterFive"`
-	SemesterSix      float64              `json:"semesterSix" bson:"semesterSix"`
-	SemesterSeven    float64              `json:"semesterSeven" bson:"semesterSeven"`
-	SemesterEight    float64              `json:"semesterEight" bson:"semesterEight"`
-	SummerOne        float64              `json:"summerOne" bson:"summerOne"`
-	SummerTwo        float64              `json:"summerTwo" bson:"summerTwo"`
-	SummerThree      float64              `json:"summerThree" bson:"summerThree"`
-	SummerFour       float64              `json:"summerFour" bson:"summerFour"`
-	SummerFive       float64              `json:"summerFive" bson:"summerFive"`
+	VideoResume      *string              `json:"videoResume" bson:"videoResume"`
+	SemesterOne      *float64             `json:"semesterOne" bson:"semesterOne"`
+	SemesterTwo      *float64             `json:"semesterTwo" bson:"semesterTwo"`
+	SemesterThree    *float64             `json:"semesterThree" bson:"semesterThree"`
+	SemesterFour     *float64             `json:"semesterFour" bson:"semesterFour"`
+	SemesterFive     *float64             `json:"semesterFive" bson:"semesterFive"`
+	SemesterSix      *float64             `json:"semesterSix" bson:"semesterSix"`
+	SemesterSeven    *float64             `json:"semesterSeven" bson:"semesterSeven"`
+	SemesterEight    *float64             `json:"semesterEight" bson:"semesterEight"`
+	SummerOne        *float64             `json:"summerOne" bson:"summerOne"`
+	SummerTwo        *float64             `json:"summerTwo" bson:"summerTwo"`
+	SummerThree      *float64             `json:"summerThree" bson:"summerThree"`
+	SummerFour       *float64             `json:"summerFour" bson:"summerFour"`
+	SummerFive       *float64             `json:"summerFive" bson:"summerFive"`
 	UpdatedAt        primitive.DateTime   `json:"updatedAt" bson:"updatedAt"`
 }
 

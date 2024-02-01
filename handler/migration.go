@@ -156,7 +156,7 @@ func (h *Handler) MigrateStudentDataToV2(ctx *gin.Context) {
 		errorArray := []string{}
 		var EndYearOffset int
 		var Course Constant.Course
-		var CourseError bool = false
+		var courseError bool = false
 
 		switch oldStudent.Course {
 		case "idd":
@@ -175,7 +175,7 @@ func (h *Handler) MigrateStudentDataToV2(ctx *gin.Context) {
 			EndYearOffset = -1
 			Course = Constant.BTECH
 			errorArray = append(errorArray, "course")
-			CourseError = true
+			courseError = true
 		}
 
 		category := GetCategoryFromString(oldStudent.Category)
@@ -207,9 +207,15 @@ func (h *Handler) MigrateStudentDataToV2(ctx *gin.Context) {
 		}
 
 		mobile := strconv.FormatInt(oldStudent.Mobile, 10)
+		mobileError := false
+		if mobile == "0" {
+			mobileError = true
+			errorArray = append(errorArray, "mobile")
+		}
+
 		gender := Constant.Gender(strings.ToLower(oldStudent.Gender))
 
-		var userError map[string]model.UserError
+		var userError map[string]model.UserError = make(map[string]model.UserError)
 
 		for _, err := range errorArray {
 			userError[err] = model.MIGRATION
@@ -263,21 +269,21 @@ func (h *Handler) MigrateStudentDataToV2(ctx *gin.Context) {
 				},
 				EducationGap: &educationGap,
 				SemesterSPI: Student.SemesterSPI{
-					One:   &oldStudent.SemesterOne,
-					Two:   &oldStudent.SemesterTwo,
-					Three: &oldStudent.SemesterThree,
-					Four:  &oldStudent.SemesterFour,
-					Five:  &oldStudent.SemesterFive,
-					Six:   &oldStudent.SemesterSix,
-					Seven: &oldStudent.SemesterSeven,
-					Eight: &oldStudent.SemesterEight,
+					One:   oldStudent.SemesterOne,
+					Two:   oldStudent.SemesterTwo,
+					Three: oldStudent.SemesterThree,
+					Four:  oldStudent.SemesterFour,
+					Five:  oldStudent.SemesterFive,
+					Six:   oldStudent.SemesterSix,
+					Seven: oldStudent.SemesterSeven,
+					Eight: oldStudent.SemesterEight,
 				},
 				SummerTermSPI: Student.SummerTermSPI{
-					One:   &oldStudent.SummerOne,
-					Two:   &oldStudent.SummerTwo,
-					Three: &oldStudent.SummerThree,
-					Four:  &oldStudent.SummerFour,
-					Five:  &oldStudent.SummerFive,
+					One:   oldStudent.SummerOne,
+					Two:   oldStudent.SummerTwo,
+					Three: oldStudent.SummerThree,
+					Four:  oldStudent.SummerFour,
+					Five:  oldStudent.SummerFive,
 				},
 				UnderGraduate: &Student.EducationDetails{
 					Certification: oldStudent.UgIn,
@@ -314,7 +320,7 @@ func (h *Handler) MigrateStudentDataToV2(ctx *gin.Context) {
 				},
 			},
 			Extras: Student.Extras{
-				VideoResume: &oldStudent.VideoResume,
+				VideoResume: oldStudent.VideoResume,
 			},
 
 			StructVersion: 2,
@@ -325,8 +331,12 @@ func (h *Handler) MigrateStudentDataToV2(ctx *gin.Context) {
 			},
 		}
 
-		if CourseError {
+		if courseError {
 			newStudent.Course = nil
+		}
+
+		if mobileError {
+			newStudent.Mobile = nil
 		}
 
 		ValidateData(&newStudent)

@@ -135,7 +135,7 @@ type Student struct {
 
 	FirstName  string  `json:"firstName" bson:"firstName"`
 	MiddleName *string `json:"middleName" bson:"middleName"`
-	LastName   string  `json:"lastName" bson:"lastName"`
+	LastName   *string `json:"lastName" bson:"lastName"`
 
 	ProfilePicture   *misc.Attachment     `json:"profilePicture" bson:"profilePicture"`
 	Gender           *constant.Gender     `json:"gender" bson:"gender"`

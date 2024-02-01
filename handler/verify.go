@@ -47,8 +47,14 @@ func (h *Handler) InvalidateCache(ctx *gin.Context) {
 	})
 }
 
+func ValidatePositiveInteger(i **int) {
+	if *i != nil && **i <= 0 {
+		*i = nil
+	}
+}
+
 func ValidateFloat64ZeroesToNull(f **float64) {
-	if *f != nil && **f == 0 {
+	if *f != nil && **f <= 0 {
 		*f = nil
 	}
 }
@@ -120,6 +126,10 @@ func ValidateData(student *model.Student) {
 	if student.ParentsDetails.FatherName == "" && student.ParentsDetails.FatherOccupation == "" && student.ParentsDetails.MotherName == "" && student.ParentsDetails.MotherOccupation == "" {
 		student.ParentsDetails = nil
 	}
+
+	ValidatePositiveInteger(&student.Academics.EducationGap)
+	ValidatePositiveInteger(&student.Academics.ActiveBacklogs)
+	ValidatePositiveInteger(&student.Academics.TotalBacklogs)
 
 	ValidateRankDetails(&student.Academics.JEERank)
 	ValidateRankDetails(&student.Academics.GATERank)
