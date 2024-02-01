@@ -75,6 +75,35 @@ func GetRankFromString(input string, rc Student.ReservationCategory) (Student.Ra
 
 }
 
+func GetEducationGapJeeRank(cursor *mongo.Cursor, errorArray *[]string, category model.ReservationCategory) (model.RankDetails, int) {
+	var type1 model.EuducationGapJeeRankStrings
+	var type2 model.EuducationGapJeeRankIntegers
+
+	if err1 := cursor.Decode(&type1); err1 == nil {
+		jeeRank, errJeeRank := GetRankFromString(type1.JeeRank, category)
+		if errJeeRank != nil {
+			fmt.Println(errJeeRank)
+			*errorArray = append(*errorArray, "jeeRank")
+			jeeRank.Rank = -1
+		}
+
+		educationGap, err := strconv.Atoi(regexp.MustCompile(`\d+`).FindString(type1.EducationGap))
+		if err != nil {
+			fmt.Println(educationGap)
+			*errorArray = append(*errorArray, "educationGap")
+			educationGap = -1
+		}
+
+		return jeeRank, educationGap
+	}
+
+	if err1 := cursor.Decode(&type2); err1 == nil {
+		return model.RankDetails{Rank: type2.JeeRank, RankCategory: model.ReservationCategory{Category: "GEN"}}, type2.EducationGap
+	}
+
+	return model.RankDetails{Rank: -1, RankCategory: model.ReservationCategory{Category: "GEN"}}, -1
+}
+
 func GetXXIIYear(cursor *mongo.Cursor) (int, int) {
 	var type1 model.XXIIYearType1
 	var type2 model.XXIIYearType2
@@ -127,6 +156,7 @@ func (h *Handler) MigrateStudentDataToV2(ctx *gin.Context) {
 		errorArray := []string{}
 		var EndYearOffset int
 		var Course Constant.Course
+		var CourseError bool = false
 
 		switch oldStudent.Course {
 		case "idd":
@@ -145,6 +175,7 @@ func (h *Handler) MigrateStudentDataToV2(ctx *gin.Context) {
 			EndYearOffset = -1
 			Course = Constant.BTECH
 			errorArray = append(errorArray, "course")
+			CourseError = true
 		}
 
 		category := GetCategoryFromString(oldStudent.Category)
@@ -157,19 +188,7 @@ func (h *Handler) MigrateStudentDataToV2(ctx *gin.Context) {
 			kaggle = oldStudent.Kaggel
 		}
 
-		jeeRank, errJeeRank := GetRankFromString(oldStudent.JeeRank, category)
-		if errJeeRank != nil {
-			fmt.Println(errJeeRank)
-			errorArray = append(errorArray, "jeeRank")
-			jeeRank.Rank = -1
-		}
-
-		educationGap, err := strconv.Atoi(regexp.MustCompile(`\d+`).FindString(oldStudent.EducationGap))
-		if err != nil {
-			fmt.Println(educationGap)
-			errorArray = append(errorArray, "educationGap")
-			educationGap = -1
-		}
+		jeeRank, educationGap := GetEducationGapJeeRank(cursor, &errorArray, category)
 
 		xYear, xiiYear := GetXXIIYear(cursor)
 		if xYear <= 0 {
@@ -187,7 +206,14 @@ func (h *Handler) MigrateStudentDataToV2(ctx *gin.Context) {
 			dob = 0
 		}
 
+		mobile := strconv.FormatInt(oldStudent.Mobile, 10)
 		gender := Constant.Gender(strings.ToLower(oldStudent.Gender))
+
+		var userError map[string]model.UserError
+
+		for _, err := range errorArray {
+			userError[err] = model.MIGRATION
+		}
 
 		newStudent := Student.Student{
 			Id:               oldStudent.ID,
@@ -211,7 +237,7 @@ func (h *Handler) MigrateStudentDataToV2(ctx *gin.Context) {
 			PermanentAddress: oldStudent.PermanentAddress,
 			PresentAddress:   oldStudent.PresentAddress,
 			PersonalEmail:    oldStudent.PersonalEmail,
-			Mobile:           strconv.FormatInt(oldStudent.Mobile, 10),
+			Mobile:           &mobile,
 			Category:         &category,
 			MotherTongue:     oldStudent.MotherTongue,
 			ParentsDetails: &Student.ParentsDetails{
@@ -235,7 +261,7 @@ func (h *Handler) MigrateStudentDataToV2(ctx *gin.Context) {
 					Year:          xiiYear,
 					Score:         oldStudent.XiiPercentage,
 				},
-				EducationGap: educationGap,
+				EducationGap: &educationGap,
 				SemesterSPI: Student.SemesterSPI{
 					One:   &oldStudent.SemesterOne,
 					Two:   &oldStudent.SemesterTwo,
@@ -294,7 +320,13 @@ func (h *Handler) MigrateStudentDataToV2(ctx *gin.Context) {
 			StructVersion: 2,
 			CreatedAt:     primitive.NewDateTimeFromTime(time.Now()),
 			UpdatedAt:     primitive.NewDateTimeFromTime(time.Now()),
-			DataErrors:    errorArray,
+			DataErrors: Student.DataErrors{
+				User: userError,
+			},
+		}
+
+		if CourseError {
+			newStudent.Course = nil
 		}
 
 		ValidateData(&newStudent)

@@ -55,12 +55,12 @@ type Academics struct {
 	Honours        *string             `json:"honours" bson:"honours"`
 	PostGraduate   *EducationDetails   `json:"postGraduate" bson:"postGraduate"`
 	ThesisEndDate  *primitive.DateTime `json:"thesisEndDate" bson:"thesisEndDate"`
-	EducationGap   int                 `json:"educationGap" bson:"educationGap"`
+	EducationGap   *int                `json:"educationGap" bson:"educationGap"`
 	SemesterSPI    SemesterSPI         `json:"semesterSPI" bson:"semesterSPI"`
 	SummerTermSPI  SummerTermSPI       `json:"summerTermSPI" bson:"summerTermSPI"`
-	CurrentCGPA    float64             `json:"currentCGPA" bson:"currentCGPA"`
-	ActiveBacklogs int                 `json:"activeBacklogs" bson:"activeBacklogs"`
-	TotalBacklogs  int                 `json:"totalBacklogs" bson:"totalBacklogs"`
+	CurrentCGPA    *float64            `json:"currentCGPA" bson:"currentCGPA"`
+	ActiveBacklogs *int                `json:"activeBacklogs" bson:"activeBacklogs"`
+	TotalBacklogs  *int                `json:"totalBacklogs" bson:"totalBacklogs"`
 
 	Verification misc.Verification `json:"verification" bson:"verification"`
 }
@@ -111,6 +111,16 @@ type WorkExperience struct {
 	Verification misc.Verification  `bson:"verification" json:"verification"`
 }
 
+type UserError string
+
+const (
+	MIGRATION UserError = "migration"
+)
+
+type DataErrors struct {
+	User map[string]UserError `json:"user" bson:"user"`
+}
+
 type Student struct {
 	Id               primitive.ObjectID   `json:"_id" bson:"_id"`
 	Groups           []primitive.ObjectID `json:"groups" bson:"groups"`
@@ -133,7 +143,7 @@ type Student struct {
 	PermanentAddress string               `json:"permanentAddress" bson:"permanentAddress"`
 	PresentAddress   string               `json:"presentAddress" bson:"presentAddress"`
 	PersonalEmail    string               `json:"personalEmail" bson:"personalEmail"`
-	Mobile           string               `json:"mobile" bson:"mobile"`
+	Mobile           *string              `json:"mobile" bson:"mobile"`
 	Category         *ReservationCategory `json:"category" bson:"category"`
 	MotherTongue     string               `json:"motherTongue" bson:"motherTongue"`
 	ParentsDetails   *ParentsDetails      `json:"parentsDetails" bson:"parentsDetails"`
@@ -148,7 +158,7 @@ type Student struct {
 	UpdatedAt     primitive.DateTime     `json:"updatedAt" bson:"updatedAt"`
 	CreatedAt     primitive.DateTime     `json:"createdAt" bson:"createdAt"`
 	RawKeyStore   map[string]interface{} `json:"raw_key_store" bson:"raw_key_store"`
-	DataErrors    []string               `json:"dataErrors" bson:"dataErrors"`
+	DataErrors    DataErrors             `json:"dataErrors" bson:"dataErrors"`
 }
 
 // at some point I expect to use * pointers to omit fields which are not necessary

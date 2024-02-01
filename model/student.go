@@ -33,11 +33,9 @@ type OldStudent struct {
 	MotherName       string               `json:"motherName" bson:"motherName"`
 	MotherOccupation string               `json:"motherOccupation" bson:"motherOccupation"`
 	MotherTongue     string               `json:"motherTongue" bson:"motherTongue"`
-	EducationGap     string               `json:"educationGap" bson:"educationGap"`
-	JeeRank          string               `json:"jeeRank" bson:"jeeRank"`
-	Cgpa             float64              `json:"cgpa" bson:"cgpa"`
-	ActiveBacklogs   int                  `json:"activeBacklogs" bson:"activeBacklogs"`
-	TotalBacklogs    int                  `json:"totalBacklogs" bson:"totalBacklogs"`
+	Cgpa             *float64             `json:"cgpa" bson:"cgpa"`
+	ActiveBacklogs   *int                 `json:"activeBacklogs" bson:"activeBacklogs"`
+	TotalBacklogs    *int                 `json:"totalBacklogs" bson:"totalBacklogs"`
 	XBoard           string               `json:"xBoard" bson:"xBoard"`
 	XPercentage      float64              `json:"xPercentage" bson:"xPercentage"`
 	XInstitute       string               `json:"xInstitute" bson:"xInstitute"`
@@ -77,6 +75,16 @@ type XXIIYearType1 struct {
 type XXIIYearType2 struct {
 	XiiYear int `json:"xiiYear" bson:"xiiYear"`
 	XYear   int `json:"xYear" bson:"xYear"`
+}
+
+type EuducationGapJeeRankIntegers struct {
+	JeeRank      int `json:"jeeRank" bson:"jeeRank"`
+	EducationGap int `json:"educationGap" bson:"educationGap"`
+}
+
+type EuducationGapJeeRankStrings struct {
+	JeeRank      string `json:"jeeRank" bson:"jeeRank"`
+	EducationGap string `json:"educationGap" bson:"educationGap"`
 }
 
 type Group struct {
