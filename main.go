@@ -13,9 +13,11 @@ import (
 	mongikModels "github.com/FrosTiK-SD/mongik/models"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
 )
 
 func main() {
+	godotenv.Load()
 	r := gin.Default()
 
 	mongikClient := mongik.NewClient(os.Getenv(constants.CONNECTION_STRING), &mongikModels.Config{
