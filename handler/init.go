@@ -18,6 +18,7 @@ const (
 )
 
 type Session struct {
+	Error   error
 	Student *model.StudentPopulated
 }
 
@@ -47,7 +48,7 @@ func NewAuthClient(mongik *mongik.Mongik) *Handler {
 	}
 }
 
-func NewRoleCheckerClient(mongik *mongik.Mongik, role *string) *RoleCheckerHandler {
+func NewRoleCheckerClient(role *string) *RoleCheckerHandler {
 	return &RoleCheckerHandler{
 		Role: *role,
 	}
