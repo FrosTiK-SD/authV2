@@ -2,7 +2,7 @@ package handler
 
 import (
 	"errors"
-	"net/http"
+	"net/http/httptest"
 
 	"github.com/FrosTiK-SD/auth/constants"
 	"github.com/FrosTiK-SD/auth/interfaces"
@@ -25,15 +25,10 @@ func (h *Handler) FiberVerifyStudent(ctx *fiber.Ctx) error {
 		},
 	}
 
-	context := gin.Context{
-		Request: &http.Request{
-			Header: http.Header{
-				"token": []string{token},
-			},
-		},
-	}
+	context, _ := gin.CreateTestContext(httptest.NewRecorder())
+	context.Request.Header.Add("token", token)
 
-	currentHandler.HandlerVerifyStudentIdToken(&context)
+	currentHandler.HandlerVerifyStudentIdToken(context)
 	student := currentHandler.Session.Student
 
 	if student != nil {
