@@ -1,10 +1,10 @@
 package handler
 
 import (
+	"errors"
+
 	"github.com/FrosTiK-SD/auth/constants"
 	"github.com/FrosTiK-SD/auth/controller"
-	"github.com/FrosTiK-SD/auth/interfaces"
-	"github.com/FrosTiK-SD/auth/util"
 
 	"github.com/gin-gonic/gin"
 )
@@ -19,6 +19,7 @@ func (h *Handler) HandlerVerifyStudentIdToken(ctx *gin.Context) {
 	email, exp, err := controller.VerifyToken(h.MongikClient.CacheClient, idToken, h.JwkSet, noCache)
 
 	if err != nil {
+		h.Session.Error = errors.New(*err)
 		ctx.JSON(200, gin.H{
 			"student": nil,
 			"expire":  exp,
@@ -29,6 +30,7 @@ func (h *Handler) HandlerVerifyStudentIdToken(ctx *gin.Context) {
 		if h.Config.Mode == MIDDLEWARE {
 			h.Session.Student = student
 		} else {
+			h.Session.Error = errors.New(*err)
 			ctx.JSON(200, gin.H{
 				"data":   student,
 				"error":  err,
@@ -36,7 +38,6 @@ func (h *Handler) HandlerVerifyStudentIdToken(ctx *gin.Context) {
 			})
 		}
 	}
-
 }
 
 func (h *Handler) InvalidateCache(ctx *gin.Context) {
@@ -44,38 +45,4 @@ func (h *Handler) InvalidateCache(ctx *gin.Context) {
 	ctx.JSON(200, gin.H{
 		"message": "Successfully invalidated cache",
 	})
-}
-
-func (h *RoleCheckerHandler) CheckRoleInGroup(ctx *gin.Context) {
-	entity, exists := ctx.Get(constants.SESSION)
-	if exists != true {
-		ctx.AbortWithStatusJSON(200, gin.H{
-			"message": constants.ERROR_ROLE_CHECK_FAILED,
-			"error":   "Entity does not exist",
-		})
-		return
-	}
-	var entityGroups *interfaces.Groups
-	entityBytes, err := json.Marshal(entity)
-	if err != nil {
-		ctx.AbortWithStatusJSON(200, gin.H{
-			"message": constants.ERROR_ROLE_CHECK_FAILED,
-			"error":   err,
-		})
-		return
-	}
-	err = json.Unmarshal(entityBytes, &entityGroups)
-	if err != nil {
-		ctx.AbortWithStatusJSON(200, gin.H{
-			"message": constants.ERROR_ROLE_CHECK_FAILED,
-			"error":   err,
-		})
-		return
-	}
-	if !util.CheckRoleExists(&entityGroups.Groups, h.Role) {
-		ctx.AbortWithStatusJSON(200, gin.H{
-			"message": constants.ERROR_ROLE_CHECK_FAILED,
-			"error":   "Role does not exist",
-		})
-	}
 }
