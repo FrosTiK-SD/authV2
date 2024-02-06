@@ -1,14 +1,15 @@
 module github.com/FrosTiK-SD/auth
 
-go 1.21.1
+go 1.21.6
 
 require (
+	github.com/FrosTiK-SD/models v0.4.12
 	github.com/FrosTiK-SD/mongik v0.1.18
 	github.com/allegro/bigcache/v3 v3.1.0
 	github.com/gin-gonic/gin v1.9.0
 	github.com/joho/godotenv v1.5.1
 	github.com/lestrrat-go/jwx/v2 v2.0.16
-	go.mongodb.org/mongo-driver v1.13.0
+	go.mongodb.org/mongo-driver v1.13.1
 )
 
 require (

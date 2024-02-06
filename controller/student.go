@@ -43,7 +43,7 @@ func GetUserByEmail(mongikClient *models.Mongik, email *string, role *string, no
 	}}, noCache)
 
 	// Now check if it is actually a student by the ROLES
-	if !util.CheckRoleExists(&studentPopulated.Groups, *role) {
+	if !util.CheckRoleExists(&studentPopulated.GroupDetails, *role) {
 		return nil, &constants.ERROR_NOT_A_STUDENT
 	}
 
