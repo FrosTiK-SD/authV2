@@ -2,46 +2,34 @@ package handler
 
 import (
 	"errors"
-	"net/http"
-	"net/http/httptest"
 
 	"github.com/FrosTiK-SD/auth/constants"
+	"github.com/FrosTiK-SD/auth/controller"
 	"github.com/FrosTiK-SD/auth/interfaces"
 	"github.com/FrosTiK-SD/auth/util"
-	"github.com/gin-gonic/gin"
 	"github.com/gofiber/fiber/v2"
 )
 
 // For Gin based middlewares
 func (h *Handler) FiberVerifyStudent(ctx *fiber.Ctx) error {
-	token := ctx.Get("token", "")
-
-	// Create a new session
-	currentHandler := Handler{
-		MongikClient: h.MongikClient,
-		JwkSet:       h.JwkSet,
-		Session:      &Session{},
-		Config: Config{
-			Mode: MIDDLEWARE,
-		},
+	idToken := ctx.Get("token", "")
+	noCache := false
+	if ctx.Get("cache-control") == constants.NO_CACHE {
+		noCache = true
 	}
 
-	context, _ := gin.CreateTestContext(httptest.NewRecorder())
-	context.Request = &http.Request{
-		Header: http.Header{
-			"token": []string{token},
-		},
+	email, _, err := controller.VerifyToken(h.MongikClient.CacheClient, idToken, h.JwkSet, noCache)
+
+	if err != nil {
+		return errors.New(*err)
+	}
+	student, err := controller.GetUserByEmail(h.MongikClient, email, &constants.ROLE_STUDENT, noCache)
+	if err != nil {
+		return errors.New(*err)
 	}
 
-	currentHandler.HandlerVerifyStudentIdToken(context)
-	student := currentHandler.Session.Student
-
-	if student != nil {
-		ctx.Locals(constants.SESSION, student)
-		ctx.Next()
-	} else {
-		return currentHandler.Session.Error
-	}
+	ctx.Locals(constants.SESSION, student)
+	ctx.Next()
 
 	return nil
 }
