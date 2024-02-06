@@ -48,19 +48,6 @@ on:
   push:
     branches:
       - dev
-  workflow_dispatch:
-    inputs:
-      logLevel:
-        description: 'Log level'
-        required: true
-        default: 'warning'
-        type: choice
-        options:
-          - info
-          - warning
-          - debug
-      tags:
-        description: 'Deploy Staging'
 
 env:
   PROJECT_ID: tpc-portal # TODO: update Google Cloud project id
