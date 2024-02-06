@@ -19,7 +19,9 @@ func (h *Handler) HandlerVerifyStudentIdToken(ctx *gin.Context) {
 	email, exp, err := controller.VerifyToken(h.MongikClient.CacheClient, idToken, h.JwkSet, noCache)
 
 	if err != nil {
-		h.Session.Error = errors.New(*err)
+		if h.Config.Mode == MIDDLEWARE {
+			h.Session.Error = errors.New(*err)
+		}
 		ctx.JSON(200, gin.H{
 			"student": nil,
 			"expire":  exp,
@@ -30,7 +32,9 @@ func (h *Handler) HandlerVerifyStudentIdToken(ctx *gin.Context) {
 		if h.Config.Mode == MIDDLEWARE {
 			h.Session.Student = student
 		} else {
-			h.Session.Error = errors.New(*err)
+			if h.Config.Mode == MIDDLEWARE {
+				h.Session.Error = errors.New(*err)
+			}
 			ctx.JSON(200, gin.H{
 				"data":   student,
 				"error":  err,
