@@ -1,5 +1,7 @@
 github.com/FrosTiK-SD/models v0.4.0 h1:nt4mzQttVJC/dPpqLsLqvFDSY3PoMtMa7iGrOYj0ymg=
 github.com/FrosTiK-SD/models v0.4.0/go.mod h1:F/IJox0VzLbPKYni9jC/n+jlKh7Ie5EjaY2YfyUDQzg=
+github.com/FrosTiK-SD/models v0.4.12 h1:tdIJcwfTJKcF2//hPDg1KanaLj4PvHWtDeQ4usG/KiU=
+github.com/FrosTiK-SD/models v0.4.12/go.mod h1:F/IJox0VzLbPKYni9jC/n+jlKh7Ie5EjaY2YfyUDQzg=
 github.com/FrosTiK-SD/mongik v0.1.18 h1:kDhGDEhgDyfEG4lEkVRfe2mVrtDB9QDsY9g2HOASjCw=
 github.com/FrosTiK-SD/mongik v0.1.18/go.mod h1:AjFFmUGUAix1sf24uxh0Wxq5fNIpykx4EEd44AMYhfw=
 github.com/allegro/bigcache/v3 v3.1.0 h1:H2Vp8VOvxcrB91o86fUSVJFqeuz8kpyyB02eH3bSzwk=

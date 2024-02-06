@@ -3,7 +3,7 @@ module github.com/FrosTiK-SD/auth
 go 1.21.6
 
 require (
-	github.com/FrosTiK-SD/models v0.4.0
+	github.com/FrosTiK-SD/models v0.4.12
 	github.com/FrosTiK-SD/mongik v0.1.18
 	github.com/allegro/bigcache/v3 v3.1.0
 	github.com/gin-gonic/gin v1.9.0
