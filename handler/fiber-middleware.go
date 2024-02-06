@@ -2,6 +2,7 @@ package handler
 
 import (
 	"errors"
+	"net/http"
 
 	"github.com/FrosTiK-SD/auth/constants"
 	"github.com/FrosTiK-SD/auth/interfaces"
@@ -12,6 +13,7 @@ import (
 
 // For Gin based middlewares
 func (h *Handler) FiberVerifyStudent(ctx *fiber.Ctx) error {
+	token := ctx.Get("token", "")
 
 	// Create a new session
 	currentHandler := Handler{
@@ -23,7 +25,13 @@ func (h *Handler) FiberVerifyStudent(ctx *fiber.Ctx) error {
 		},
 	}
 
-	context := gin.Context{}
+	context := gin.Context{
+		Request: &http.Request{
+			Header: http.Header{
+				"token": []string{token},
+			},
+		},
+	}
 
 	currentHandler.HandlerVerifyStudentIdToken(&context)
 	student := currentHandler.Session.Student
