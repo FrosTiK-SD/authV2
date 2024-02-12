@@ -48,6 +48,7 @@ func main() {
 	}
 
 	r.GET("/api/token/student/verify", handler.HandlerVerifyStudentIdToken)
+	r.POST("/api/student/update", handler.GinVerifyStudent, handler.HandlerUpdateStudentDetails)
 	r.GET("/api/token/invalidate_cache", handler.InvalidateCache)
 
 	port := "" + os.Getenv("PORT")
