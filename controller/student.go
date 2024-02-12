@@ -14,6 +14,7 @@ import (
 	"github.com/google/go-cmp/cmp"
 	jsoniter "github.com/json-iterator/go"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 var json = jsoniter.ConfigCompatibleWithStandardLibrary
@@ -73,57 +74,81 @@ func AssignUnVerifiedFields(updated *model.StudentPopulated, current *studentMod
 	current.ParentsDetails = updated.ParentsDetails
 }
 
+func SetVerificationToNotVerified(verification *misc.Verification) {
+	verification.IsVerified = false
+	verification.VerifiedBy = primitive.NilObjectID
+	verification.VerifiedAt = 0
+}
+
 func InvalidateVerifiedFieldsOnChange(updated *model.StudentPopulated, current *studentModel.Student) {
 	// invalidate academic details
 	if !cmp.Equal(updated.Academics, current.Academics) {
 		current.Academics = updated.Academics
-		current.Academics.Verification = misc.Verification{}
+		SetVerificationToNotVerified(&current.Academics.Verification)
 	}
 
 	// invalidate social profiles
 	if !cmp.Equal(updated.SocialProfiles.LinkedIn, current.SocialProfiles.LinkedIn) {
 		current.SocialProfiles.LinkedIn = updated.SocialProfiles.LinkedIn
-		current.SocialProfiles.LinkedIn.Verification = misc.Verification{}
+		if current.SocialProfiles.LinkedIn != nil {
+			SetVerificationToNotVerified(&current.SocialProfiles.LinkedIn.Verification)
+		}
 	}
 
 	if !cmp.Equal(updated.SocialProfiles.Github, current.SocialProfiles.Github) {
 		current.SocialProfiles.Github = updated.SocialProfiles.Github
-		current.SocialProfiles.Github.Verification = misc.Verification{}
+		if current.SocialProfiles.Github != nil {
+			SetVerificationToNotVerified(&current.SocialProfiles.Github.Verification)
+		}
 	}
 
 	if !cmp.Equal(updated.SocialProfiles.MicrosoftTeams, current.SocialProfiles.MicrosoftTeams) {
 		current.SocialProfiles.MicrosoftTeams = updated.SocialProfiles.MicrosoftTeams
-		current.SocialProfiles.MicrosoftTeams.Verification = misc.Verification{}
+		if current.SocialProfiles.MicrosoftTeams != nil {
+			SetVerificationToNotVerified(&current.SocialProfiles.MicrosoftTeams.Verification)
+		}
 	}
 
 	if !cmp.Equal(updated.SocialProfiles.Skype, current.SocialProfiles.Skype) {
 		current.SocialProfiles.Skype = updated.SocialProfiles.Skype
-		current.SocialProfiles.Skype.Verification = misc.Verification{}
+		if current.SocialProfiles.LinkedIn != nil {
+			SetVerificationToNotVerified(&current.SocialProfiles.Skype.Verification)
+		}
 	}
 
 	if !cmp.Equal(updated.SocialProfiles.GoogleScholar, current.SocialProfiles.GoogleScholar) {
 		current.SocialProfiles.GoogleScholar = updated.SocialProfiles.GoogleScholar
-		current.SocialProfiles.GoogleScholar.Verification = misc.Verification{}
+		if current.SocialProfiles.GoogleScholar != nil {
+			SetVerificationToNotVerified(&current.SocialProfiles.GoogleScholar.Verification)
+		}
 	}
 
 	if !cmp.Equal(updated.SocialProfiles.Codeforces, current.SocialProfiles.Codeforces) {
 		current.SocialProfiles.Codeforces = updated.SocialProfiles.Codeforces
-		current.SocialProfiles.Codeforces.Verification = misc.Verification{}
+		if current.SocialProfiles.Codeforces != nil {
+			SetVerificationToNotVerified(&current.SocialProfiles.Codeforces.Verification)
+		}
 	}
 
 	if !cmp.Equal(updated.SocialProfiles.CodeChef, current.SocialProfiles.CodeChef) {
 		current.SocialProfiles.CodeChef = updated.SocialProfiles.CodeChef
-		current.SocialProfiles.CodeChef.Verification = misc.Verification{}
+		if current.SocialProfiles.CodeChef != nil {
+			SetVerificationToNotVerified(&current.SocialProfiles.CodeChef.Verification)
+		}
 	}
 
 	if !cmp.Equal(updated.SocialProfiles.LeetCode, current.SocialProfiles.LeetCode) {
 		current.SocialProfiles.LeetCode = updated.SocialProfiles.LeetCode
-		current.SocialProfiles.LeetCode.Verification = misc.Verification{}
+		if current.SocialProfiles.LeetCode != nil {
+			SetVerificationToNotVerified(&current.SocialProfiles.LeetCode.Verification)
+		}
 	}
 
 	if !cmp.Equal(updated.SocialProfiles.Kaggle, current.SocialProfiles.Kaggle) {
 		current.SocialProfiles.Kaggle = updated.SocialProfiles.Kaggle
-		current.SocialProfiles.Kaggle.Verification = misc.Verification{}
+		if current.SocialProfiles.Kaggle != nil {
+			SetVerificationToNotVerified(&current.SocialProfiles.Kaggle.Verification)
+		}
 	}
 
 	var newWorkExperienceArray []studentModel.WorkExperience
@@ -140,7 +165,7 @@ func InvalidateVerifiedFieldsOnChange(updated *model.StudentPopulated, current *
 		}
 
 		if isUpdated {
-			updatedWorkExp.Verification = misc.Verification{}
+			SetVerificationToNotVerified(&updatedWorkExp.Verification)
 			newWorkExperienceArray = append(newWorkExperienceArray, updatedWorkExp)
 		}
 	}
@@ -150,6 +175,6 @@ func InvalidateVerifiedFieldsOnChange(updated *model.StudentPopulated, current *
 	// invalidate extra
 	if !cmp.Equal(updated.Extras, current.Extras) {
 		updated.Extras = current.Extras
-		updated.Extras.Verification = misc.Verification{}
+		SetVerificationToNotVerified(&updated.Extras.Verification)
 	}
 }

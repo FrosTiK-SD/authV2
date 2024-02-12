@@ -15,6 +15,7 @@ func (h *Handler) HandlerUpdateStudentDetails(ctx *gin.Context) {
 	updatedStudent := model.StudentPopulated{}
 	if errBinding := ctx.ShouldBindBodyWith(&updatedStudent, binding.JSON); errBinding != nil {
 		ctx.AbortWithStatusJSON(401, gin.H{"error": errBinding.Error()})
+		return
 	}
 
 	filter := bson.M{"_id": h.Session.Student.Id, "email": h.Session.Student.InstituteEmail}
@@ -22,6 +23,7 @@ func (h *Handler) HandlerUpdateStudentDetails(ctx *gin.Context) {
 
 	if errFind := studentCollection.FindOne(ctx, filter).Decode(&currentStudent); errFind != nil {
 		ctx.AbortWithStatusJSON(401, gin.H{"error": errFind.Error()})
+		return
 	}
 
 	controller.AssignUnVerifiedFields(&updatedStudent, &currentStudent)
@@ -29,6 +31,7 @@ func (h *Handler) HandlerUpdateStudentDetails(ctx *gin.Context) {
 
 	if updateResult, errUpdate := studentCollection.ReplaceOne(ctx, filter, currentStudent); errUpdate != nil {
 		ctx.AbortWithStatusJSON(400, gin.H{"error": errUpdate.Error()})
+		return
 	} else {
 		ctx.JSON(200, gin.H{"student": updateResult})
 
