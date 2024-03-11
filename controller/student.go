@@ -54,7 +54,7 @@ func GetUserByEmail(mongikClient *models.Mongik, email *string, role *string, no
 	return &studentPopulated, nil
 }
 
-func AssignUnVerifiedFields(updated *model.StudentPopulated, current *studentModel.Student) {
+func AssignUnVerifiedFields(updated *studentModel.Student, current *studentModel.Student) {
 	// cannot change: groups, companies, batch, email, department, academics.verification, socialProfile.verification, metadata
 	current.RollNo = updated.RollNo
 	current.Course = updated.Course
@@ -80,7 +80,7 @@ func SetVerificationToNotVerified(verification *misc.Verification) {
 	verification.VerifiedAt = 0
 }
 
-func InvalidateVerifiedFieldsOnChange(updated *model.StudentPopulated, current *studentModel.Student) {
+func InvalidateVerifiedFieldsOnChange(updated *studentModel.Student, current *studentModel.Student) {
 	// invalidate academic details
 	if !cmp.Equal(updated.Academics, current.Academics) {
 		current.Academics = updated.Academics

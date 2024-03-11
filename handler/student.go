@@ -3,7 +3,6 @@ package handler
 import (
 	"github.com/FrosTiK-SD/auth/constants"
 	"github.com/FrosTiK-SD/auth/controller"
-	"github.com/FrosTiK-SD/auth/model"
 	studentModel "github.com/FrosTiK-SD/models/student"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
@@ -12,7 +11,7 @@ import (
 
 func (h *Handler) HandlerUpdateStudentDetails(ctx *gin.Context) {
 	studentCollection := h.MongikClient.MongoClient.Database(constants.DB).Collection(constants.COLLECTION_STUDENT)
-	updatedStudent := model.StudentPopulated{}
+	updatedStudent := studentModel.Student{}
 	if errBinding := ctx.ShouldBindBodyWith(&updatedStudent, binding.JSON); errBinding != nil {
 		ctx.AbortWithStatusJSON(401, gin.H{"error": errBinding.Error()})
 		return
