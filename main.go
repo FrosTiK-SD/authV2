@@ -6,7 +6,7 @@ import (
 
 	"github.com/FrosTiK-SD/auth/constants"
 	"github.com/FrosTiK-SD/auth/controller"
-	"github.com/FrosTiK-SD/auth/handler"
+	h "github.com/FrosTiK-SD/auth/handler"
 	"github.com/FrosTiK-SD/auth/util"
 	"github.com/FrosTiK-SD/mongik"
 	mongikConstants "github.com/FrosTiK-SD/mongik/constants"
@@ -38,17 +38,21 @@ func main() {
 
 	r.Use(cors.New(util.DefaultCors()))
 
-	handler := &handler.Handler{
+	handler := &h.Handler{
 		MongikClient: mongikClient,
 		JwkSet:       defaultJwkSet,
-		Config: handler.Config{
-			Mode: handler.HANDLER,
+		Config: h.Config{
+			Mode: h.HANDLER,
 		},
-		Session: &handler.Session{},
+		Session: &h.Session{},
 	}
+
+	authHandler := h.NewAuthClient(mongikClient)
 
 	r.GET("/api/token/student/verify", handler.HandlerVerifyStudentIdToken)
 	r.GET("/api/token/invalidate_cache", handler.InvalidateCache)
+
+	r.GET("/api/student/rollNos", authHandler.GinVerifyStudent, handler.HandlerGetStudentsByRollNos)
 
 	port := "" + os.Getenv("PORT")
 	if port == "" {
