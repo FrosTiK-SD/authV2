@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/FrosTiK-SD/auth/constants"
+	"github.com/FrosTiK-SD/auth/interfaces"
 	"github.com/FrosTiK-SD/auth/model"
 	"github.com/FrosTiK-SD/auth/util"
 	db "github.com/FrosTiK-SD/mongik/db"
@@ -48,4 +49,17 @@ func GetUserByEmail(mongikClient *models.Mongik, email *string, role *string, no
 	}
 
 	return &studentPopulated, nil
+}
+
+func GetStudentsByRollNos(mongikClient *models.Mongik, request *interfaces.StudentsRollNoReq, noCache bool) (*[]model.StudentMini, error) {
+	var studentsMini []model.StudentMini
+
+	studentsMini, err := db.Find[model.StudentMini](mongikClient, constants.DB, constants.COLLECTION_STUDENT, bson.M{
+		"rollNo": bson.M{"$in": request.RollNos},
+	}, noCache)
+	if err != nil {
+		return nil, err
+	}
+
+	return &studentsMini, nil
 }
