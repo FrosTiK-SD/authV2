@@ -24,15 +24,16 @@ func GetStudentRoleObjectID() primitive.ObjectID {
 
 func (h *Handler) HandlerUpdateStudentDetails(ctx *gin.Context) {
 	studentCollection := h.MongikClient.MongoClient.Database(constants.DB).Collection(constants.COLLECTION_STUDENT)
-	updatedStudent := studentModel.Student{}
+
+	var updatedStudent studentModel.Student
 	if errBinding := ctx.ShouldBindBodyWith(&updatedStudent, binding.JSON); errBinding != nil {
 		ctx.AbortWithStatusJSON(401, gin.H{"error": errBinding.Error()})
 		return
 	}
 
 	filter := bson.M{"_id": h.Session.Student.Id, "email": h.Session.Student.InstituteEmail}
-	currentStudent := studentModel.Student{}
 
+	var currentStudent studentModel.Student
 	if errFind := studentCollection.FindOne(ctx, filter).Decode(&currentStudent); errFind != nil {
 		ctx.AbortWithStatusJSON(401, gin.H{"error": errFind.Error()})
 		return
