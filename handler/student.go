@@ -1,6 +1,8 @@
 package handler
 
 import (
+	"os"
+
 	"github.com/FrosTiK-SD/auth/constants"
 	"github.com/FrosTiK-SD/auth/controller"
 	"github.com/FrosTiK-SD/auth/interfaces"
@@ -13,7 +15,7 @@ import (
 )
 
 func GetStudentRoleObjectID() primitive.ObjectID {
-	if objID, err := primitive.ObjectIDFromHex("64bae5678fdd09af699cf7a5"); err != nil {
+	if objID, err := primitive.ObjectIDFromHex(os.Getenv(constants.ENV_STUDENT_GROUP_OBJ_ID)); err != nil {
 		return primitive.NilObjectID
 	} else {
 		return objID
