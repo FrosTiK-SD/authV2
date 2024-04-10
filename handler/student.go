@@ -12,6 +12,14 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
+func GetStudentRoleObjectID() primitive.ObjectID {
+	if objID, err := primitive.ObjectIDFromHex("64bae5678fdd09af699cf7a5"); err != nil {
+		return primitive.NilObjectID
+	} else {
+		return objID
+	}
+}
+
 func (h *Handler) HandlerUpdateStudentDetails(ctx *gin.Context) {
 	studentCollection := h.MongikClient.MongoClient.Database(constants.DB).Collection(constants.COLLECTION_STUDENT)
 	updatedStudent := studentModel.Student{}
@@ -52,11 +60,12 @@ func (h *Handler) HandlerRegisterStudentDetails(ctx *gin.Context) {
 	if email, _, errVerify := controller.VerifyToken(h.MongikClient.CacheClient, idToken, h.JwkSet, true); errVerify != nil {
 		ctx.AbortWithStatusJSON(401, gin.H{"error": errVerify})
 		return
-	} else if email != &newStudentDetails.InstituteEmail {
-		ctx.AbortWithStatusJSON(401, gin.H{"error": "Email mismatch"})
+	} else {
+		newStudentDetails.InstituteEmail = *email
 	}
 
 	newStudent := studentModel.Student{
+		Groups:         []primitive.ObjectID{GetStudentRoleObjectID()},
 		Id:             primitive.NewObjectID(),
 		Batch:          &newStudentDetails.Batch,
 		RollNo:         newStudentDetails.RollNo,
