@@ -8,7 +8,7 @@ import (
 
 func CheckValidInstituteEmail(email string) bool {
 	_, domain, found := strings.Cut(email, "@")
-	if found && domain == constants.INSTITUTE_MAIL_DOMAIN {
+	if found && ArrayContains(constants.INSTITUTE_MAIL_DOMAINS, domain) {
 		return true
 	}
 

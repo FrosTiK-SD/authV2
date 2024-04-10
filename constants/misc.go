@@ -1,3 +1,3 @@
 package constants
 
-const INSTITUTE_MAIL_DOMAIN = "itbhu.ac.in"
+var INSTITUTE_MAIL_DOMAINS = []string{"itbhu.ac.in", "iitbhu.ac.in"}
