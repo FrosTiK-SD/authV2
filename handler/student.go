@@ -6,6 +6,7 @@ import (
 	"github.com/FrosTiK-SD/auth/constants"
 	"github.com/FrosTiK-SD/auth/controller"
 	"github.com/FrosTiK-SD/auth/interfaces"
+	"github.com/FrosTiK-SD/auth/util"
 	"github.com/FrosTiK-SD/models/constant"
 	studentModel "github.com/FrosTiK-SD/models/student"
 	db "github.com/FrosTiK-SD/mongik/db"
@@ -64,6 +65,10 @@ func (h *Handler) HandlerRegisterStudentDetails(ctx *gin.Context) {
 		ctx.AbortWithStatusJSON(401, gin.H{"error": errVerify})
 		return
 	} else {
+		if !util.CheckValidInstituteEmail(*email) {
+			ctx.AbortWithStatusJSON(401, gin.H{"error": "not a valid institute email"})
+			return
+		}
 		newStudentDetails.InstituteEmail = *email
 	}
 
