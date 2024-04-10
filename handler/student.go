@@ -8,6 +8,7 @@ import (
 	"github.com/FrosTiK-SD/auth/interfaces"
 	"github.com/FrosTiK-SD/models/constant"
 	studentModel "github.com/FrosTiK-SD/models/student"
+	db "github.com/FrosTiK-SD/mongik/db"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 	"go.mongodb.org/mongo-driver/bson"
@@ -42,7 +43,7 @@ func (h *Handler) HandlerUpdateStudentDetails(ctx *gin.Context) {
 	controller.AssignUnVerifiedFields(&updatedStudent, &currentStudent)
 	controller.InvalidateVerifiedFieldsOnChange(&updatedStudent, &currentStudent)
 
-	if updateResult, errUpdate := studentCollection.ReplaceOne(ctx, filter, currentStudent); errUpdate != nil {
+	if updateResult, errUpdate := db.ReplaceOne(h.MongikClient, constants.DB, constants.COLLECTION_STUDENT, filter, &currentStudent); errUpdate != nil {
 		ctx.AbortWithStatusJSON(400, gin.H{"error": errUpdate.Error()})
 		return
 	} else {
@@ -52,7 +53,6 @@ func (h *Handler) HandlerUpdateStudentDetails(ctx *gin.Context) {
 
 func (h *Handler) HandlerRegisterStudentDetails(ctx *gin.Context) {
 	idToken := ctx.GetHeader("token")
-	studentCollection := h.MongikClient.MongoClient.Database(constants.DB).Collection(constants.COLLECTION_STUDENT)
 	newStudentDetails := interfaces.StudentRegistration{}
 
 	if errBinding := ctx.ShouldBindBodyWith(&newStudentDetails, binding.JSON); errBinding != nil {
@@ -81,7 +81,7 @@ func (h *Handler) HandlerRegisterStudentDetails(ctx *gin.Context) {
 		LastName:       newStudentDetails.LastName,
 	}
 
-	if result, err := studentCollection.InsertOne(ctx, newStudent); err != nil {
+	if result, err := db.InsertOne(h.MongikClient, constants.DB, constants.COLLECTION_STUDENT, newStudent); err != nil {
 		ctx.AbortWithStatusJSON(401, gin.H{"error": err.Error()})
 		return
 	} else {
