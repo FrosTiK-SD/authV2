@@ -11,7 +11,6 @@ import (
 	studentModel "github.com/FrosTiK-SD/models/student"
 	db "github.com/FrosTiK-SD/mongik/db"
 	"github.com/gin-gonic/gin"
-	"github.com/gin-gonic/gin/binding"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
@@ -28,8 +27,7 @@ func (h *Handler) HandlerUpdateStudentDetails(ctx *gin.Context) {
 	studentCollection := h.MongikClient.MongoClient.Database(constants.DB).Collection(constants.COLLECTION_STUDENT)
 
 	var updatedStudent studentModel.Student
-	if errBinding := ctx.ShouldBindBodyWith(&updatedStudent, binding.JSON); errBinding != nil {
-		ctx.AbortWithStatusJSON(401, gin.H{"error": errBinding.Error()})
+	if errBinding := ctx.BindJSON(&updatedStudent); errBinding != nil {
 		return
 	}
 
@@ -56,8 +54,7 @@ func (h *Handler) HandlerRegisterStudentDetails(ctx *gin.Context) {
 	idToken := ctx.GetHeader("token")
 	newStudentDetails := interfaces.StudentRegistration{}
 
-	if errBinding := ctx.ShouldBindBodyWith(&newStudentDetails, binding.JSON); errBinding != nil {
-		ctx.AbortWithStatusJSON(401, gin.H{"error": errBinding.Error()})
+	if errBinding := ctx.BindJSON(&newStudentDetails); errBinding != nil {
 		return
 	}
 
