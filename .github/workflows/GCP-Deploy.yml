@@ -125,6 +125,7 @@ jobs:
             REDIS_URI=${{ secrets.REDIS_URI }}
             REDIS_PASSWORD=${{ secrets.REDIS_PASSWORD }}
             REDIS_USERNAME=${{ secrets.REDIS_USERNAME }}
+            STUDENT_GROUP_OBJ_ID=${{ secrets.STUDENT_GROUP_OBJ_ID }}
 
       # If required, use the Cloud Run url output in later steps
       - name: Show Output
