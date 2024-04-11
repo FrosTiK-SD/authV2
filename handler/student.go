@@ -81,6 +81,9 @@ func (h *Handler) HandlerRegisterStudentDetails(ctx *gin.Context) {
 		FirstName:      newStudentDetails.FirstName,
 		MiddleName:     newStudentDetails.MiddleName,
 		LastName:       newStudentDetails.LastName,
+		PersonalEmail:  newStudentDetails.PersonalEmail,
+		Mobile:         newStudentDetails.Mobile,
+		Gender:         newStudentDetails.Gender,
 	}
 
 	if result, err := db.InsertOne(h.MongikClient, constants.DB, constants.COLLECTION_STUDENT, newStudent); err != nil {
