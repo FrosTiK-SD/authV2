@@ -12,12 +12,9 @@ import (
 	db "github.com/FrosTiK-SD/mongik/db"
 	models "github.com/FrosTiK-SD/mongik/models"
 	"github.com/google/go-cmp/cmp"
-	jsoniter "github.com/json-iterator/go"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
-
-var json = jsoniter.ConfigCompatibleWithStandardLibrary
 
 func getAliasEmailList(email string) []string {
 	var aliasEmailList []string
@@ -80,6 +77,19 @@ func SetVerificationToNotVerified(verification *misc.Verification) {
 	verification.VerifiedAt = 0
 }
 
+func CheckSocialProfile(updatedSocialProfile *studentModel.SocialProfile, currentSocialProfile *studentModel.SocialProfile) {
+	if updatedSocialProfile == nil {
+		currentSocialProfile = nil
+		return
+	}
+
+	if updatedSocialProfile.URL != currentSocialProfile.URL || updatedSocialProfile.Username != currentSocialProfile.Username {
+		currentSocialProfile.URL = updatedSocialProfile.URL
+		currentSocialProfile.Username = updatedSocialProfile.Username
+		SetVerificationToNotVerified(&currentSocialProfile.Verification)
+	}
+}
+
 func InvalidateVerifiedFieldsOnChange(updated *studentModel.Student, current *studentModel.Student) {
 	// invalidate academic details
 	if !cmp.Equal(updated.Academics, current.Academics) {
@@ -88,68 +98,15 @@ func InvalidateVerifiedFieldsOnChange(updated *studentModel.Student, current *st
 	}
 
 	// invalidate social profiles
-	if !cmp.Equal(updated.SocialProfiles.LinkedIn, current.SocialProfiles.LinkedIn) {
-		current.SocialProfiles.LinkedIn = updated.SocialProfiles.LinkedIn
-		if current.SocialProfiles.LinkedIn != nil {
-			SetVerificationToNotVerified(&current.SocialProfiles.LinkedIn.Verification)
-		}
-	}
-
-	if !cmp.Equal(updated.SocialProfiles.Github, current.SocialProfiles.Github) {
-		current.SocialProfiles.Github = updated.SocialProfiles.Github
-		if current.SocialProfiles.Github != nil {
-			SetVerificationToNotVerified(&current.SocialProfiles.Github.Verification)
-		}
-	}
-
-	if !cmp.Equal(updated.SocialProfiles.MicrosoftTeams, current.SocialProfiles.MicrosoftTeams) {
-		current.SocialProfiles.MicrosoftTeams = updated.SocialProfiles.MicrosoftTeams
-		if current.SocialProfiles.MicrosoftTeams != nil {
-			SetVerificationToNotVerified(&current.SocialProfiles.MicrosoftTeams.Verification)
-		}
-	}
-
-	if !cmp.Equal(updated.SocialProfiles.Skype, current.SocialProfiles.Skype) {
-		current.SocialProfiles.Skype = updated.SocialProfiles.Skype
-		if current.SocialProfiles.LinkedIn != nil {
-			SetVerificationToNotVerified(&current.SocialProfiles.Skype.Verification)
-		}
-	}
-
-	if !cmp.Equal(updated.SocialProfiles.GoogleScholar, current.SocialProfiles.GoogleScholar) {
-		current.SocialProfiles.GoogleScholar = updated.SocialProfiles.GoogleScholar
-		if current.SocialProfiles.GoogleScholar != nil {
-			SetVerificationToNotVerified(&current.SocialProfiles.GoogleScholar.Verification)
-		}
-	}
-
-	if !cmp.Equal(updated.SocialProfiles.Codeforces, current.SocialProfiles.Codeforces) {
-		current.SocialProfiles.Codeforces = updated.SocialProfiles.Codeforces
-		if current.SocialProfiles.Codeforces != nil {
-			SetVerificationToNotVerified(&current.SocialProfiles.Codeforces.Verification)
-		}
-	}
-
-	if !cmp.Equal(updated.SocialProfiles.CodeChef, current.SocialProfiles.CodeChef) {
-		current.SocialProfiles.CodeChef = updated.SocialProfiles.CodeChef
-		if current.SocialProfiles.CodeChef != nil {
-			SetVerificationToNotVerified(&current.SocialProfiles.CodeChef.Verification)
-		}
-	}
-
-	if !cmp.Equal(updated.SocialProfiles.LeetCode, current.SocialProfiles.LeetCode) {
-		current.SocialProfiles.LeetCode = updated.SocialProfiles.LeetCode
-		if current.SocialProfiles.LeetCode != nil {
-			SetVerificationToNotVerified(&current.SocialProfiles.LeetCode.Verification)
-		}
-	}
-
-	if !cmp.Equal(updated.SocialProfiles.Kaggle, current.SocialProfiles.Kaggle) {
-		current.SocialProfiles.Kaggle = updated.SocialProfiles.Kaggle
-		if current.SocialProfiles.Kaggle != nil {
-			SetVerificationToNotVerified(&current.SocialProfiles.Kaggle.Verification)
-		}
-	}
+	CheckSocialProfile(updated.SocialProfiles.LinkedIn, current.SocialProfiles.LinkedIn)
+	CheckSocialProfile(updated.SocialProfiles.Github, current.SocialProfiles.Github)
+	CheckSocialProfile(updated.SocialProfiles.MicrosoftTeams, current.SocialProfiles.MicrosoftTeams)
+	CheckSocialProfile(updated.SocialProfiles.Skype, current.SocialProfiles.Skype)
+	CheckSocialProfile(updated.SocialProfiles.GoogleScholar, current.SocialProfiles.GoogleScholar)
+	CheckSocialProfile(updated.SocialProfiles.Codeforces, current.SocialProfiles.Codeforces)
+	CheckSocialProfile(updated.SocialProfiles.CodeChef, current.SocialProfiles.CodeChef)
+	CheckSocialProfile(updated.SocialProfiles.LeetCode, current.SocialProfiles.LeetCode)
+	CheckSocialProfile(updated.SocialProfiles.Kaggle, current.SocialProfiles.Kaggle)
 
 	var newWorkExperienceArray []studentModel.WorkExperience
 

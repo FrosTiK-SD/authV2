@@ -78,13 +78,13 @@ func VerifyToken(cacheClient *bigcache.BigCache, idToken string, defaultJwkSet *
 	exp := rawJWT.Expiration()
 
 	// Validations
-	if time.Now().Sub(rawJWT.IssuedAt()) < 0 || time.Now().Sub(exp) > 0 || rawJWT.Subject() == "" || rawJWT.Issuer() != fmt.Sprintf("https://securetoken.google.com/%s", os.Getenv(constants.FIREBASE_PROJECT_ID)) || !util.ArrayContains(rawJWT.Audience(), os.Getenv(constants.FIREBASE_PROJECT_ID)) {
+	if time.Since(rawJWT.IssuedAt()) < 0 || time.Since(exp) > 0 || rawJWT.Subject() == "" || rawJWT.Issuer() != fmt.Sprintf("https://securetoken.google.com/%s", os.Getenv(constants.FIREBASE_PROJECT_ID)) || !util.ArrayContains(rawJWT.Audience(), os.Getenv(constants.FIREBASE_PROJECT_ID)) {
 		return nil, &exp, &constants.ERROR_INVALID_TOKEN
 	}
 
 	// Get the email
 	email, found := rawJWT.Get("email")
-	if found == false {
+	if !found {
 		return nil, &exp, &constants.ERROR_GETTING_EMAIL
 	}
 
