@@ -6,6 +6,7 @@ import (
 	"github.com/FrosTiK-SD/auth/constants"
 	"github.com/FrosTiK-SD/auth/controller"
 	"github.com/FrosTiK-SD/auth/interfaces"
+	"github.com/FrosTiK-SD/auth/model"
 	"github.com/FrosTiK-SD/auth/util"
 	"github.com/FrosTiK-SD/models/constant"
 	studentModel "github.com/FrosTiK-SD/models/student"
@@ -26,13 +27,21 @@ func GetStudentRoleObjectID() primitive.ObjectID {
 func (h *Handler) HandlerUpdateStudentDetails(ctx *gin.Context) {
 	studentCollection := h.MongikClient.MongoClient.Database(constants.DB).Collection(constants.COLLECTION_STUDENT)
 
+	student, exists := ctx.Get(constants.SESSION)
+	if !exists {
+		ctx.AbortWithStatusJSON(401, gin.H{"error": "Cant get student"})
+		return
+	}
+
+	studentPopulated := student.(*model.StudentPopulated)
+
 	var updatedStudent studentModel.Student
 	if errBinding := ctx.ShouldBindJSON(&updatedStudent); errBinding != nil {
 		ctx.AbortWithStatusJSON(401, gin.H{"error": errBinding.Error()})
 		return
 	}
 
-	filter := bson.M{"_id": h.Session.Student.Id, "email": h.Session.Student.InstituteEmail}
+	filter := bson.M{"_id": studentPopulated.Id, "email": studentPopulated.InstituteEmail}
 
 	var currentStudent studentModel.Student
 	if errFind := studentCollection.FindOne(ctx, filter).Decode(&currentStudent); errFind != nil {
