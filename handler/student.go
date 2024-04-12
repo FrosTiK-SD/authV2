@@ -24,6 +24,7 @@ func GetStudentRoleObjectID() primitive.ObjectID {
 }
 
 func (h *Handler) HandlerUpdateStudentDetails(ctx *gin.Context) {
+	idToken := ctx.GetHeader("token")
 	studentCollection := h.MongikClient.MongoClient.Database(constants.DB).Collection(constants.COLLECTION_STUDENT)
 
 	var updatedStudent studentModel.Student
@@ -32,7 +33,18 @@ func (h *Handler) HandlerUpdateStudentDetails(ctx *gin.Context) {
 		return
 	}
 
-	filter := bson.M{"_id": h.Session.Student.Id, "email": h.Session.Student.InstituteEmail}
+	if email, _, errVerify := controller.VerifyToken(h.MongikClient.CacheClient, idToken, h.JwkSet, true); errVerify != nil {
+		ctx.AbortWithStatusJSON(401, gin.H{"error": errVerify})
+		return
+	} else {
+		if !util.CheckValidInstituteEmail(*email) {
+			ctx.AbortWithStatusJSON(401, gin.H{"error": "not a valid institute email"})
+			return
+		}
+		updatedStudent.InstituteEmail = *email
+	}
+
+	filter := bson.M{"_id": updatedStudent.RollNo, "email": updatedStudent.InstituteEmail}
 
 	var currentStudent studentModel.Student
 	if errFind := studentCollection.FindOne(ctx, filter).Decode(&currentStudent); errFind != nil {
