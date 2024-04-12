@@ -27,7 +27,8 @@ func (h *Handler) HandlerUpdateStudentDetails(ctx *gin.Context) {
 	studentCollection := h.MongikClient.MongoClient.Database(constants.DB).Collection(constants.COLLECTION_STUDENT)
 
 	var updatedStudent studentModel.Student
-	if errBinding := ctx.BindJSON(&updatedStudent); errBinding != nil {
+	if errBinding := ctx.ShouldBindJSON(&updatedStudent); errBinding != nil {
+		ctx.AbortWithStatusJSON(401, gin.H{"error": errBinding.Error()})
 		return
 	}
 
