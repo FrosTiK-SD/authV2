@@ -149,3 +149,23 @@ func GetAllStudents(mongikClient *models.Mongik, noCache bool) (*[]model.Student
 	}, noCache)
 	return &students, err
 }
+
+func GetStudentById(mongikClient *models.Mongik, _id primitive.ObjectID, noCache bool) (*model.StudentPopulated, error) {
+	student, err := db.AggregateOne[model.StudentPopulated](mongikClient, constants.DB, constants.COLLECTION_STUDENT, []bson.M{
+		{
+			"$match": bson.M{
+				"_id": _id,
+			},
+		},
+		{
+			"$lookup": bson.M{
+				"from":         constants.COLLECTION_GROUP,
+				"localField":   "groups",
+				"foreignField": "_id",
+				"as":           "groups",
+			},
+		},
+	},
+		noCache)
+	return &student, err
+}

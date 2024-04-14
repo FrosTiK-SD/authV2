@@ -44,6 +44,32 @@ func (h *Handler) GetAllStudents(ctx *gin.Context) {
 		})
 }
 
+func (h *Handler) GetStudentById(ctx *gin.Context) {
+	noCache := util.GetNoCache(ctx)
+	_id, err := primitive.ObjectIDFromHex(ctx.GetHeader("id"))
+
+	if err != nil {
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+			"error": "Invaild ObjectID",
+		})
+		return
+	}
+
+	student, err := controller.GetStudentById(h.MongikClient, _id, noCache)
+
+	if err != nil {
+		ctx.AbortWithStatusJSON(http.StatusNotFound, gin.H{
+			"error": "Could Not Fetch Student",
+		})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{
+		"data": student,
+	})
+
+}
+
 func (h *Handler) HandlerUpdateStudentDetails(ctx *gin.Context) {
 	studentCollection := h.MongikClient.MongoClient.Database(constants.DB).Collection(constants.COLLECTION_STUDENT)
 

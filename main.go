@@ -57,6 +57,7 @@ func main() {
 	student := r.Group("/api/student")
 	{
 		student.GET("/", handler.GinVerifyStudent, handler.GetRoleCheckHandlerForStudent(constants.ROLE_ADMIN), handler.GetAllStudents)
+		student.GET("/id", handler.GinVerifyStudent, handler.GetStudentById)
 		student.PUT("/update", handler.GinVerifyStudent, handler.HandlerUpdateStudentDetails)
 		student.POST("/register", handler.HandlerRegisterStudentDetails)
 	}
