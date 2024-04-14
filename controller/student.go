@@ -135,3 +135,17 @@ func InvalidateVerifiedFieldsOnChange(updated *studentModel.Student, current *st
 		SetVerificationToNotVerified(&updated.Extras.Verification)
 	}
 }
+
+func GetAllStudents(mongikClient *models.Mongik, noCache bool) (*[]model.StudentPopulated, error) {
+	students, err := db.Aggregate[model.StudentPopulated](mongikClient, constants.DB, constants.COLLECTION_STUDENT, []bson.M{
+		{
+			"$lookup": bson.M{
+				"from":         constants.COLLECTION_GROUP,
+				"localField":   "groups",
+				"foreignField": "_id",
+				"as":           "groups",
+			},
+		},
+	}, noCache)
+	return &students, err
+}

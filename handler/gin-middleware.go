@@ -1,8 +1,12 @@
 package handler
 
 import (
+	"fmt"
+	"net/http"
+
 	"github.com/FrosTiK-SD/auth/constants"
 	"github.com/FrosTiK-SD/auth/interfaces"
+	"github.com/FrosTiK-SD/auth/model"
 	"github.com/FrosTiK-SD/auth/util"
 	"github.com/gin-gonic/gin"
 )
@@ -28,6 +32,31 @@ func (h *Handler) GinVerifyStudent(ctx *gin.Context) {
 		ctx.Next()
 	} else {
 		ctx.Abort()
+	}
+}
+
+// To be Used only after GinVerifyStudent
+func (h *Handler) GetRoleCheckHandlerForStudent(roles ...string) func(ctx *gin.Context) {
+	return func(ctx *gin.Context) {
+		value, exists := ctx.Get(constants.SESSION)
+		student, ok := value.(*model.StudentPopulated)
+
+		if !exists || !ok {
+			ctx.AbortWithStatusJSON(http.StatusForbidden, gin.H{
+				"message": constants.ERROR_ROLE_CHECK_FAILED,
+				"error":   "Student does not exist",
+			})
+			return
+		}
+		for _, role := range roles {
+			if !util.CheckRoleExists(&student.GroupDetails, role) {
+				ctx.AbortWithStatusJSON(http.StatusForbidden, gin.H{
+					"message": constants.ERROR_ROLE_CHECK_FAILED,
+					"error":   fmt.Sprintf("Student Does not have Role '%s'", role),
+				})
+				return
+			}
+		}
 	}
 }
 

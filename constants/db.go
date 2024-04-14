@@ -18,7 +18,7 @@ const COLLECTION_RECRUITER = "recruiters"
 const FIREBASE_PROJECT_ID = "FIREBASE_PROJECT_ID"
 
 const CACHING_DURATION = 20 * time.Hour
-const CACHE_CONTROL_HEADER = "Cache-Control"
+const CACHE_CONTROL_HEADER = "cache-control"
 const NO_CACHE = "no-cache"
 
 // Keys of Cache
