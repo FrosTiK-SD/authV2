@@ -47,10 +47,18 @@ func main() {
 		Session: &handler.Session{},
 	}
 
-	r.GET("/api/token/student/verify", handler.HandlerVerifyStudentIdToken)
-	r.PUT("/api/student/update", handler.GinVerifyStudent, handler.HandlerUpdateStudentDetails)
-	r.POST("/api/student/register", handler.HandlerRegisterStudentDetails)
-	r.GET("/api/token/invalidate_cache", handler.InvalidateCache)
+	token := r.Group("/api/token")
+	{
+		token.GET("/verify", handler.HandlerVerifyRecruiterIdToken)
+		token.GET("/student/verify", handler.HandlerVerifyStudentIdToken)
+		token.GET("/invalidate_cache", handler.InvalidateCache)
+	}
+
+	student := r.Group("/api/student")
+	{
+		student.PUT("/update", handler.GinVerifyStudent, handler.HandlerUpdateStudentDetails)
+		student.POST("/register", handler.HandlerRegisterStudentDetails)
+	}
 
 	port := "" + os.Getenv("PORT")
 	if port == "" {
