@@ -28,6 +28,30 @@ func (h *Handler) GetAllGroups(ctx *gin.Context) {
 	})
 }
 
+func (h *Handler) BatchCreateGroup(ctx *gin.Context) {
+	batchCreateGroupRequest := interfaces.BatchCreateGroupRequest{}
+
+	if errBinding := ctx.BindJSON(&batchCreateGroupRequest); errBinding != nil {
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+			"error":   constants.ERROR_INCORRENT_BODY,
+			"message": errBinding,
+		})
+		return
+	}
+	insertResult, err := controller.BatchCreateGroup(h.MongikClient, batchCreateGroupRequest.Groups)
+
+	if err != nil {
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+			"error":   constants.ERROR_MONGO_ERROR,
+			"message": err,
+		})
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{
+		"data": insertResult,
+	})
+}
+
 func (h *Handler) BatchEditGroup(ctx *gin.Context) {
 	noCache := util.GetNoCache(ctx)
 

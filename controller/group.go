@@ -7,6 +7,7 @@ import (
 	db "github.com/FrosTiK-SD/mongik/db"
 	mongikModels "github.com/FrosTiK-SD/mongik/models"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -14,6 +15,17 @@ func GetAllGroups(mongikClient *mongikModels.Mongik, noCache bool) (*[]company.G
 	groups, err := db.Aggregate[company.Group](mongikClient, constants.DB, constants.COLLECTION_GROUP, []bson.M{}, noCache)
 
 	return &groups, err
+}
+
+func BatchCreateGroup(mongikClient *mongikModels.Mongik, groups []company.Group) (*mongo.InsertManyResult, error) {
+
+	for idx, _ := range groups {
+		groups[idx].ID = primitive.NewObjectID()
+	}
+
+	insertResult, err := db.InsertMany(mongikClient, constants.DB, constants.COLLECTION_GROUP, groups)
+
+	return insertResult, err
 }
 
 func BatchEditGroup(mongikClient *mongikModels.Mongik, assignRequests []interfaces.AssignRequest, noCache bool) (*[]*mongo.UpdateResult, *[]*mongo.UpdateResult, *[]error) {
