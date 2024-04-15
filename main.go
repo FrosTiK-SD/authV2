@@ -66,7 +66,7 @@ func main() {
 
 	group := r.Group("/api/group")
 	{
-		group.GET("/")
+		group.GET("/", handler.GinVerifyStudent, handler.GetRoleCheckHandlerForStudent(constants.ROLE_GROUP_READ), handler.GetAllGroups)
 		group.PUT("/batch/edit")
 		group.DELETE("/batch/delete")
 		group.POST("/batch/assign")
