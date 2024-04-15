@@ -76,7 +76,7 @@ func main() {
 	domain := r.Group("/api/domain")
 	{
 		domain.GET("/", handler.GinVerifyStudent, handler.GetRoleCheckHandlerForStudent(constants.ROLE_DOMAIN_ALL_READ), handler.GetAllDomains)
-		domain.GET("/id")
+		domain.GET("/id", handler.GinVerifyStudent, handler.GetRoleCheckHandlerForStudent(constants.ROLE_DOMAIN_ALL_READ), handler.GetDomainById)
 		domain.DELETE("/id")
 	}
 
