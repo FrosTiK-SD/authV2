@@ -58,6 +58,7 @@ func main() {
 	{
 		student.GET("/", handler.GinVerifyStudent, handler.GetRoleCheckHandlerForStudent(constants.ROLE_ADMIN), handler.GetAllStudents)
 		student.GET("/id", handler.GinVerifyStudent, handler.GetStudentById)
+		student.GET("/tpr/all", handler.GinVerifyStudent, handler.GetRoleCheckHandlerForStudent(constants.ROLE_ADMIN), handler.GetAllTprs)
 		student.PUT("/update", handler.GinVerifyStudent, handler.HandlerUpdateStudentDetails)
 		student.POST("/register", handler.HandlerRegisterStudentDetails)
 	}

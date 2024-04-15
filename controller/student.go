@@ -169,3 +169,28 @@ func GetStudentById(mongikClient *models.Mongik, _id primitive.ObjectID, noCache
 		noCache)
 	return &student, err
 }
+
+func GetAllStudentsOfRole(mongikClient *models.Mongik, role string, noCache bool) (*[]model.StudentPopulated, error) {
+	roleStudents, err := db.Aggregate[model.StudentPopulated](mongikClient, constants.DB, constants.COLLECTION_STUDENT, []bson.M{
+		{
+			"$lookup": bson.M{
+				"from":         constants.COLLECTION_GROUP,
+				"localField":   "groups",
+				"foreignField": "_id",
+				"as":           "groups",
+			},
+		},
+		{
+			"$match": bson.M{
+				"groups": bson.M{
+					"$elemMatch": bson.M{
+						"roles": role,
+					},
+				},
+			},
+		},
+	},
+		noCache)
+
+	return &roleStudents, err
+}

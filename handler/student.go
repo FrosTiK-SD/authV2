@@ -70,6 +70,21 @@ func (h *Handler) GetStudentById(ctx *gin.Context) {
 
 }
 
+func (h *Handler) GetAllTprs(ctx *gin.Context) {
+	noCache := util.GetNoCache(ctx)
+	tprs, err := controller.GetAllStudentsOfRole(h.MongikClient, constants.ROLE_TPR, noCache)
+
+	if err != nil {
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+			"error": "Could Not Fetch TPRs",
+		})
+		return
+	}
+	ctx.JSON(http.StatusOK, gin.H{
+		"data": tprs,
+	})
+}
+
 func (h *Handler) HandlerUpdateStudentDetails(ctx *gin.Context) {
 	studentCollection := h.MongikClient.MongoClient.Database(constants.DB).Collection(constants.COLLECTION_STUDENT)
 
