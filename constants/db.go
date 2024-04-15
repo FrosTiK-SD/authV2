@@ -14,6 +14,7 @@ const COLLECTION_GROUP = "groups"
 const COLLECTION_ROOM = "rooms"
 const COLLECTION_ATTENDANCE = "attendances"
 const COLLECTION_RECRUITER = "recruiters"
+const COLLECTION_DOMAIN = "domains"
 
 const FIREBASE_PROJECT_ID = "FIREBASE_PROJECT_ID"
 
