@@ -3,6 +3,7 @@ package controller
 import (
 	"github.com/FrosTiK-SD/auth/constants"
 	"github.com/FrosTiK-SD/auth/interfaces"
+	"github.com/FrosTiK-SD/auth/model"
 	"github.com/FrosTiK-SD/models/company"
 	db "github.com/FrosTiK-SD/mongik/db"
 	mongikModels "github.com/FrosTiK-SD/mongik/models"
@@ -19,7 +20,7 @@ func GetAllGroups(mongikClient *mongikModels.Mongik, noCache bool) (*[]company.G
 
 func BatchCreateGroup(mongikClient *mongikModels.Mongik, groups []company.Group) (*mongo.InsertManyResult, error) {
 
-	for idx, _ := range groups {
+	for idx := range groups {
 		groups[idx].ID = primitive.NewObjectID()
 	}
 
@@ -69,4 +70,25 @@ func BatchEditGroup(mongikClient *mongikModels.Mongik, assignRequests []interfac
 
 	}
 	return &addList, &removeList, &errors
+}
+
+func BatchDeleteGroup(mongikClient *mongikModels.Mongik, groups *[]primitive.ObjectID) (*mongo.DeleteResult, *mongo.UpdateResult, *error) {
+	groupResult, groupError := db.DeleteMany(mongikClient, constants.DB, constants.COLLECTION_GROUP, bson.M{
+		"_id": bson.M{
+			"$in": groups,
+		},
+	})
+
+	if groupError != nil {
+		return groupResult, nil, &groupError
+	}
+
+	studentResult, studentError := db.UpdateMany[model.StudentPopulated](mongikClient, constants.DB, constants.COLLECTION_STUDENT, bson.M{}, bson.M{
+		"$pull": bson.M{
+			"groups": bson.M{
+				"$in": groups,
+			},
+		},
+	})
+	return groupResult, studentResult, &studentError
 }

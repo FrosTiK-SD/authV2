@@ -86,3 +86,37 @@ func (h *Handler) BatchEditGroup(ctx *gin.Context) {
 	}
 
 }
+
+func (h *Handler) BatchDeleteGroup(ctx *gin.Context) {
+	batchDeleteGroupRequest := interfaces.BatchDeleteGroupRequest{}
+
+	if errBinding := ctx.BindJSON(&batchDeleteGroupRequest); errBinding != nil {
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+			"error":   constants.ERROR_INCORRENT_BODY,
+			"message": errBinding,
+		})
+		return
+	}
+
+	groupResult, studentResult, err := controller.BatchDeleteGroup(h.MongikClient, &batchDeleteGroupRequest.Groups)
+
+	if *err != nil {
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+			"data": gin.H{
+				"group":    groupResult,
+				"students": studentResult,
+			},
+			"error":   constants.ERROR_MONGO_ERROR,
+			"message": err,
+		})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{
+		"data": gin.H{
+			"group":    groupResult,
+			"students": studentResult,
+		},
+		"error": nil,
+	})
+}

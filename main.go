@@ -69,7 +69,7 @@ func main() {
 		group.GET("/", handler.GinVerifyStudent, handler.GetRoleCheckHandlerForStudent(constants.ROLE_GROUP_READ), handler.GetAllGroups)
 		group.POST("/batch", handler.GinVerifyStudent, handler.GetRoleCheckHandlerForStudent(constants.ROLE_GROUP_CREATE), handler.BatchCreateGroup)
 		group.PUT("/batch/edit", handler.GinVerifyStudent, handler.GetRoleCheckHandlerForStudent(constants.ROLE_GROUP_EDIT), handler.BatchEditGroup)
-		group.DELETE("/batch/delete")
+		group.DELETE("/batch/delete", handler.GinVerifyStudent, handler.GetRoleCheckHandlerForStudent(constants.ROLE_GROUP_DELETE), handler.BatchDeleteGroup)
 		group.POST("/batch/assign")
 	}
 

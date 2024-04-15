@@ -15,3 +15,7 @@ type AssignRequest struct {
 type BatchCreateGroupRequest struct {
 	Groups []company.Group `json:"group" bson:"group"`
 }
+
+type BatchDeleteGroupRequest struct {
+	Groups []primitive.ObjectID `json:"groups" bson:"groups"`
+}
