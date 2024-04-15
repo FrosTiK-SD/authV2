@@ -48,6 +48,7 @@ func main() {
 	}
 
 	r.GET("/api/token/student/verify", handler.HandlerVerifyStudentIdToken)
+	r.GET("/api/student/profile", handler.GinVerifyStudent, handler.HandlerGetStudentProfile)
 	r.PUT("/api/student/update", handler.GinVerifyStudent, handler.HandlerUpdateStudentDetails)
 	r.POST("/api/student/register", handler.HandlerRegisterStudentDetails)
 	r.GET("/api/token/invalidate_cache", handler.InvalidateCache)
