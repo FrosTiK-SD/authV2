@@ -120,3 +120,35 @@ func (h *Handler) BatchDeleteGroup(ctx *gin.Context) {
 		"error": nil,
 	})
 }
+
+func (h *Handler) BatchAssignGroup(ctx *gin.Context) {
+	batchAssignGroupRequest := []interfaces.BatchAssignGroupRequest{}
+
+	if errBinding := ctx.BindJSON(&batchAssignGroupRequest); errBinding != nil {
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+			"error":   constants.ERROR_INCORRENT_BODY,
+			"message": errBinding,
+		})
+		return
+	}
+	addList, removeList, errors := controller.BatchAssignGroup(h.MongikClient, batchAssignGroupRequest)
+
+	if len(errors) != 0 {
+		ctx.AbortWithStatusJSON(http.StatusPartialContent, gin.H{
+			"data": gin.H{
+				"addList":    addList,
+				"removeList": removeList,
+			},
+			"error": errors,
+		})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{
+		"data": gin.H{
+			"addList":    addList,
+			"removeList": removeList,
+		},
+		"error": nil,
+	})
+}

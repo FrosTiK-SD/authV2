@@ -92,3 +92,47 @@ func BatchDeleteGroup(mongikClient *mongikModels.Mongik, groups *[]primitive.Obj
 	})
 	return groupResult, studentResult, &studentError
 }
+
+func BatchAssignGroup(mongikClient *mongikModels.Mongik, assignRequests []interfaces.BatchAssignGroupRequest) ([]*mongo.UpdateResult, []*mongo.UpdateResult, []error) {
+	var addList, removeList []*mongo.UpdateResult
+	var errors []error
+
+	for idx := range assignRequests {
+		switch assignRequests[idx].Action {
+		case constants.ACTION_PUSH:
+			addResult, err := db.UpdateMany[model.StudentPopulated](mongikClient, constants.DB, constants.COLLECTION_STUDENT, bson.M{
+				"_id": bson.M{
+					"$in": assignRequests[idx].Students,
+				},
+			}, bson.M{
+				"$addToSet": bson.M{
+					"groups": bson.M{
+						"$each": assignRequests[idx].Groups,
+					},
+				},
+			})
+			addList = append(addList, addResult)
+			if err != nil {
+				errors = append(errors, err)
+			}
+		case constants.ACTION_PULL:
+			removeResult, err := db.UpdateMany[model.StudentPopulated](mongikClient, constants.DB, constants.COLLECTION_STUDENT, bson.M{
+				"_id": bson.M{
+					"$in": assignRequests[idx].Students,
+				},
+			}, bson.M{
+				"$pull": bson.M{
+					"groups": bson.M{
+						"$in": assignRequests[idx].Groups,
+					},
+				},
+			})
+			removeList = append(removeList, removeResult)
+			if err != nil {
+				errors = append(errors, err)
+			}
+		}
+
+	}
+	return addList, removeList, errors
+}

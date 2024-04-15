@@ -70,7 +70,7 @@ func main() {
 		group.POST("/batch", handler.GinVerifyStudent, handler.GetRoleCheckHandlerForStudent(constants.ROLE_GROUP_CREATE), handler.BatchCreateGroup)
 		group.PUT("/batch/edit", handler.GinVerifyStudent, handler.GetRoleCheckHandlerForStudent(constants.ROLE_GROUP_EDIT), handler.BatchEditGroup)
 		group.DELETE("/batch/delete", handler.GinVerifyStudent, handler.GetRoleCheckHandlerForStudent(constants.ROLE_GROUP_DELETE), handler.BatchDeleteGroup)
-		group.POST("/batch/assign")
+		group.POST("/batch/assign", handler.GinVerifyStudent, handler.GetRoleCheckHandlerForStudent(constants.ROLE_GROUP_ASSIGN), handler.BatchAssignGroup)
 	}
 
 	domain := r.Group("/api/domain")

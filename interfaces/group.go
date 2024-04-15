@@ -19,3 +19,9 @@ type BatchCreateGroupRequest struct {
 type BatchDeleteGroupRequest struct {
 	Groups []primitive.ObjectID `json:"groups" bson:"groups"`
 }
+
+type BatchAssignGroupRequest struct {
+	Action   constants.Action     `json:"action" bson:"action"`
+	Groups   []primitive.ObjectID `json:"groups" bson:"groups"`
+	Students []primitive.ObjectID `json:"students" bson:"students"`
+}
