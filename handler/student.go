@@ -85,6 +85,24 @@ func (h *Handler) GetAllTprs(ctx *gin.Context) {
 	})
 }
 
+// Already verified as Tpr by middleware
+func (h *Handler) HandlerTprLogin(ctx *gin.Context) {
+	value, exists := ctx.Get(constants.SESSION)
+	student, ok := value.(*model.StudentPopulated)
+
+	if !exists || !ok {
+		ctx.AbortWithStatusJSON(http.StatusForbidden, gin.H{
+			"message": constants.ERROR_ROLE_CHECK_FAILED,
+			"error":   "Student does not exist",
+		})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{
+		"data": student,
+	})
+}
+
 func (h *Handler) HandlerUpdateStudentDetails(ctx *gin.Context) {
 	studentCollection := h.MongikClient.MongoClient.Database(constants.DB).Collection(constants.COLLECTION_STUDENT)
 

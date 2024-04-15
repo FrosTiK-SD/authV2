@@ -59,8 +59,24 @@ func main() {
 		student.GET("/", handler.GinVerifyStudent, handler.GetRoleCheckHandlerForStudent(constants.ROLE_ADMIN), handler.GetAllStudents)
 		student.GET("/id", handler.GinVerifyStudent, handler.GetStudentById)
 		student.GET("/tpr/all", handler.GinVerifyStudent, handler.GetRoleCheckHandlerForStudent(constants.ROLE_ADMIN), handler.GetAllTprs)
+		student.GET("/tprLogin", handler.GinVerifyStudent, handler.GetRoleCheckHandlerForStudent(constants.ROLE_TPR), handler.HandlerTprLogin)
 		student.PUT("/update", handler.GinVerifyStudent, handler.HandlerUpdateStudentDetails)
 		student.POST("/register", handler.HandlerRegisterStudentDetails)
+	}
+
+	group := r.Group("/api/group")
+	{
+		group.GET("/")
+		group.PUT("/batch/edit")
+		group.DELETE("/batch/delete")
+		group.POST("/batch/assign")
+	}
+
+	domain := r.Group("/api/domain")
+	{
+		domain.GET("/")
+		domain.GET("/id")
+		domain.DELETE("/id")
 	}
 
 	port := "" + os.Getenv("PORT")
