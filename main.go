@@ -77,6 +77,7 @@ func main() {
 	{
 		domain.GET("/", handler.GinVerifyStudent, handler.GetRoleCheckHandlerForStudent(constants.ROLE_DOMAIN_ALL_READ), handler.GetAllDomains)
 		domain.GET("/id", handler.GinVerifyStudent, handler.GetRoleCheckHandlerForStudent(constants.ROLE_DOMAIN_ALL_READ), handler.GetDomainById)
+		domain.POST("/batch", handler.GinVerifyStudent, handler.GetRoleCheckHandlerForStudent(constants.ROLE_DOMAIN_CREATE), handler.BatchCreateDomain)
 		domain.DELETE("/id")
 	}
 

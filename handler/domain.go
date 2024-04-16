@@ -5,6 +5,7 @@ import (
 
 	"github.com/FrosTiK-SD/auth/constants"
 	"github.com/FrosTiK-SD/auth/controller"
+	"github.com/FrosTiK-SD/auth/interfaces"
 	"github.com/FrosTiK-SD/auth/util"
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -53,4 +54,38 @@ func (h *Handler) GetDomainById(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, gin.H{
 		"data": domain,
 	})
+}
+
+func (h *Handler) BatchCreateDomain(ctx *gin.Context) {
+
+	batchCreateDomainRequest := interfaces.BatchCreateDomainRequest{}
+
+	if errBinding := ctx.BindJSON(&batchCreateDomainRequest); errBinding != nil {
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+			"error":   constants.ERROR_INCORRENT_BODY,
+			"message": errBinding,
+		})
+		return
+	}
+
+	newDomains, usersList, errors := controller.BatchCreateDomain(h.MongikClient, batchCreateDomainRequest.Domains)
+
+	if len(errors) != 0 {
+		ctx.AbortWithStatusJSON(http.StatusPartialContent, gin.H{
+			"data": gin.H{
+				"newDomains": newDomains,
+				"usersList":  usersList,
+			},
+			"error": errors,
+		})
+		return
+	}
+	ctx.JSON(http.StatusOK, gin.H{
+		"data": gin.H{
+			"newDomains": newDomains,
+			"usersList":  usersList,
+		},
+		"error": nil,
+	})
+
 }
