@@ -78,3 +78,46 @@ func BatchCreateDomain(mongikClient *mongikModels.Mongik, domains []model.Domain
 
 	return domainResult, studentResults, errors
 }
+
+func UpdateDomainById(mongikClient *mongikModels.Mongik, domainId primitive.ObjectID, updatedDomain *model.Domain) (*model.Domain, *mongo.UpdateResult, *mongo.UpdateResult, error) {
+
+	oldDomain := db.FindOneAndUpdate[model.Domain](mongikClient, constants.DB, constants.COLLECTION_DOMAIN, bson.M{
+		"_id": domainId,
+	},
+		bson.M{
+			"$set": bson.M{
+				"domain":      updatedDomain.Domain,
+				"companyName": updatedDomain.CompanyName,
+				"assignedTo":  updatedDomain.AssignedTo,
+
+				"updatedAt": primitive.NewDateTimeFromTime(time.Now()),
+			},
+		},
+	)
+
+	removeDomainResult, err := db.UpdateMany[student.Student](mongikClient, constants.DB, constants.COLLECTION_STUDENT, bson.M{
+		"_id": bson.M{
+			"$in": oldDomain.AssignedTo,
+		},
+	}, bson.M{
+		"$pull": bson.M{
+			"companiesAlloted": oldDomain.Domain,
+		},
+	})
+
+	if err != nil {
+		return &oldDomain, removeDomainResult, nil, err
+	}
+
+	addDomainResult, err := db.UpdateMany[student.Student](mongikClient, constants.DB, constants.COLLECTION_STUDENT, bson.M{
+		"_id": bson.M{
+			"$in": updatedDomain.AssignedTo,
+		},
+	}, bson.M{
+		"$addToSet": bson.M{
+			"companiesAlloted": updatedDomain.Domain,
+		},
+	})
+
+	return &oldDomain, removeDomainResult, addDomainResult, err
+}

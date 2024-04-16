@@ -89,3 +89,49 @@ func (h *Handler) BatchCreateDomain(ctx *gin.Context) {
 	})
 
 }
+
+func (h *Handler) EditDomainById(ctx *gin.Context) {
+
+	domainId, err := primitive.ObjectIDFromHex(ctx.GetHeader("id"))
+
+	if err != nil {
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+			"error":   constants.ERROR_INCORRENT_BODY,
+			"message": "Invalid Domain ID",
+		})
+		return
+	}
+
+	updateDomainRequest := interfaces.UpdateDomainRequest{}
+
+	if errBinding := ctx.BindJSON(&updateDomainRequest); errBinding != nil {
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+			"error":   constants.ERROR_INCORRENT_BODY,
+			"message": errBinding,
+		})
+		return
+	}
+
+	oldDomain, oldStudentsResult, newStudentsResult, err := controller.UpdateDomainById(h.MongikClient, domainId, &updateDomainRequest.Domain)
+
+	if err != nil {
+		ctx.AbortWithStatusJSON(http.StatusPartialContent, gin.H{
+			"data": gin.H{
+				"oldDomain":        oldDomain,
+				"usersListOld":     oldStudentsResult,
+				"usersListUpdated": newStudentsResult,
+			},
+			"error": err,
+		})
+		return
+	}
+
+	ctx.AbortWithStatusJSON(http.StatusOK, gin.H{
+		"data": gin.H{
+			"oldDomain":        oldDomain,
+			"usersListOld":     oldStudentsResult,
+			"usersListUpdated": newStudentsResult,
+		},
+		"error": nil,
+	})
+}
