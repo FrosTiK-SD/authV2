@@ -56,7 +56,7 @@ func main() {
 
 	student := r.Group("/api/student")
 	{
-		student.GET("/", handler.GinVerifyStudent, handler.GetRoleCheckHandlerForStudent(constants.ROLE_ADMIN), handler.GetAllStudents)
+		student.GET("", handler.GinVerifyStudent, handler.GetRoleCheckHandlerForStudent(constants.ROLE_ADMIN), handler.GetAllStudents)
 		student.GET("/id", handler.GinVerifyStudent, handler.GetStudentById)
 		student.GET("/tpr/all", handler.GinVerifyStudent, handler.GetRoleCheckHandlerForStudent(constants.ROLE_ADMIN), handler.GetAllTprs)
 		student.GET("/tprLogin", handler.GinVerifyStudent, handler.GetRoleCheckHandlerForStudent(constants.ROLE_TPR), handler.HandlerTprLogin)
@@ -66,7 +66,7 @@ func main() {
 
 	group := r.Group("/api/group")
 	{
-		group.GET("/", handler.GinVerifyStudent, handler.GetRoleCheckHandlerForStudent(constants.ROLE_GROUP_READ), handler.GetAllGroups)
+		group.GET("", handler.GinVerifyStudent, handler.GetRoleCheckHandlerForStudent(constants.ROLE_GROUP_READ), handler.GetAllGroups)
 		group.POST("/batch", handler.GinVerifyStudent, handler.GetRoleCheckHandlerForStudent(constants.ROLE_GROUP_CREATE), handler.BatchCreateGroup)
 		group.PUT("/batch/edit", handler.GinVerifyStudent, handler.GetRoleCheckHandlerForStudent(constants.ROLE_GROUP_EDIT), handler.BatchEditGroup)
 		group.DELETE("/batch/delete", handler.GinVerifyStudent, handler.GetRoleCheckHandlerForStudent(constants.ROLE_GROUP_DELETE), handler.BatchDeleteGroup)
@@ -75,7 +75,7 @@ func main() {
 
 	domain := r.Group("/api/domain")
 	{
-		domain.GET("/", handler.GinVerifyStudent, handler.GetRoleCheckHandlerForStudent(constants.ROLE_DOMAIN_ALL_READ), handler.GetAllDomains)
+		domain.GET("", handler.GinVerifyStudent, handler.GetRoleCheckHandlerForStudent(constants.ROLE_DOMAIN_ALL_READ), handler.GetAllDomains)
 		domain.GET("/id", handler.GinVerifyStudent, handler.GetRoleCheckHandlerForStudent(constants.ROLE_DOMAIN_ALL_READ), handler.GetDomainById)
 		domain.POST("/batch", handler.GinVerifyStudent, handler.GetRoleCheckHandlerForStudent(constants.ROLE_DOMAIN_CREATE), handler.BatchCreateDomain)
 		domain.PUT("/id", handler.GinVerifyStudent, handler.GetRoleCheckHandlerForStudent(constants.ROLE_DOMAIN_EDIT), handler.EditDomainById)
