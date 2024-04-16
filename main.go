@@ -82,6 +82,11 @@ func main() {
 		domain.DELETE("/id", handler.GinVerifyStudent, handler.GetRoleCheckHandlerForStudent(constants.ROLE_DOMAIN_DELETE), handler.DeleteDomainById)
 	}
 
+	companies := r.Group("/api/company", handler.GinVerifyStudent)
+	{
+		companies.GET("/all", handler.GetRoleCheckHandlerForStudent(constants.ROLE_COMPANY_ALL_READ), handler.GetAllCompanies)
+	}
+
 	port := "" + os.Getenv("PORT")
 	if port == "" {
 		port = "8080"
