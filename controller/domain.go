@@ -121,3 +121,37 @@ func UpdateDomainById(mongikClient *mongikModels.Mongik, domainId primitive.Obje
 
 	return &oldDomain, removeDomainResult, addDomainResult, err
 }
+
+func DeleteDomainById(mongikClient *mongikModels.Mongik, domainId primitive.ObjectID, noCache bool) (*mongo.DeleteResult, *mongo.UpdateResult, error) {
+	deletedDomain, err := db.AggregateOne[model.Domain](mongikClient, constants.DB, constants.COLLECTION_DOMAIN, []bson.M{
+		{
+			"$match": bson.M{
+				"_id": domainId,
+			},
+		},
+	}, noCache)
+
+	if err != nil {
+		return nil, nil, err
+	}
+
+	deleteResult, err := db.DeleteOne(mongikClient, constants.DB, constants.COLLECTION_DOMAIN, bson.M{
+		"_id": domainId,
+	})
+
+	if err != nil {
+		return deleteResult, nil, err
+	}
+
+	studentResult, err := db.UpdateMany[student.Student](mongikClient, constants.DB, constants.COLLECTION_STUDENT, bson.M{
+		"_id": bson.M{
+			"$in": deletedDomain.AssignedTo,
+		},
+	}, bson.M{
+		"$pull": bson.M{
+			"companiesAlloted": deletedDomain.Domain,
+		},
+	})
+
+	return deleteResult, studentResult, err
+}

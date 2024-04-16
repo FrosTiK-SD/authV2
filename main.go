@@ -79,7 +79,7 @@ func main() {
 		domain.GET("/id", handler.GinVerifyStudent, handler.GetRoleCheckHandlerForStudent(constants.ROLE_DOMAIN_ALL_READ), handler.GetDomainById)
 		domain.POST("/batch", handler.GinVerifyStudent, handler.GetRoleCheckHandlerForStudent(constants.ROLE_DOMAIN_CREATE), handler.BatchCreateDomain)
 		domain.PUT("/id", handler.GinVerifyStudent, handler.GetRoleCheckHandlerForStudent(constants.ROLE_DOMAIN_EDIT), handler.EditDomainById)
-		domain.DELETE("/id")
+		domain.DELETE("/id", handler.GinVerifyStudent, handler.GetRoleCheckHandlerForStudent(constants.ROLE_DOMAIN_DELETE), handler.DeleteDomainById)
 	}
 
 	port := "" + os.Getenv("PORT")

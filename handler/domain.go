@@ -135,3 +135,41 @@ func (h *Handler) EditDomainById(ctx *gin.Context) {
 		"error": nil,
 	})
 }
+
+func (h *Handler) DeleteDomainById(ctx *gin.Context) {
+
+	noCache := util.GetNoCache(ctx)
+	domainId, err := primitive.ObjectIDFromHex(ctx.GetHeader("id"))
+
+	if err != nil {
+
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+			"error":   constants.ERROR_INCORRENT_BODY,
+			"message": "Invalid Domain Id",
+		})
+		return
+	}
+
+	deleteResult, studentResult, err := controller.DeleteDomainById(h.MongikClient, domainId, noCache)
+
+	if err != nil {
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+			"data": gin.H{
+				"deleteResult":  deleteResult,
+				"studentResult": studentResult,
+			},
+			"error":   constants.ERROR_MONGO_ERROR,
+			"message": err,
+		})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{
+		"data": gin.H{
+			"deleteResult":  deleteResult,
+			"studentResult": studentResult,
+		},
+		"error": nil,
+	})
+
+}
