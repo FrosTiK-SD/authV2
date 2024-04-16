@@ -1,13 +1,13 @@
 package interfaces
 
 type GenericField struct {
-	DataType    string      `json:"dataType"`
-	DataChoices *[]string   `json:"dataChoices,omitempty"`
-	IsVerified  *bool       `json:"isVerified,omitempty"`
-	Value       interface{} `json:"value"`
-	IsEditable  bool        `json:"isEditable"`
-	IsRequired  bool        `json:"isRequired"`
-	IsNull      bool        `json:"isNull"`
+	DataType    string    `json:"dataType"`
+	DataChoices *[]string `json:"dataChoices,omitempty"`
+	IsVerified  *bool     `json:"isVerified,omitempty"`
+	Value       any       `json:"value"`
+	IsLocked    bool      `json:"isEditable"`
+	IsRequired  bool      `json:"isRequired"`
+	IsNull      bool      `json:"isNull"`
 }
 
 type ProfilePersonal struct {
@@ -15,8 +15,10 @@ type ProfilePersonal struct {
 	MiddleName       GenericField `json:"middle_name,omitempty"`
 	LastName         GenericField `json:"last_name,omitempty"`
 	Gender           GenericField `json:"gender,omitempty"`
+	DOB              GenericField `json:"dob,omitempty"`
 	PermanentAddress GenericField `json:"permanent_address,omitempty"`
 	PresentAddress   GenericField `json:"present_address,omitempty"`
+	PersonalEmail    GenericField `json:"personal_email,omitempty"`
 	Mobile           GenericField `json:"mobile,omitempty"`
 	Category         GenericField `json:"category,omitempty"`
 	IsPWD            GenericField `json:"is_pwd,omitempty"`
