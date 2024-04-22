@@ -55,8 +55,26 @@ func MapProfilePersonal(profile *interfaces.ProfilePersonal, student *model.Stud
 	profile.Mobile.IsRequired = true
 }
 
+func MapProfileCurrentAcademics(profile *interfaces.ProfileCurrentAcademics, academics *studentModel.Academics) {
+	AssignNilPossibleValue(&profile.SemesterSPI.One, academics.SemesterSPI.One)
+	AssignNilPossibleValue(&profile.SemesterSPI.Two, academics.SemesterSPI.Two)
+	AssignNilPossibleValue(&profile.SemesterSPI.Three, academics.SemesterSPI.Three)
+	AssignNilPossibleValue(&profile.SemesterSPI.Four, academics.SemesterSPI.Four)
+	AssignNilPossibleValue(&profile.SemesterSPI.Five, academics.SemesterSPI.Five)
+	AssignNilPossibleValue(&profile.SemesterSPI.Six, academics.SemesterSPI.Six)
+	AssignNilPossibleValue(&profile.SemesterSPI.Seven, academics.SemesterSPI.Seven)
+	AssignNilPossibleValue(&profile.SemesterSPI.Eight, academics.SemesterSPI.Eight)
+
+	AssignNilPossibleValue(&profile.SummerTermSPI.One, academics.SummerTermSPI.One)
+	AssignNilPossibleValue(&profile.SummerTermSPI.Two, academics.SummerTermSPI.Two)
+	AssignNilPossibleValue(&profile.SummerTermSPI.Three, academics.SummerTermSPI.Three)
+	AssignNilPossibleValue(&profile.SummerTermSPI.Four, academics.SummerTermSPI.Four)
+	AssignNilPossibleValue(&profile.SummerTermSPI.Five, academics.SummerTermSPI.Five)
+}
+
 func MapStudentToStudentProfile(student *model.StudentPopulated) interfaces.StudentProfile {
 	var profile interfaces.StudentProfile
 	MapProfilePersonal(&profile.Profile.PersonalProfile, student)
+	MapProfileCurrentAcademics(&profile.CurrentAcademics, &student.Academics)
 	return profile
 }
