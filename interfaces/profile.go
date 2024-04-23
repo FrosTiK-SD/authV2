@@ -8,6 +8,7 @@ type GenericField struct {
 	IsLocked    bool      `json:"isEditable"`
 	IsRequired  bool      `json:"isRequired"`
 	IsNull      bool      `json:"isNull"`
+	IsHidden bool `json:"isHidden"`
 }
 
 type ProfilePersonal struct {
