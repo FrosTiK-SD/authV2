@@ -22,6 +22,15 @@ func AssignReservationCategory(category *interfaces.GenericField, isEWS *interfa
 	}
 }
 
+func AssignSocialProfile(field *interfaces.GenericField, social *studentModel.SocialProfile) {
+	field.IsNull = reflect2.IsNil(field)
+	field.DataType = "Social"
+
+	if !field.IsNull {
+		field.Value = social.URL + "|" + social.Username
+	}
+}
+
 func AssignNilPossibleValue(field *interfaces.GenericField, value any) {
 	field.Value = value
 	field.IsNull = reflect2.IsNil(value)
@@ -70,6 +79,9 @@ func MapProfileCurrentAcademics(profile *interfaces.ProfileCurrentAcademics, aca
 	AssignNilPossibleValue(&profile.SummerTermSPI.Three, academics.SummerTermSPI.Three)
 	AssignNilPossibleValue(&profile.SummerTermSPI.Four, academics.SummerTermSPI.Four)
 	AssignNilPossibleValue(&profile.SummerTermSPI.Five, academics.SummerTermSPI.Five)
+}
+
+func MapProfileSocials(profile *interfaces.ProfileSocials, socials *studentModel.SocialProfiles) {
 }
 
 func MapStudentToStudentProfile(student *model.StudentPopulated) interfaces.StudentProfile {
