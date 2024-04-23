@@ -43,6 +43,12 @@ type ProfileSocials struct {
 	Leetcode       GenericField `json:"leetcode,omitempty"`
 }
 
+type GenericRank struct {
+	Rank       GenericField `json:"rank,omitempty"`
+	IsEWS      GenericField `json:"isEWS,omitempty"`
+	IsPWD      GenericField `json:"isPWD,omitempty"`
+}
+
 type ProfileInstitute struct {
 	RollNumber     GenericField `json:"rollNo,omitempty"`
 	InstituteEmail GenericField `json:"email,omitempty"`
@@ -53,6 +59,8 @@ type ProfileInstitute struct {
 	Honours        GenericField `json:"honours,omitempty"`
 	ThesisEndDate  GenericField `json:"thesisEndDate,omitempty"`
 	EducationGap   GenericField `json:"educationGap,omitempty"`
+	JeeRank GenericRank `json:"jeeRank,omitempty"`
+	GateRank GenericRank `json:"gateRank,omitempty"`
 }
 
 type ProfileDetails struct {
