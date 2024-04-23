@@ -6,12 +6,16 @@ import (
 
 	"strconv"
 
+	"github.com/FrosTiK-SD/auth/constants"
 	"github.com/FrosTiK-SD/auth/interfaces"
 	"github.com/FrosTiK-SD/auth/model"
-	"github.com/FrosTiK-SD/models/student"
 	studentModel "github.com/FrosTiK-SD/models/student"
 	"github.com/modern-go/reflect2"
 )
+
+var PointerToNilString *string = nil
+var PointerToNilInteger *int = nil
+var PointerToNilFloat64 *float64 = nil
 
 func AssignReservationCategory(category *interfaces.GenericField, isEWS *interfaces.GenericField, isPWD *interfaces.GenericField, rc *studentModel.ReservationCategory) {
 	if reflect2.IsNil(rc) {
@@ -23,22 +27,27 @@ func AssignReservationCategory(category *interfaces.GenericField, isEWS *interfa
 		isEWS.Value = rc.IsEWS
 		isPWD.Value = rc.IsPWD
 	}
+
+	category.DataType = constants.TYPE_STRING
+	isEWS.DataType = constants.TYPE_BOOL
+	isPWD.DataType = constants.TYPE_BOOL
 }
 
 func AssignSocialProfile(field *interfaces.GenericField, social *studentModel.SocialProfile) {
+	field.DataType = constants.TYPE_SOCIAL
+
 	if social != nil {
 		field.IsNull = reflect2.IsNil(field)
-		field.DataType = "Social"
 
 		if !field.IsNull {
 			field.Value = social.URL + "|" + social.Username
 		}
+
+		return
 	}
-	if social == nil {
-		field.IsNull = true
-		field.DataType = "Social"
-		field.Value = "null"
-	}
+
+	field.IsNull = true
+	field.Value = nil
 }
 
 func AssignNilPossibleValue(field *interfaces.GenericField, value any) {
@@ -52,29 +61,31 @@ func AssignNotNilValue(field *interfaces.GenericField, value any) {
 	field.DataType = fmt.Sprintf("%v", reflect.TypeOf(value))
 }
 
-func AssignPastAcademics(field *interfaces.ProfilePastEducation, education *student.EducationDetails) {
-	if education == nil {
-       AssignNilPossibleValue(&field.Certification,education)
-       AssignNilPossibleValue(&field.Institute,education)
-	   AssignNilPossibleValue(&field.Year,education)
-	   AssignNilPossibleValue(&field.Score,education)
-	}
+func AssignPastAcademics(field *interfaces.ProfilePastEducation, education *studentModel.EducationDetails) {
 	if education != nil {
-		AssignNotNilValue(&field.Certification,education.Certification)
-        AssignNotNilValue(&field.Institute,education.Institute)
-        AssignNotNilValue(&field.Year,education.Year)
-        AssignNotNilValue(&field.Score,education.Score)
+		AssignNotNilValue(&field.Certification, education.Certification)
+		AssignNotNilValue(&field.Institute, education.Institute)
+		AssignNotNilValue(&field.Year, education.Year)
+		AssignNotNilValue(&field.Score, education.Score)
+		return
 	}
+
+	AssignNilPossibleValue(&field.Certification, PointerToNilString)
+	AssignNilPossibleValue(&field.Institute, PointerToNilInteger)
+	AssignNilPossibleValue(&field.Year, PointerToNilInteger)
+	AssignNilPossibleValue(&field.Score, PointerToNilFloat64)
 }
 
-func AssignRankValue(rankField *interfaces.GenericRank, rankDetails *student.RankDetails){
-	if rankDetails == nil {
-        AssignNilPossibleValue(&rankField.Rank,rankDetails)
-    }
-    if rankDetails != nil {
-        AssignNotNilValue(&rankField.Rank,rankDetails.Rank)
-		AssignReservationCategory(&rankField.Rank,&rankField.IsEWS,&rankField.IsPWD,&rankDetails.RankCategory)
-    }
+func AssignRankValue(field *interfaces.GenericRank, rankDetails *studentModel.RankDetails) {
+	if rankDetails != nil {
+		AssignNotNilValue(&field.Rank, rankDetails.Rank)
+		AssignReservationCategory(&field.Rank, &field.IsEWS, &field.IsPWD, &rankDetails.RankCategory)
+		return
+
+	}
+
+	AssignNilPossibleValue(&field.Rank, PointerToNilInteger)
+	AssignReservationCategory(&field.Category, &field.IsEWS, &field.IsPWD, nil)
 }
 
 func MapProfilePersonal(profile *interfaces.ProfilePersonal, student *model.StudentPopulated) {
@@ -94,6 +105,7 @@ func MapProfilePersonal(profile *interfaces.ProfilePersonal, student *model.Stud
 	AssignNotNilValue(&profile.MotherName, student.ParentsDetails.MotherName)
 	AssignNotNilValue(&profile.FatherOccupation, student.ParentsDetails.FatherOccupation)
 	AssignNotNilValue(&profile.MotherOccupation, student.ParentsDetails.MotherOccupation)
+
 	// required
 	profile.FirstName.IsRequired = true
 	profile.DOB.IsRequired = true
@@ -121,7 +133,7 @@ func MapProfileCurrentAcademics(profile *interfaces.ProfileCurrentAcademics, aca
 
 func AssignBatch(profile *interfaces.GenericField, institute *studentModel.Student) {
 	profile.IsNull = reflect2.IsNil(institute.Batch)
-	profile.DataType = "string"
+	profile.DataType = constants.TYPE_STRING
 	if !profile.IsNull {
 		profile.Value = strconv.Itoa(institute.Batch.StartYear) + "-" + strconv.Itoa(institute.Batch.EndYear)
 	}
@@ -158,9 +170,9 @@ func MapPastAcademics(profile *interfaces.ProfilePastAcademics, institute *stude
 	AssignPastAcademics(&profile.Postgraduate, institute.PostGraduate)
 }
 
-func MapRanks(profile *interfaces.ProfileInstitute,institute *studentModel.Academics){
-	AssignRankValue(&profile.JeeRank,institute.JEERank)
-	AssignRankValue(&profile.GateRank,institute.GATERank)
+func MapRanks(profile *interfaces.ProfilePastAcademics, rank *studentModel.Academics) {
+	AssignRankValue(&profile.JeeRank, rank.JEERank)
+	AssignRankValue(&profile.GateRank, rank.GATERank)
 }
 
 func MapStudentToStudentProfile(student *model.StudentPopulated) interfaces.StudentProfile {
@@ -170,6 +182,6 @@ func MapStudentToStudentProfile(student *model.StudentPopulated) interfaces.Stud
 	MapProfileSocials(&profile.Profile.SocialProfile, &student.SocialProfiles)
 	MapProfileInstitute(&profile.Profile.InstituteProfile, &student.Student)
 	MapPastAcademics(&profile.PastAcademics, &student.Academics)
-	MapRanks(&profile.Profile.InstituteProfile, &student.Academics)
+	MapRanks(&profile.PastAcademics, &student.Academics)
 	return profile
 }

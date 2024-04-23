@@ -44,9 +44,10 @@ type ProfileSocials struct {
 }
 
 type GenericRank struct {
-	Rank       GenericField `json:"rank,omitempty"`
-	IsEWS      GenericField `json:"isEWS,omitempty"`
-	IsPWD      GenericField `json:"isPWD,omitempty"`
+	Rank     GenericField `json:"rank,omitempty"`
+	Category GenericField `json:"category,omitempty"`
+	IsEWS    GenericField `json:"isEWS,omitempty"`
+	IsPWD    GenericField `json:"isPWD,omitempty"`
 }
 
 type ProfileInstitute struct {
@@ -59,8 +60,6 @@ type ProfileInstitute struct {
 	Honours        GenericField `json:"honours,omitempty"`
 	ThesisEndDate  GenericField `json:"thesisEndDate,omitempty"`
 	EducationGap   GenericField `json:"educationGap,omitempty"`
-	JeeRank GenericRank `json:"jeeRank,omitempty"`
-	GateRank GenericRank `json:"gateRank,omitempty"`
 }
 
 type ProfileDetails struct {
@@ -81,6 +80,8 @@ type ProfilePastAcademics struct {
 	ClassXII      ProfilePastEducation `json:"class_xii,omitempty"`
 	Undergraduate ProfilePastEducation `json:"undergraduate,omitempty"`
 	Postgraduate  ProfilePastEducation `json:"postgraduate,omitempty"`
+	JeeRank       GenericRank          `json:"jeeRank,omitempty"`
+	GateRank      GenericRank          `json:"gateRank,omitempty"`
 }
 
 type ProfileSemesterSPI struct {
