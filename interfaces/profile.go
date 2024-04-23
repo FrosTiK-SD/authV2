@@ -3,12 +3,11 @@ package interfaces
 type GenericField struct {
 	DataType    string    `json:"dataType"`
 	DataChoices *[]string `json:"dataChoices,omitempty"`
-	IsVerified  *bool     `json:"isVerified,omitempty"`
+	IsVerified  *bool    `json:"isVerified,omitempty"`
 	Value       any       `json:"value"`
 	IsLocked    bool      `json:"isEditable"`
 	IsRequired  bool      `json:"isRequired"`
 	IsNull      bool      `json:"isNull"`
-	IsHidden    bool      `json:"isHidden"`
 }
 
 type ProfilePersonal struct {
@@ -24,17 +23,35 @@ type ProfilePersonal struct {
 	Category         GenericField `json:"category,omitempty"`
 	IsPWD            GenericField `json:"is_pwd,omitempty"`
 	IsEWS            GenericField `json:"is_ews,omitempty"`
+	FatherName 		 GenericField `json:"fatherName,omitempty"`
+	FatherOccupation GenericField `json:"fatherOccupation,omitempty"`
+	MotherName 		 GenericField `json:"motherName,omitempty"`
+	MotherOccupation GenericField `json:"motherOccupation,omitempty"`
 	MotherTongue     GenericField `json:"mother_tongue,omitempty"`
 }
 
 type ProfileSocials struct {
 	LinkedIn GenericField `json:"linked_in,omitempty"`
 	Github   GenericField `json:"github,omitempty"`
+	Kaggle GenericField `json:"kaggle,omitempty"`
+	MicrosoftTeams GenericField `json:"microsoftTeams,omitempty"`
+    Skype GenericField `json:"skype,omitempty"`
+    GoogleScholar GenericField `json:"googleScholar,omitempty"`
+	Codeforces GenericField `json:"codeforces,omitempty"`
+	CodeChef GenericField `json:"codeChef,omitempty"`
+	Leetcode GenericField `json:"leetcode,omitempty"`
 }
 
 type ProfileInstitute struct {
 	RollNumber     GenericField `json:"roll_number,omitempty"`
 	InstituteEmail GenericField `json:"institute_email,omitempty"`
+	Batch GenericField `json:"batch,omitempty"`
+	Department GenericField `json:"department,omitempty"`
+	Course GenericField `json:"course,omitempty"`
+	Specialisation GenericField `json:"specialisation,omitempty"`
+	Honours GenericField `json:"honours,omitempty"`
+	ThesisEndDate GenericField `json:"thesisEndDate,omitempty"`
+	EducationGap GenericField `json:"educationGap,omitempty"`
 }
 
 type ProfileDetails struct {

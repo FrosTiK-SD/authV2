@@ -23,7 +23,7 @@ func AssignReservationCategory(category *interfaces.GenericField, isEWS *interfa
 }
 
 func AssignNilPossibleValue(field *interfaces.GenericField, value any) {
-	field.Value = value
+	field.Value = nil
 	field.IsNull = reflect2.IsNil(value)
 	field.DataType = fmt.Sprintf("%v", reflect.TypeOf(value))
 }
@@ -33,48 +33,48 @@ func AssignNotNilValue(field *interfaces.GenericField, value any) {
 	field.DataType = fmt.Sprintf("%v", reflect.TypeOf(value))
 }
 
-func MapProfilePersonal(profile *interfaces.ProfilePersonal, student *model.StudentPopulated) {
-	AssignNotNilValue(&profile.FirstName, student.FirstName)
-	AssignNilPossibleValue(&profile.MiddleName, student.MiddleName)
-	AssignNilPossibleValue(&profile.LastName, student.LastName)
-
-	AssignNilPossibleValue(&profile.Gender, student.Gender)
-	AssignNilPossibleValue(&profile.DOB, student.DOB)
-	AssignNotNilValue(&profile.PermanentAddress, student.PermanentAddress)
-	AssignNotNilValue(&profile.PresentAddress, student.PresentAddress)
-	AssignNotNilValue(&profile.PersonalEmail, student.PersonalEmail)
-	AssignNilPossibleValue(&profile.Mobile, student.Mobile)
-	AssignReservationCategory(&profile.Category, &profile.IsEWS, &profile.IsPWD, student.Category)
-	AssignNotNilValue(&profile.MotherTongue, student.MotherTongue)
+func MapProfileDetails(profile *interfaces.StudentProfile, student *model.StudentPopulated) {
+	AssignNotNilValue(&profile.Profile.PersonalProfile.FirstName, student.FirstName)
+	AssignNotNilValue(&profile.Profile.InstituteProfile.RollNumber,student.RollNo)
+	AssignNotNilValue(&profile.Profile.InstituteProfile.InstituteEmail,student.InstituteEmail)
+	AssignNotNilValue(&profile.Profile.PersonalProfile.PermanentAddress,student.PermanentAddress)
+	AssignNilPossibleValue(&profile.Profile.PersonalProfile.MiddleName, student.MiddleName)
+	AssignNilPossibleValue(&profile.Profile.PersonalProfile.LastName, student.LastName)
+	AssignNilPossibleValue(&profile.Profile.PersonalProfile.Gender, student.Gender)
+	AssignNilPossibleValue(&profile.Profile.PersonalProfile.DOB, student.DOB)
+	AssignNotNilValue(&profile.Profile.PersonalProfile.PresentAddress, student.PresentAddress)
+	AssignNotNilValue(&profile.Profile.PersonalProfile.PersonalEmail, student.PersonalEmail)
+	AssignNilPossibleValue(&profile.Profile.PersonalProfile.Mobile, student.Mobile)
+	AssignReservationCategory(&profile.Profile.PersonalProfile.Category, &profile.Profile.PersonalProfile.IsEWS, &profile.Profile.PersonalProfile.IsPWD, student.Category)
+	AssignNotNilValue(&profile.Profile.PersonalProfile.MotherTongue, student.MotherTongue)
+	AssignNilPossibleValue(&profile.Profile.InstituteProfile.Specialisation, student.Specialisation)
+	AssignNilPossibleValue(&profile.Profile.InstituteProfile.Honours,student.Academics.Honours)
+	AssignNilPossibleValue(&profile.Profile.InstituteProfile.EducationGap,student.Academics.EducationGap)
+	AssignNilPossibleValue(&profile.Profile.InstituteProfile.ThesisEndDate,student.Academics.ThesisEndDate)
+    AssignNotNilValue(&profile.Profile.PersonalProfile.MotherName,student.ParentsDetails.MotherName)
+	AssignNotNilValue(&profile.Profile.PersonalProfile.FatherName,student.ParentsDetails.FatherName)
+	AssignNotNilValue(&profile.Profile.PersonalProfile.MotherOccupation,student.ParentsDetails.MotherOccupation)
+	AssignNotNilValue(&profile.Profile.PersonalProfile.FatherOccupation,student.ParentsDetails.FatherOccupation)
+	AssignNilPossibleValue(&profile.CurrentAcademics.SemesterSPI.Seven,student.Academics.SemesterSPI.Seven)
+	AssignNilPossibleValue(&profile.CurrentAcademics.SemesterSPI.Eight,student.Academics.SemesterSPI.Eight)
+	AssignNilPossibleValue(&profile.CurrentAcademics.SemesterSPI.Nine,student.Academics.SemesterSPI.Nine)
+	AssignNilPossibleValue(&profile.CurrentAcademics.SemesterSPI.Ten,student.Academics.SemesterSPI.Ten)
+	AssignNilPossibleValue(&profile.CurrentAcademics.SummerTermSPI.One,student.Academics.SummerTermSPI.One)
+	AssignNilPossibleValue(&profile.CurrentAcademics.SummerTermSPI.Two,student.Academics.SummerTermSPI.Two)
+	AssignNilPossibleValue(&profile.CurrentAcademics.SummerTermSPI.Three,student.Academics.SummerTermSPI.Three)
+	AssignNilPossibleValue(&profile.CurrentAcademics.SummerTermSPI.Four,student.Academics.SummerTermSPI.Four)
+	AssignNilPossibleValue(&profile.CurrentAcademics.SummerTermSPI.Five,student.Academics.SummerTermSPI.Five)
 
 	// required
-	profile.FirstName.IsRequired = true
-	profile.DOB.IsRequired = true
-	profile.PermanentAddress.IsRequired = true
-	profile.PersonalEmail.IsRequired = true
-	profile.Mobile.IsRequired = true
-}
-
-func MapProfileCurrentAcademics(profile *interfaces.ProfileCurrentAcademics, academics *studentModel.Academics) {
-	AssignNilPossibleValue(&profile.SemesterSPI.One, academics.SemesterSPI.One)
-	AssignNilPossibleValue(&profile.SemesterSPI.Two, academics.SemesterSPI.Two)
-	AssignNilPossibleValue(&profile.SemesterSPI.Three, academics.SemesterSPI.Three)
-	AssignNilPossibleValue(&profile.SemesterSPI.Four, academics.SemesterSPI.Four)
-	AssignNilPossibleValue(&profile.SemesterSPI.Five, academics.SemesterSPI.Five)
-	AssignNilPossibleValue(&profile.SemesterSPI.Six, academics.SemesterSPI.Six)
-	AssignNilPossibleValue(&profile.SemesterSPI.Seven, academics.SemesterSPI.Seven)
-	AssignNilPossibleValue(&profile.SemesterSPI.Eight, academics.SemesterSPI.Eight)
-
-	AssignNilPossibleValue(&profile.SummerTermSPI.One, academics.SummerTermSPI.One)
-	AssignNilPossibleValue(&profile.SummerTermSPI.Two, academics.SummerTermSPI.Two)
-	AssignNilPossibleValue(&profile.SummerTermSPI.Three, academics.SummerTermSPI.Three)
-	AssignNilPossibleValue(&profile.SummerTermSPI.Four, academics.SummerTermSPI.Four)
-	AssignNilPossibleValue(&profile.SummerTermSPI.Five, academics.SummerTermSPI.Five)
+	profile.Profile.PersonalProfile.FirstName.IsRequired = true
+	profile.Profile.PersonalProfile.DOB.IsRequired = true
+	profile.Profile.PersonalProfile.PermanentAddress.IsRequired = true
+	profile.Profile.PersonalProfile.PersonalEmail.IsRequired = true
+	profile.Profile.PersonalProfile.Mobile.IsRequired = true
 }
 
 func MapStudentToStudentProfile(student *model.StudentPopulated) interfaces.StudentProfile {
 	var profile interfaces.StudentProfile
-	MapProfilePersonal(&profile.Profile.PersonalProfile, student)
-	MapProfileCurrentAcademics(&profile.CurrentAcademics, &student.Academics)
+	MapProfileDetails(&profile, student)
 	return profile
 }
