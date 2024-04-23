@@ -12,29 +12,47 @@ type GenericField struct {
 }
 
 type ProfilePersonal struct {
-	FirstName        GenericField `json:"first_name,omitempty"`
-	MiddleName       GenericField `json:"middle_name,omitempty"`
-	LastName         GenericField `json:"last_name,omitempty"`
+	FirstName        GenericField `json:"firstName,omitempty"`
+	MiddleName       GenericField `json:"middleName,omitempty"`
+	LastName         GenericField `json:"lastName,omitempty"`
 	Gender           GenericField `json:"gender,omitempty"`
 	DOB              GenericField `json:"dob,omitempty"`
-	PermanentAddress GenericField `json:"permanent_address,omitempty"`
-	PresentAddress   GenericField `json:"present_address,omitempty"`
-	PersonalEmail    GenericField `json:"personal_email,omitempty"`
+	PermanentAddress GenericField `json:"permanentAddress,omitempty"`
+	PresentAddress   GenericField `json:"presentAddress,omitempty"`
+	PersonalEmail    GenericField `json:"personalEmail,omitempty"`
 	Mobile           GenericField `json:"mobile,omitempty"`
 	Category         GenericField `json:"category,omitempty"`
-	IsPWD            GenericField `json:"is_pwd,omitempty"`
-	IsEWS            GenericField `json:"is_ews,omitempty"`
-	MotherTongue     GenericField `json:"mother_tongue,omitempty"`
+	IsPWD            GenericField `json:"isPWD,omitempty"`
+	IsEWS            GenericField `json:"isEWS,omitempty"`
+	FatherName       GenericField `json:"fatherName,omitempty"`
+	FatherOccupation GenericField `json:"fatherOccupation,omitempty"`
+	MotherName       GenericField `json:"motherName,omitempty"`
+	MotherOccupation GenericField `json:"motherOccupation,omitempty"`
+	MotherTongue     GenericField `json:"motherTongue,omitempty"`
 }
 
 type ProfileSocials struct {
-	LinkedIn GenericField `json:"linked_in,omitempty"`
-	Github   GenericField `json:"github,omitempty"`
+	LinkedIn       GenericField `json:"linkedIn,omitempty"`
+	Github         GenericField `json:"github,omitempty"`
+	Kaggle         GenericField `json:"kaggle,omitempty"`
+	MicrosoftTeams GenericField `json:"microsoftTeams,omitempty"`
+	Skype          GenericField `json:"skype,omitempty"`
+	GoogleScholar  GenericField `json:"googleScholar,omitempty"`
+	Codeforces     GenericField `json:"codeforces,omitempty"`
+	CodeChef       GenericField `json:"codechef,omitempty"`
+	Leetcode       GenericField `json:"leetcode,omitempty"`
 }
 
 type ProfileInstitute struct {
-	RollNumber     GenericField `json:"roll_number,omitempty"`
-	InstituteEmail GenericField `json:"institute_email,omitempty"`
+	RollNumber     GenericField `json:"rollNo,omitempty"`
+	InstituteEmail GenericField `json:"email,omitempty"`
+	Batch          GenericField `json:"batch,omitempty"`
+	Department     GenericField `json:"department,omitempty"`
+	Course         GenericField `json:"course,omitempty"`
+	Specialisation GenericField `json:"specialisation,omitempty"`
+	Honours        GenericField `json:"honours,omitempty"`
+	ThesisEndDate  GenericField `json:"thesisEndDate,omitempty"`
+	EducationGap   GenericField `json:"educationGap,omitempty"`
 }
 
 type ProfileDetails struct {

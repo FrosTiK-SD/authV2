@@ -82,6 +82,7 @@ func MapProfileCurrentAcademics(profile *interfaces.ProfileCurrentAcademics, aca
 }
 
 func MapProfileSocials(profile *interfaces.ProfileSocials, socials *studentModel.SocialProfiles) {
+	
 }
 
 func MapStudentToStudentProfile(student *model.StudentPopulated) interfaces.StudentProfile {

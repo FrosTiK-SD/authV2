@@ -28,6 +28,7 @@ func main() {
 			Password: os.Getenv(constants.REDIS_PASSWORD),
 			Username: os.Getenv(constants.REDIS_USERNAME),
 		},
+		FallbackToDefault: true,
 	})
 
 	// Initialie default JWKs
