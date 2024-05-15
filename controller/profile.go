@@ -9,8 +9,10 @@ import (
 	"github.com/FrosTiK-SD/auth/constants"
 	"github.com/FrosTiK-SD/auth/interfaces"
 	"github.com/FrosTiK-SD/auth/model"
+	constantModel "github.com/FrosTiK-SD/models/constant"
 	studentModel "github.com/FrosTiK-SD/models/student"
 	"github.com/modern-go/reflect2"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 var PointerToNilString *string = nil
@@ -50,35 +52,36 @@ func AssignSocialProfile(field *interfaces.GenericField, social *studentModel.So
 	field.Value = nil
 }
 
-func AssignNilPossibleValue(field *interfaces.GenericField, value any) {
+func AssignNilPossibleValue[V int | float64 | string | constantModel.Course | constantModel.Gender | primitive.DateTime](field *interfaces.GenericField, value *V) {
 	field.Value = value
 	field.IsNull = reflect2.IsNil(value)
 	field.DataType = fmt.Sprintf("%v", reflect.TypeOf(value))
+
 }
 
-func AssignNotNilValue(field *interfaces.GenericField, value any) {
-	field.Value = value
-	field.DataType = fmt.Sprintf("%v", reflect.TypeOf(value))
+func AssignNotNilValue[V int | float64 | string | constantModel.Course](field *interfaces.GenericField, value *V) {
+	field.Value = *value
+	field.DataType = fmt.Sprintf("%v", reflect.TypeOf(*value))
 }
 
 func AssignPastAcademics(field *interfaces.ProfilePastEducation, education *studentModel.EducationDetails) {
 	if education != nil {
-		AssignNotNilValue(&field.Certification, education.Certification)
-		AssignNotNilValue(&field.Institute, education.Institute)
-		AssignNotNilValue(&field.Year, education.Year)
-		AssignNotNilValue(&field.Score, education.Score)
+		AssignNotNilValue(&field.Certification, &education.Certification)
+		AssignNotNilValue(&field.Institute, &education.Institute)
+		AssignNotNilValue(&field.Year, &education.Year)
+		AssignNotNilValue(&field.Score, &education.Score)
 		return
 	}
 
 	AssignNilPossibleValue(&field.Certification, PointerToNilString)
-	AssignNilPossibleValue(&field.Institute, PointerToNilInteger)
+	AssignNilPossibleValue(&field.Institute, PointerToNilString)
 	AssignNilPossibleValue(&field.Year, PointerToNilInteger)
 	AssignNilPossibleValue(&field.Score, PointerToNilFloat64)
 }
 
 func AssignRankValue(field *interfaces.GenericRank, rankDetails *studentModel.RankDetails) {
 	if rankDetails != nil {
-		AssignNotNilValue(&field.Rank, rankDetails.Rank)
+		AssignNotNilValue(&field.Rank, &rankDetails.Rank)
 		AssignReservationCategory(&field.Rank, &field.IsEWS, &field.IsPWD, &rankDetails.RankCategory)
 		return
 
@@ -89,22 +92,22 @@ func AssignRankValue(field *interfaces.GenericRank, rankDetails *studentModel.Ra
 }
 
 func MapProfilePersonal(profile *interfaces.ProfilePersonal, student *model.StudentPopulated) {
-	AssignNotNilValue(&profile.FirstName, student.FirstName)
+	AssignNotNilValue(&profile.FirstName, &student.FirstName)
 	AssignNilPossibleValue(&profile.MiddleName, student.MiddleName)
 	AssignNilPossibleValue(&profile.LastName, student.LastName)
 
 	AssignNilPossibleValue(&profile.Gender, student.Gender)
 	AssignNilPossibleValue(&profile.DOB, student.DOB)
-	AssignNotNilValue(&profile.PermanentAddress, student.PermanentAddress)
-	AssignNotNilValue(&profile.PresentAddress, student.PresentAddress)
-	AssignNotNilValue(&profile.PersonalEmail, student.PersonalEmail)
+	AssignNotNilValue(&profile.PermanentAddress, &student.PermanentAddress)
+	AssignNotNilValue(&profile.PresentAddress, &student.PresentAddress)
+	AssignNotNilValue(&profile.PersonalEmail, &student.PersonalEmail)
 	AssignNilPossibleValue(&profile.Mobile, student.Mobile)
 	AssignReservationCategory(&profile.Category, &profile.IsEWS, &profile.IsPWD, student.Category)
-	AssignNotNilValue(&profile.MotherTongue, student.MotherTongue)
-	AssignNotNilValue(&profile.FatherName, student.ParentsDetails.FatherName)
-	AssignNotNilValue(&profile.MotherName, student.ParentsDetails.MotherName)
-	AssignNotNilValue(&profile.FatherOccupation, student.ParentsDetails.FatherOccupation)
-	AssignNotNilValue(&profile.MotherOccupation, student.ParentsDetails.MotherOccupation)
+	AssignNotNilValue(&profile.MotherTongue, &student.MotherTongue)
+	AssignNotNilValue(&profile.FatherName, &student.ParentsDetails.FatherName)
+	AssignNotNilValue(&profile.MotherName, &student.ParentsDetails.MotherName)
+	AssignNotNilValue(&profile.FatherOccupation, &student.ParentsDetails.FatherOccupation)
+	AssignNotNilValue(&profile.MotherOccupation, &student.ParentsDetails.MotherOccupation)
 
 	// required
 	profile.FirstName.IsRequired = true
@@ -153,9 +156,9 @@ func MapProfileSocials(profile *interfaces.ProfileSocials, socials *studentModel
 
 func MapProfileInstitute(profile *interfaces.ProfileInstitute, institute *studentModel.Student) {
 	AssignBatch(&profile.Batch, institute)
-	AssignNotNilValue(&profile.RollNumber, institute.RollNo)
-	AssignNotNilValue(&profile.InstituteEmail, institute.InstituteEmail)
-	AssignNotNilValue(&profile.Department, institute.Department)
+	AssignNotNilValue(&profile.RollNumber, &institute.RollNo)
+	AssignNotNilValue(&profile.InstituteEmail, &institute.InstituteEmail)
+	AssignNotNilValue(&profile.Department, &institute.Department)
 	AssignNilPossibleValue(&profile.EducationGap, institute.Academics.EducationGap)
 	AssignNotNilValue(&profile.Course, institute.Course)
 	AssignNilPossibleValue(&profile.Specialisation, institute.Specialisation)

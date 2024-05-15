@@ -187,7 +187,7 @@ func (h *Handler) HandlerRegisterStudentDetails(ctx *gin.Context) {
 func (h *Handler) HandlerGetStudentProfile(ctx *gin.Context) {
 	student, exists := ctx.Get(constants.SESSION)
 	if !exists {
-		ctx.AbortWithStatusJSON(401, gin.H{"error": "Cant get student"})
+		ctx.AbortWithStatusJSON(401, gin.H{"error": "Cannot get student"})
 		return
 	}
 
