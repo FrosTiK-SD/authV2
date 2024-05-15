@@ -177,11 +177,17 @@ func MapRanks(profile *interfaces.ProfilePastAcademics, rank *studentModel.Acade
 
 func MapStudentToStudentProfile(student *model.StudentPopulated) interfaces.StudentProfile {
 	var profile interfaces.StudentProfile
+
+	// Profile
 	MapProfilePersonal(&profile.Profile.PersonalProfile, student)
-	MapProfileCurrentAcademics(&profile.CurrentAcademics, &student.Academics)
 	MapProfileSocials(&profile.Profile.SocialProfile, &student.SocialProfiles)
 	MapProfileInstitute(&profile.Profile.InstituteProfile, &student.Student)
+
+	// Past Academics
 	MapPastAcademics(&profile.PastAcademics, &student.Academics)
 	MapRanks(&profile.PastAcademics, &student.Academics)
+
+	// Current Academics
+	MapProfileCurrentAcademics(&profile.CurrentAcademics, &student.Academics)
 	return profile
 }
