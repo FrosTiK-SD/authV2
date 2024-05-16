@@ -193,7 +193,7 @@ func (h *Handler) HandlerGetStudentProfile(ctx *gin.Context) {
 
 	studentPopulated := student.(*model.StudentPopulated)
 	studentProfile := interfaces.StudentProfile{}
-	controller.MapStudentToStudentProfile(&studentProfile, studentPopulated)
+	controller.MapStudentToStudentProfile(&studentProfile, studentPopulated, true)
 
 	ctx.JSON(200, gin.H{"profile": studentProfile})
 }

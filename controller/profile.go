@@ -19,7 +19,7 @@ var PointerToNilString *string = nil
 var PointerToNilInteger *int = nil
 var PointerToNilFloat64 *float64 = nil
 
-func AssignReservationCategory(category *interfaces.GenericField, isEWS *interfaces.GenericField, isPWD *interfaces.GenericField, rc *studentModel.ReservationCategory) {
+func AssignReservationCategory(category *interfaces.GenericField, isEWS *interfaces.GenericField, isPWD *interfaces.GenericField, rc *studentModel.ReservationCategory, forward bool) {
 	if reflect2.IsNil(rc) {
 		category.IsNull = true
 		isEWS.IsNull = true
@@ -35,7 +35,7 @@ func AssignReservationCategory(category *interfaces.GenericField, isEWS *interfa
 	isPWD.DataType = constants.TYPE_BOOL
 }
 
-func AssignSocialProfile(field *interfaces.GenericField, social *studentModel.SocialProfile) {
+func AssignSocialProfile(field *interfaces.GenericField, social *studentModel.SocialProfile, forward bool) {
 	field.DataType = constants.TYPE_SOCIAL
 
 	if social != nil {
@@ -52,62 +52,62 @@ func AssignSocialProfile(field *interfaces.GenericField, social *studentModel.So
 	field.Value = nil
 }
 
-func AssignNilPossibleValue[V int | float64 | string | constantModel.Course | constantModel.Gender | primitive.DateTime](field *interfaces.GenericField, value *V) {
+func AssignNilPossibleValue[V int | float64 | string | constantModel.Course | constantModel.Gender | primitive.DateTime](field *interfaces.GenericField, value *V, forward bool) {
 	field.Value = value
 	field.IsNull = reflect2.IsNil(value)
 	field.DataType = fmt.Sprintf("%v", reflect.TypeOf(value))
 
 }
 
-func AssignNotNilValue[V int | float64 | string | constantModel.Course](field *interfaces.GenericField, value *V) {
+func AssignNotNilValue[V int | float64 | string | constantModel.Course](field *interfaces.GenericField, value *V, forward bool) {
 	field.Value = *value
 	field.DataType = fmt.Sprintf("%v", reflect.TypeOf(*value))
 }
 
-func AssignPastAcademics(field *interfaces.ProfilePastEducation, education *studentModel.EducationDetails) {
+func AssignPastAcademics(field *interfaces.ProfilePastEducation, education *studentModel.EducationDetails, forward bool) {
 	if education != nil {
-		AssignNotNilValue(&field.Certification, &education.Certification)
-		AssignNotNilValue(&field.Institute, &education.Institute)
-		AssignNotNilValue(&field.Year, &education.Year)
-		AssignNotNilValue(&field.Score, &education.Score)
+		AssignNotNilValue(&field.Certification, &education.Certification, forward)
+		AssignNotNilValue(&field.Institute, &education.Institute, forward)
+		AssignNotNilValue(&field.Year, &education.Year, forward)
+		AssignNotNilValue(&field.Score, &education.Score, forward)
 		return
 	}
 
-	AssignNilPossibleValue(&field.Certification, PointerToNilString)
-	AssignNilPossibleValue(&field.Institute, PointerToNilString)
-	AssignNilPossibleValue(&field.Year, PointerToNilInteger)
-	AssignNilPossibleValue(&field.Score, PointerToNilFloat64)
+	AssignNilPossibleValue(&field.Certification, PointerToNilString, forward)
+	AssignNilPossibleValue(&field.Institute, PointerToNilString, forward)
+	AssignNilPossibleValue(&field.Year, PointerToNilInteger, forward)
+	AssignNilPossibleValue(&field.Score, PointerToNilFloat64, forward)
 }
 
-func AssignRankValue(field *interfaces.GenericRank, rankDetails *studentModel.RankDetails) {
+func AssignRankValue(field *interfaces.GenericRank, rankDetails *studentModel.RankDetails, forward bool) {
 	if rankDetails != nil {
-		AssignNotNilValue(&field.Rank, &rankDetails.Rank)
-		AssignReservationCategory(&field.Rank, &field.IsEWS, &field.IsPWD, &rankDetails.RankCategory)
+		AssignNotNilValue(&field.Rank, &rankDetails.Rank, forward)
+		AssignReservationCategory(&field.Rank, &field.IsEWS, &field.IsPWD, &rankDetails.RankCategory, forward)
 		return
 
 	}
 
-	AssignNilPossibleValue(&field.Rank, PointerToNilInteger)
-	AssignReservationCategory(&field.Category, &field.IsEWS, &field.IsPWD, nil)
+	AssignNilPossibleValue(&field.Rank, PointerToNilInteger, forward)
+	AssignReservationCategory(&field.Category, &field.IsEWS, &field.IsPWD, nil, forward)
 }
 
-func MapProfilePersonal(profile *interfaces.ProfilePersonal, student *model.StudentPopulated) {
-	AssignNotNilValue(&profile.FirstName, &student.FirstName)
-	AssignNilPossibleValue(&profile.MiddleName, student.MiddleName)
-	AssignNilPossibleValue(&profile.LastName, student.LastName)
+func MapProfilePersonal(profile *interfaces.ProfilePersonal, student *model.StudentPopulated, forward bool) {
+	AssignNotNilValue(&profile.FirstName, &student.FirstName, forward)
+	AssignNilPossibleValue(&profile.MiddleName, student.MiddleName, forward)
+	AssignNilPossibleValue(&profile.LastName, student.LastName, forward)
 
-	AssignNilPossibleValue(&profile.Gender, student.Gender)
-	AssignNilPossibleValue(&profile.DOB, student.DOB)
-	AssignNotNilValue(&profile.PermanentAddress, &student.PermanentAddress)
-	AssignNotNilValue(&profile.PresentAddress, &student.PresentAddress)
-	AssignNotNilValue(&profile.PersonalEmail, &student.PersonalEmail)
-	AssignNilPossibleValue(&profile.Mobile, student.Mobile)
-	AssignReservationCategory(&profile.Category, &profile.IsEWS, &profile.IsPWD, student.Category)
-	AssignNotNilValue(&profile.MotherTongue, &student.MotherTongue)
-	AssignNotNilValue(&profile.FatherName, &student.ParentsDetails.FatherName)
-	AssignNotNilValue(&profile.MotherName, &student.ParentsDetails.MotherName)
-	AssignNotNilValue(&profile.FatherOccupation, &student.ParentsDetails.FatherOccupation)
-	AssignNotNilValue(&profile.MotherOccupation, &student.ParentsDetails.MotherOccupation)
+	AssignNilPossibleValue(&profile.Gender, student.Gender, forward)
+	AssignNilPossibleValue(&profile.DOB, student.DOB, forward)
+	AssignNotNilValue(&profile.PermanentAddress, &student.PermanentAddress, forward)
+	AssignNotNilValue(&profile.PresentAddress, &student.PresentAddress, forward)
+	AssignNotNilValue(&profile.PersonalEmail, &student.PersonalEmail, forward)
+	AssignNilPossibleValue(&profile.Mobile, student.Mobile, forward)
+	AssignReservationCategory(&profile.Category, &profile.IsEWS, &profile.IsPWD, student.Category, forward)
+	AssignNotNilValue(&profile.MotherTongue, &student.MotherTongue, forward)
+	AssignNotNilValue(&profile.FatherName, &student.ParentsDetails.FatherName, forward)
+	AssignNotNilValue(&profile.MotherName, &student.ParentsDetails.MotherName, forward)
+	AssignNotNilValue(&profile.FatherOccupation, &student.ParentsDetails.FatherOccupation, forward)
+	AssignNotNilValue(&profile.MotherOccupation, &student.ParentsDetails.MotherOccupation, forward)
 
 	// required
 	profile.FirstName.IsRequired = true
@@ -117,24 +117,24 @@ func MapProfilePersonal(profile *interfaces.ProfilePersonal, student *model.Stud
 	profile.Mobile.IsRequired = true
 }
 
-func MapProfileCurrentAcademics(profile *interfaces.ProfileCurrentAcademics, academics *studentModel.Academics) {
-	AssignNilPossibleValue(&profile.SemesterSPI.One, academics.SemesterSPI.One)
-	AssignNilPossibleValue(&profile.SemesterSPI.Two, academics.SemesterSPI.Two)
-	AssignNilPossibleValue(&profile.SemesterSPI.Three, academics.SemesterSPI.Three)
-	AssignNilPossibleValue(&profile.SemesterSPI.Four, academics.SemesterSPI.Four)
-	AssignNilPossibleValue(&profile.SemesterSPI.Five, academics.SemesterSPI.Five)
-	AssignNilPossibleValue(&profile.SemesterSPI.Six, academics.SemesterSPI.Six)
-	AssignNilPossibleValue(&profile.SemesterSPI.Seven, academics.SemesterSPI.Seven)
-	AssignNilPossibleValue(&profile.SemesterSPI.Eight, academics.SemesterSPI.Eight)
+func MapProfileCurrentAcademics(profile *interfaces.ProfileCurrentAcademics, academics *studentModel.Academics, forward bool) {
+	AssignNilPossibleValue(&profile.SemesterSPI.One, academics.SemesterSPI.One, forward)
+	AssignNilPossibleValue(&profile.SemesterSPI.Two, academics.SemesterSPI.Two, forward)
+	AssignNilPossibleValue(&profile.SemesterSPI.Three, academics.SemesterSPI.Three, forward)
+	AssignNilPossibleValue(&profile.SemesterSPI.Four, academics.SemesterSPI.Four, forward)
+	AssignNilPossibleValue(&profile.SemesterSPI.Five, academics.SemesterSPI.Five, forward)
+	AssignNilPossibleValue(&profile.SemesterSPI.Six, academics.SemesterSPI.Six, forward)
+	AssignNilPossibleValue(&profile.SemesterSPI.Seven, academics.SemesterSPI.Seven, forward)
+	AssignNilPossibleValue(&profile.SemesterSPI.Eight, academics.SemesterSPI.Eight, forward)
 
-	AssignNilPossibleValue(&profile.SummerTermSPI.One, academics.SummerTermSPI.One)
-	AssignNilPossibleValue(&profile.SummerTermSPI.Two, academics.SummerTermSPI.Two)
-	AssignNilPossibleValue(&profile.SummerTermSPI.Three, academics.SummerTermSPI.Three)
-	AssignNilPossibleValue(&profile.SummerTermSPI.Four, academics.SummerTermSPI.Four)
-	AssignNilPossibleValue(&profile.SummerTermSPI.Five, academics.SummerTermSPI.Five)
+	AssignNilPossibleValue(&profile.SummerTermSPI.One, academics.SummerTermSPI.One, forward)
+	AssignNilPossibleValue(&profile.SummerTermSPI.Two, academics.SummerTermSPI.Two, forward)
+	AssignNilPossibleValue(&profile.SummerTermSPI.Three, academics.SummerTermSPI.Three, forward)
+	AssignNilPossibleValue(&profile.SummerTermSPI.Four, academics.SummerTermSPI.Four, forward)
+	AssignNilPossibleValue(&profile.SummerTermSPI.Five, academics.SummerTermSPI.Five, forward)
 }
 
-func AssignBatch(profile *interfaces.GenericField, institute *studentModel.Student) {
+func AssignBatch(profile *interfaces.GenericField, institute *studentModel.Student, forward bool) {
 	profile.IsNull = reflect2.IsNil(institute.Batch)
 	profile.DataType = constants.TYPE_STRING
 	if !profile.IsNull {
@@ -142,52 +142,52 @@ func AssignBatch(profile *interfaces.GenericField, institute *studentModel.Stude
 	}
 }
 
-func MapProfileSocials(profile *interfaces.ProfileSocials, socials *studentModel.SocialProfiles) {
-	AssignSocialProfile(&profile.LinkedIn, socials.LinkedIn)
-	AssignSocialProfile(&profile.Github, socials.Github)
-	AssignSocialProfile(&profile.CodeChef, socials.CodeChef)
-	AssignSocialProfile(&profile.Codeforces, socials.Codeforces)
-	AssignSocialProfile(&profile.Leetcode, socials.LeetCode)
-	AssignSocialProfile(&profile.GoogleScholar, socials.GoogleScholar)
-	AssignSocialProfile(&profile.MicrosoftTeams, socials.MicrosoftTeams)
-	AssignSocialProfile(&profile.Kaggle, socials.Kaggle)
-	AssignSocialProfile(&profile.Skype, socials.Skype)
+func MapProfileSocials(profile *interfaces.ProfileSocials, socials *studentModel.SocialProfiles, forward bool) {
+	AssignSocialProfile(&profile.LinkedIn, socials.LinkedIn, forward)
+	AssignSocialProfile(&profile.Github, socials.Github, forward)
+	AssignSocialProfile(&profile.CodeChef, socials.CodeChef, forward)
+	AssignSocialProfile(&profile.Codeforces, socials.Codeforces, forward)
+	AssignSocialProfile(&profile.Leetcode, socials.LeetCode, forward)
+	AssignSocialProfile(&profile.GoogleScholar, socials.GoogleScholar, forward)
+	AssignSocialProfile(&profile.MicrosoftTeams, socials.MicrosoftTeams, forward)
+	AssignSocialProfile(&profile.Kaggle, socials.Kaggle, forward)
+	AssignSocialProfile(&profile.Skype, socials.Skype, forward)
 }
 
-func MapProfileInstitute(profile *interfaces.ProfileInstitute, institute *studentModel.Student) {
-	AssignBatch(&profile.Batch, institute)
-	AssignNotNilValue(&profile.RollNumber, &institute.RollNo)
-	AssignNotNilValue(&profile.InstituteEmail, &institute.InstituteEmail)
-	AssignNotNilValue(&profile.Department, &institute.Department)
-	AssignNilPossibleValue(&profile.EducationGap, institute.Academics.EducationGap)
-	AssignNotNilValue(&profile.Course, institute.Course)
-	AssignNilPossibleValue(&profile.Specialisation, institute.Specialisation)
-	AssignNilPossibleValue(&profile.Honours, institute.Academics.Honours)
-	AssignNilPossibleValue(&profile.ThesisEndDate, institute.Academics.ThesisEndDate)
+func MapProfileInstitute(profile *interfaces.ProfileInstitute, institute *studentModel.Student, forward bool) {
+	AssignBatch(&profile.Batch, institute, forward)
+	AssignNotNilValue(&profile.RollNumber, &institute.RollNo, forward)
+	AssignNotNilValue(&profile.InstituteEmail, &institute.InstituteEmail, forward)
+	AssignNotNilValue(&profile.Department, &institute.Department, forward)
+	AssignNilPossibleValue(&profile.EducationGap, institute.Academics.EducationGap, forward)
+	AssignNotNilValue(&profile.Course, institute.Course, forward)
+	AssignNilPossibleValue(&profile.Specialisation, institute.Specialisation, forward)
+	AssignNilPossibleValue(&profile.Honours, institute.Academics.Honours, forward)
+	AssignNilPossibleValue(&profile.ThesisEndDate, institute.Academics.ThesisEndDate, forward)
 }
 
-func MapPastAcademics(profile *interfaces.ProfilePastAcademics, institute *studentModel.Academics) {
-	AssignPastAcademics(&profile.ClassX, institute.XthClass)
-	AssignPastAcademics(&profile.ClassXII, institute.XIIthClass)
-	AssignPastAcademics(&profile.Undergraduate, institute.UnderGraduate)
-	AssignPastAcademics(&profile.Postgraduate, institute.PostGraduate)
+func MapPastAcademics(profile *interfaces.ProfilePastAcademics, institute *studentModel.Academics, forward bool) {
+	AssignPastAcademics(&profile.ClassX, institute.XthClass, forward)
+	AssignPastAcademics(&profile.ClassXII, institute.XIIthClass, forward)
+	AssignPastAcademics(&profile.Undergraduate, institute.UnderGraduate, forward)
+	AssignPastAcademics(&profile.Postgraduate, institute.PostGraduate, forward)
 }
 
-func MapRanks(profile *interfaces.ProfilePastAcademics, rank *studentModel.Academics) {
-	AssignRankValue(&profile.JeeRank, rank.JEERank)
-	AssignRankValue(&profile.GateRank, rank.GATERank)
+func MapRanks(profile *interfaces.ProfilePastAcademics, rank *studentModel.Academics, forward bool) {
+	AssignRankValue(&profile.JeeRank, rank.JEERank, forward)
+	AssignRankValue(&profile.GateRank, rank.GATERank, forward)
 }
 
-func MapStudentToStudentProfile(profile *interfaces.StudentProfile, student *model.StudentPopulated) {
+func MapStudentToStudentProfile(profile *interfaces.StudentProfile, student *model.StudentPopulated, forward bool) {
 	// Profile
-	MapProfilePersonal(&profile.Profile.PersonalProfile, student)
-	MapProfileSocials(&profile.Profile.SocialProfile, &student.SocialProfiles)
-	MapProfileInstitute(&profile.Profile.InstituteProfile, &student.Student)
+	MapProfilePersonal(&profile.Profile.PersonalProfile, student, forward)
+	MapProfileSocials(&profile.Profile.SocialProfile, &student.SocialProfiles, forward)
+	MapProfileInstitute(&profile.Profile.InstituteProfile, &student.Student, forward)
 
 	// Past Academics
-	MapPastAcademics(&profile.PastAcademics, &student.Academics)
-	MapRanks(&profile.PastAcademics, &student.Academics)
+	MapPastAcademics(&profile.PastAcademics, &student.Academics, forward)
+	MapRanks(&profile.PastAcademics, &student.Academics, forward)
 
 	// Current Academics
-	MapProfileCurrentAcademics(&profile.CurrentAcademics, &student.Academics)
+	MapProfileCurrentAcademics(&profile.CurrentAcademics, &student.Academics, forward)
 }
