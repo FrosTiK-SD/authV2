@@ -197,3 +197,19 @@ func (h *Handler) HandlerGetStudentProfile(ctx *gin.Context) {
 
 	ctx.JSON(200, gin.H{"profile": studentProfile})
 }
+
+func (h *Handler) HandlerUpdateStudentProfile(ctx *gin.Context) {
+	_, exists := ctx.Get(constants.SESSION)
+	if !exists {
+		ctx.AbortWithStatusJSON(401, gin.H{"error": "Cannot get student"})
+		return
+	}
+
+	studentPopulated := model.StudentPopulated{}
+	studentProfile := interfaces.StudentProfile{}
+
+	ctx.BindJSON(&studentProfile)
+	controller.MapStudentToStudentProfile(&studentProfile, &studentPopulated, false)
+
+	ctx.JSON(200, gin.H{"student": studentPopulated})
+}

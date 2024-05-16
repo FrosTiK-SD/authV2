@@ -17,7 +17,7 @@ type StudentRegistration struct {
 	Course         string        `json:"course" bson:"course"`
 	Specialisation *string       `json:"specialisation" bson:"specialisation"`
 
-	Mobile        *string          `json:"mobile" bson:"mobile"`
+	Mobile        string           `json:"mobile" bson:"mobile"`
 	PersonalEmail string           `json:"personalEmail" bson:"personalEmail"`
 	Gender        *Constant.Gender `json:"gender" bson:"gender"`
 
