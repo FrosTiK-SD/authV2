@@ -42,16 +42,13 @@ func AssignReservationCategory(category *interfaces.GenericField[string], isEWS 
 	// backward mapping
 
 	if category.IsNull {
-		*rc = nil
 		return
 	}
 
 	*rc = new(studentModel.ReservationCategory)
-
 	(**rc).Category = category.Value
 	(**rc).IsEWS = isEWS.Value
 	(**rc).IsPWD = isPWD.Value
-
 }
 
 func AssignSocialProfile(field *interfaces.GenericField[interfaces.TYPE_SOCIAL], social **studentModel.SocialProfile, forward bool) {
@@ -76,7 +73,6 @@ func AssignSocialProfile(field *interfaces.GenericField[interfaces.TYPE_SOCIAL],
 	// backward mapping
 
 	if field.IsNull {
-		*social = nil
 		return
 	}
 
@@ -98,8 +94,8 @@ func AssignNilPossibleValue[V int | float64 | string | constantModel.Course | co
 	}
 
 	// backward mapping
+
 	if field.IsNull {
-		*value = nil
 		return
 	}
 
@@ -115,6 +111,7 @@ func AssignNotNilValue[V int | float64 | string | constantModel.Course](field *i
 	}
 
 	// backward mapping
+
 	*value = field.Value
 }
 
@@ -138,7 +135,6 @@ func AssignPastAcademics(field *interfaces.ProfilePastEducation, education **stu
 	// backward
 
 	if field.Certification.IsNull || field.Institute.IsNull {
-		*education = nil
 		return
 	}
 
@@ -166,7 +162,6 @@ func AssignRankValue(field *interfaces.GenericRank, rankDetails **studentModel.R
 	// backward mapping
 
 	if field.Rank.IsNull {
-		*rankDetails = nil
 		return
 	}
 
@@ -266,6 +261,9 @@ func MapRanks(profile *interfaces.ProfilePastAcademics, rank *studentModel.Acade
 	AssignRankValue(&profile.GateRank, &rank.GATERank, forward)
 }
 
+// 'forward' defines the mapping direction
+// if true, then maps model to profile
+// if false, then maps profile to model
 func MapStudentToStudentProfile(profile *interfaces.StudentProfile, student *studentModel.Student, forward bool) {
 	// Profile
 	MapProfilePersonal(&profile.Profile.PersonalProfile, student, forward)
