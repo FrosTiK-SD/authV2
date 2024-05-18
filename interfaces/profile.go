@@ -5,7 +5,7 @@ type GenericField struct {
 	DataChoices *[]string `json:"dataChoices,omitempty"`
 	IsVerified  *bool     `json:"isVerified,omitempty"`
 	Value       any       `json:"value"`
-	IsLocked    bool      `json:"isEditable"`
+	IsLocked    bool      `json:"isLocked"`
 	IsRequired  bool      `json:"isRequired"`
 	IsNull      bool      `json:"isNull"`
 	IsHidden    bool      `json:"isHidden"`
