@@ -13,11 +13,14 @@ const COLLECTION_STUDENT = "students"
 const COLLECTION_GROUP = "groups"
 const COLLECTION_ROOM = "rooms"
 const COLLECTION_ATTENDANCE = "attendances"
+const COLLECTION_RECRUITER = "recruiters"
+const COLLECTION_DOMAIN = "domains"
+const COLLECTION_COMPANY = "companies"
 
 const FIREBASE_PROJECT_ID = "FIREBASE_PROJECT_ID"
 
 const CACHING_DURATION = 20 * time.Hour
-const CACHE_CONTROL_HEADER = "Cache-Control"
+const CACHE_CONTROL_HEADER = "cache-control"
 const NO_CACHE = "no-cache"
 
 // Keys of Cache
