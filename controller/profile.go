@@ -9,7 +9,6 @@ import (
 
 	"github.com/FrosTiK-SD/auth/constants"
 	"github.com/FrosTiK-SD/auth/interfaces"
-	"github.com/FrosTiK-SD/auth/model"
 	constantModel "github.com/FrosTiK-SD/models/constant"
 	studentModel "github.com/FrosTiK-SD/models/student"
 	"github.com/modern-go/reflect2"
@@ -88,6 +87,7 @@ func AssignSocialProfile(field *interfaces.GenericField, social **studentModel.S
 	(**social).Username = strings.Split(val, "|")[1]
 }
 
+// TODO: Fix primitive.DateTime not getting converted to integer and back
 func AssignNilPossibleValue[V int | float64 | string | constantModel.Course | constantModel.Gender | primitive.DateTime](field *interfaces.GenericField, value **V, forward bool) {
 	if forward {
 		field.Value = *value
@@ -184,7 +184,7 @@ func AssignRankValue(field *interfaces.GenericRank, rankDetails **studentModel.R
 	AssignReservationCategory(&field.Rank, &field.IsEWS, &field.IsPWD, &(*rankDetails).RankCategory, forward)
 }
 
-func MapProfilePersonal(profile *interfaces.ProfilePersonal, student *model.StudentPopulated, forward bool) {
+func MapProfilePersonal(profile *interfaces.ProfilePersonal, student *studentModel.Student, forward bool) {
 	AssignNotNilValue(&profile.FirstName, &student.FirstName, forward)
 	AssignNilPossibleValue(&profile.MiddleName, &student.MiddleName, forward)
 	AssignNilPossibleValue(&profile.LastName, &student.LastName, forward)
@@ -211,6 +211,10 @@ func MapProfilePersonal(profile *interfaces.ProfilePersonal, student *model.Stud
 }
 
 func MapProfileCurrentAcademics(profile *interfaces.ProfileCurrentAcademics, academics *studentModel.Academics, forward bool) {
+	AssignNilPossibleValue(&profile.Misc.CurrentCGPA, &academics.CurrentCGPA, forward)
+	AssignNilPossibleValue(&profile.Misc.ActiveBacklogs, &academics.ActiveBacklogs, forward)
+	AssignNilPossibleValue(&profile.Misc.TotalBacklogs, &academics.TotalBacklogs, forward)
+
 	AssignNilPossibleValue(&profile.SemesterSPI.One, &academics.SemesterSPI.One, forward)
 	AssignNilPossibleValue(&profile.SemesterSPI.Two, &academics.SemesterSPI.Two, forward)
 	AssignNilPossibleValue(&profile.SemesterSPI.Three, &academics.SemesterSPI.Three, forward)
@@ -271,11 +275,11 @@ func MapRanks(profile *interfaces.ProfilePastAcademics, rank *studentModel.Acade
 	AssignRankValue(&profile.GateRank, &rank.GATERank, forward)
 }
 
-func MapStudentToStudentProfile(profile *interfaces.StudentProfile, student *model.StudentPopulated, forward bool) {
+func MapStudentToStudentProfile(profile *interfaces.StudentProfile, student *studentModel.Student, forward bool) {
 	// Profile
 	MapProfilePersonal(&profile.Profile.PersonalProfile, student, forward)
 	MapProfileSocials(&profile.Profile.SocialProfile, &student.SocialProfiles, forward)
-	MapProfileInstitute(&profile.Profile.InstituteProfile, &student.Student, forward)
+	MapProfileInstitute(&profile.Profile.InstituteProfile, student, forward)
 
 	// Past Academics
 	MapPastAcademics(&profile.PastAcademics, &student.Academics, forward)

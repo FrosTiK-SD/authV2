@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"fmt"
 	"net/http"
 	"os"
 
@@ -193,7 +194,7 @@ func (h *Handler) HandlerGetStudentProfile(ctx *gin.Context) {
 
 	studentPopulated := student.(*model.StudentPopulated)
 	studentProfile := interfaces.StudentProfile{}
-	controller.MapStudentToStudentProfile(&studentProfile, studentPopulated, true)
+	controller.MapStudentToStudentProfile(&studentProfile, &studentPopulated.Student, true)
 
 	ctx.JSON(200, gin.H{"profile": studentProfile})
 }
@@ -205,11 +206,32 @@ func (h *Handler) HandlerUpdateStudentProfile(ctx *gin.Context) {
 		return
 	}
 
-	studentPopulated := model.StudentPopulated{}
+	updatedStudent := studentModel.Student{}
 	studentProfile := interfaces.StudentProfile{}
 
 	ctx.BindJSON(&studentProfile)
-	controller.MapStudentToStudentProfile(&studentProfile, &studentPopulated, false)
+	controller.MapStudentToStudentProfile(&studentProfile, &updatedStudent, false)
 
-	ctx.JSON(200, gin.H{"student": studentPopulated})
+	filter := bson.M{"email": updatedStudent.InstituteEmail}
+
+	var currentStudent studentModel.Student
+	studentCollection := h.MongikClient.MongoClient.Database(constants.DB).Collection(constants.COLLECTION_STUDENT)
+	if errFind := studentCollection.FindOne(ctx, filter).Decode(&currentStudent); errFind != nil {
+		ctx.AbortWithStatusJSON(401, gin.H{"error": errFind.Error()})
+		return
+	}
+
+	controller.AssignUnVerifiedFields(&updatedStudent, &currentStudent)
+	controller.InvalidateVerifiedFieldsOnChange(&updatedStudent, &currentStudent)
+
+	fmt.Println(currentStudent)
+
+	// if updateResult, errUpdate := db.ReplaceOne(h.MongikClient, constants.DB, constants.COLLECTION_STUDENT, filter, &currentStudent); errUpdate != nil {
+	// 	ctx.AbortWithStatusJSON(400, gin.H{"error": errUpdate.Error()})
+	// 	return
+	// } else {
+	// 	ctx.JSON(200, gin.H{"student": updateResult})
+	// }
+
+	ctx.JSON(200, gin.H{"student": currentStudent})
 }

@@ -84,6 +84,12 @@ type ProfilePastAcademics struct {
 	GateRank      GenericRank          `json:"gateRank,omitempty"`
 }
 
+type ProfileCurrentAcademicsMisc struct {
+	CurrentCGPA    GenericField `json:"current_cgpa,omitempty"`
+	ActiveBacklogs GenericField `json:"active_backlogs,omitempty"`
+	TotalBacklogs  GenericField `json:"total_backlogs,omitempty"`
+}
+
 type ProfileSemesterSPI struct {
 	One   GenericField `json:"one,omitempty"`
 	Two   GenericField `json:"two,omitempty"`
@@ -106,8 +112,9 @@ type ProfileSummerTermSPI struct {
 }
 
 type ProfileCurrentAcademics struct {
-	SemesterSPI   ProfileSemesterSPI   `json:"semester_spi,omitempty"`
-	SummerTermSPI ProfileSummerTermSPI `json:"summer_term_spi,omitempty"`
+	Misc          ProfileCurrentAcademicsMisc `json:"misc,omitempty"`
+	SemesterSPI   ProfileSemesterSPI          `json:"semester_spi,omitempty"`
+	SummerTermSPI ProfileSummerTermSPI        `json:"summer_term_spi,omitempty"`
 }
 
 type StudentProfile struct {
