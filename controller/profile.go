@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"reflect"
 	"strings"
+	"time"
 
 	"strconv"
 
@@ -103,6 +104,16 @@ func AssignNilPossibleValue[V int | float64 | string | constantModel.Course | co
 		return
 	}
 
+	// special handling for primitive.DateTime
+	if reflect.TypeOf(field.Value).Name() == constants.TYPE_STRING && field.DataType == ("*"+constants.TYPE_PRIMITIVE_DATETIME) {
+		stringVal, _ := field.Value.(string)
+		t, _ := time.Parse(time.RFC3339, stringVal)
+		var tempInterface interface{} = primitive.NewDateTimeFromTime(t)
+		tempValue := tempInterface.(V)
+		*value = &tempValue
+		return
+	}
+
 	*value = new(V)
 	**value, _ = field.Value.(V)
 }
@@ -117,7 +128,7 @@ func AssignNotNilValue[V int | float64 | string | constantModel.Course](field *i
 	// backward mapping
 
 	// special handling for int
-	if reflect.TypeOf(field.Value).Name() == "float64" && field.DataType == "int" {
+	if reflect.TypeOf(field.Value).Name() == constants.TYPE_FLOAT64 && field.DataType == constants.TYPE_INTEGER {
 		float64val, _ := field.Value.(float64)
 		var tempInterface interface{} = int(float64val)
 		*value = tempInterface.(V)
