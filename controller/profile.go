@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"reflect"
 	"strings"
-	"time"
 
 	"strconv"
 
@@ -21,7 +20,7 @@ var PointerToNilInteger *int = nil
 var PointerToNilFloat64 *float64 = nil
 var PointerToNilReservationCategory *studentModel.ReservationCategory = nil
 
-func AssignReservationCategory(category *interfaces.GenericField, isEWS *interfaces.GenericField, isPWD *interfaces.GenericField, rc **studentModel.ReservationCategory, forward bool) {
+func AssignReservationCategory(category *interfaces.GenericField[string], isEWS *interfaces.GenericField[bool], isPWD *interfaces.GenericField[bool], rc **studentModel.ReservationCategory, forward bool) {
 	if forward {
 		if reflect2.IsNil(*rc) {
 			category.IsNull = true
@@ -49,13 +48,13 @@ func AssignReservationCategory(category *interfaces.GenericField, isEWS *interfa
 
 	*rc = new(studentModel.ReservationCategory)
 
-	(**rc).Category, _ = category.Value.(string)
-	(**rc).IsEWS, _ = isEWS.Value.(bool)
-	(**rc).IsPWD, _ = isPWD.Value.(bool)
+	(**rc).Category = category.Value
+	(**rc).IsEWS = isEWS.Value
+	(**rc).IsPWD = isPWD.Value
 
 }
 
-func AssignSocialProfile(field *interfaces.GenericField, social **studentModel.SocialProfile, forward bool) {
+func AssignSocialProfile(field *interfaces.GenericField[interfaces.TYPE_SOCIAL], social **studentModel.SocialProfile, forward bool) {
 	if forward {
 		field.DataType = constants.TYPE_SOCIAL
 
@@ -70,7 +69,7 @@ func AssignSocialProfile(field *interfaces.GenericField, social **studentModel.S
 		}
 
 		field.IsNull = true
-		field.Value = nil
+		field.Value = ""
 		return
 	}
 
@@ -83,42 +82,32 @@ func AssignSocialProfile(field *interfaces.GenericField, social **studentModel.S
 
 	*social = new(studentModel.SocialProfile)
 
-	val, _ := field.Value.(string)
+	val := field.Value
 	(**social).URL = strings.Split(val, "|")[0]
 	(**social).Username = strings.Split(val, "|")[1]
 }
 
-// TODO: Fix primitive.DateTime not getting converted to integer and back
-func AssignNilPossibleValue[V int | float64 | string | constantModel.Course | constantModel.Gender | primitive.DateTime](field *interfaces.GenericField, value **V, forward bool) {
+func AssignNilPossibleValue[V int | float64 | string | constantModel.Course | constantModel.Gender | primitive.DateTime](field *interfaces.GenericField[V], value **V, forward bool) {
 	if forward {
-		field.Value = *value
 		field.IsNull = reflect2.IsNil(*value)
+		if !field.IsNull {
+			field.Value = **value
+		}
 		field.DataType = fmt.Sprintf("%v", reflect.TypeOf(*value))
 		return
 	}
 
 	// backward mapping
-
 	if field.IsNull {
 		*value = nil
 		return
 	}
 
-	// special handling for primitive.DateTime
-	if reflect.TypeOf(field.Value).Name() == constants.TYPE_STRING && field.DataType == ("*"+constants.TYPE_PRIMITIVE_DATETIME) {
-		stringVal, _ := field.Value.(string)
-		t, _ := time.Parse(time.RFC3339, stringVal)
-		var tempInterface interface{} = primitive.NewDateTimeFromTime(t)
-		tempValue := tempInterface.(V)
-		*value = &tempValue
-		return
-	}
-
 	*value = new(V)
-	**value, _ = field.Value.(V)
+	**value = field.Value
 }
 
-func AssignNotNilValue[V int | float64 | string | constantModel.Course](field *interfaces.GenericField, value *V, forward bool) {
+func AssignNotNilValue[V int | float64 | string | constantModel.Course](field *interfaces.GenericField[V], value *V, forward bool) {
 	if forward {
 		field.Value = *value
 		field.DataType = fmt.Sprintf("%v", reflect.TypeOf(*value))
@@ -126,16 +115,7 @@ func AssignNotNilValue[V int | float64 | string | constantModel.Course](field *i
 	}
 
 	// backward mapping
-
-	// special handling for int
-	if reflect.TypeOf(field.Value).Name() == constants.TYPE_FLOAT64 && field.DataType == constants.TYPE_INTEGER {
-		float64val, _ := field.Value.(float64)
-		var tempInterface interface{} = int(float64val)
-		*value = tempInterface.(V)
-		return
-	}
-
-	*value, _ = field.Value.(V)
+	*value = field.Value
 }
 
 func AssignPastAcademics(field *interfaces.ProfilePastEducation, education **studentModel.EducationDetails, forward bool) {
@@ -192,7 +172,7 @@ func AssignRankValue(field *interfaces.GenericRank, rankDetails **studentModel.R
 
 	*rankDetails = new(studentModel.RankDetails)
 	AssignNotNilValue(&field.Rank, &(*rankDetails).Rank, forward)
-	AssignReservationCategory(&field.Rank, &field.IsEWS, &field.IsPWD, &(*rankDetails).RankCategory, forward)
+	AssignReservationCategory(&field.Category, &field.IsEWS, &field.IsPWD, &(*rankDetails).RankCategory, forward)
 }
 
 func MapProfilePersonal(profile *interfaces.ProfilePersonal, student *studentModel.Student, forward bool) {
@@ -242,7 +222,7 @@ func MapProfileCurrentAcademics(profile *interfaces.ProfileCurrentAcademics, aca
 	AssignNilPossibleValue(&profile.SummerTermSPI.Five, &academics.SummerTermSPI.Five, forward)
 }
 
-func AssignBatch(profile *interfaces.GenericField, institute *studentModel.Student, forward bool) {
+func AssignBatch(profile *interfaces.GenericField[string], institute *studentModel.Student, forward bool) {
 	profile.IsNull = reflect2.IsNil(institute.Batch)
 	profile.DataType = constants.TYPE_STRING
 	if !profile.IsNull {
