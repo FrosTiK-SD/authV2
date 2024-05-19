@@ -197,10 +197,6 @@ func MapProfilePersonal(profile *interfaces.ProfilePersonal, student *studentMod
 }
 
 func MapProfileCurrentAcademics(profile *interfaces.ProfileCurrentAcademics, academics *studentModel.Academics, forward bool) {
-	AssignNilPossibleValue(&profile.Misc.CurrentCGPA, &academics.CurrentCGPA, forward)
-	AssignNilPossibleValue(&profile.Misc.ActiveBacklogs, &academics.ActiveBacklogs, forward)
-	AssignNilPossibleValue(&profile.Misc.TotalBacklogs, &academics.TotalBacklogs, forward)
-
 	AssignNilPossibleValue(&profile.SemesterSPI.One, &academics.SemesterSPI.One, forward)
 	AssignNilPossibleValue(&profile.SemesterSPI.Two, &academics.SemesterSPI.Two, forward)
 	AssignNilPossibleValue(&profile.SemesterSPI.Three, &academics.SemesterSPI.Three, forward)
@@ -215,6 +211,10 @@ func MapProfileCurrentAcademics(profile *interfaces.ProfileCurrentAcademics, aca
 	AssignNilPossibleValue(&profile.SummerTermSPI.Three, &academics.SummerTermSPI.Three, forward)
 	AssignNilPossibleValue(&profile.SummerTermSPI.Four, &academics.SummerTermSPI.Four, forward)
 	AssignNilPossibleValue(&profile.SummerTermSPI.Five, &academics.SummerTermSPI.Five, forward)
+
+	AssignNilPossibleValue(&profile.Misc.CurrentCGPA, &academics.CurrentCGPA, forward)
+	AssignNilPossibleValue(&profile.Misc.ActiveBacklogs, &academics.ActiveBacklogs, forward)
+	AssignNilPossibleValue(&profile.Misc.TotalBacklogs, &academics.TotalBacklogs, forward)
 }
 
 func AssignBatch(profile *interfaces.GenericField[string], institute *studentModel.Student, forward bool) {

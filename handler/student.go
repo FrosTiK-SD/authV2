@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"fmt"
 	"net/http"
 	"os"
 
@@ -224,14 +223,12 @@ func (h *Handler) HandlerUpdateStudentProfile(ctx *gin.Context) {
 	controller.AssignUnVerifiedFields(&updatedStudent, &currentStudent)
 	controller.InvalidateVerifiedFieldsOnChange(&updatedStudent, &currentStudent)
 
-	fmt.Println(currentStudent)
-
-	// if updateResult, errUpdate := db.ReplaceOne(h.MongikClient, constants.DB, constants.COLLECTION_STUDENT, filter, &currentStudent); errUpdate != nil {
-	// 	ctx.AbortWithStatusJSON(400, gin.H{"error": errUpdate.Error()})
-	// 	return
-	// } else {
-	// 	ctx.JSON(200, gin.H{"student": updateResult})
-	// }
+	if updateResult, errUpdate := db.ReplaceOne(h.MongikClient, constants.DB, constants.COLLECTION_STUDENT, filter, &currentStudent); errUpdate != nil {
+		ctx.AbortWithStatusJSON(400, gin.H{"error": errUpdate.Error()})
+		return
+	} else {
+		ctx.JSON(200, gin.H{"student": updateResult})
+	}
 
 	ctx.JSON(200, gin.H{"student": currentStudent})
 }
