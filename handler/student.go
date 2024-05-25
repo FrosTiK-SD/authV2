@@ -195,7 +195,7 @@ func (h *Handler) HandlerGetStudentProfile(ctx *gin.Context) {
 	studentProfile := interfaces.StudentProfile{}
 	controller.MapStudentToStudentProfile(&studentProfile, &studentPopulated.Student, true)
 
-	ctx.JSON(200, gin.H{"profile": studentProfile})
+	ctx.JSON(200, gin.H{"profile": studentProfile, "isAcademicsVerified": studentPopulated.Academics.Verification.IsVerified})
 }
 
 func (h *Handler) HandlerUpdateStudentProfile(ctx *gin.Context) {

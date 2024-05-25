@@ -19,6 +19,8 @@ var PointerToNilString *string = nil
 var PointerToNilInteger *int = nil
 var PointerToNilFloat64 *float64 = nil
 var PointerToNilReservationCategory *studentModel.ReservationCategory = nil
+var GenderChoices = []constantModel.Gender{constantModel.MALE, constantModel.FEMALE, constantModel.OTHER_GENDER}
+var ReservationCategoryChoices = []string{"GEN", "OBC", "OBC-NCL", "SC", "ST"}
 
 func AssignReservationCategory(category *interfaces.GenericField[string], isEWS *interfaces.GenericField[bool], isPWD *interfaces.GenericField[bool], rc **studentModel.ReservationCategory, forward bool) {
 	if forward {
@@ -32,7 +34,8 @@ func AssignReservationCategory(category *interfaces.GenericField[string], isEWS 
 			isPWD.Value = (**rc).IsPWD
 		}
 
-		category.DataType = constants.TYPE_STRING
+		category.DataType = constants.TYPE_CHOICES
+		category.DataChoices = &ReservationCategoryChoices
 		isEWS.DataType = constants.TYPE_BOOL
 		isPWD.DataType = constants.TYPE_BOOL
 
@@ -61,6 +64,8 @@ func AssignSocialProfile(field *interfaces.GenericField[interfaces.TYPE_SOCIAL],
 			if !field.IsNull {
 				field.Value = (**social).URL + "|" + (**social).Username
 			}
+
+			field.IsVerified = &(*social).Verification.IsVerified
 
 			return
 		}
@@ -188,12 +193,18 @@ func MapProfilePersonal(profile *interfaces.ProfilePersonal, student *studentMod
 	AssignNotNilValue(&profile.FatherOccupation, &student.ParentsDetails.FatherOccupation, forward)
 	AssignNotNilValue(&profile.MotherOccupation, &student.ParentsDetails.MotherOccupation, forward)
 
-	// required
-	profile.FirstName.IsRequired = true
-	profile.DOB.IsRequired = true
-	profile.PermanentAddress.IsRequired = true
-	profile.PersonalEmail.IsRequired = true
-	profile.Mobile.IsRequired = true
+	if forward {
+		// set required field
+		profile.FirstName.IsRequired = true
+		profile.DOB.IsRequired = true
+		profile.PermanentAddress.IsRequired = true
+		profile.PersonalEmail.IsRequired = true
+		profile.Mobile.IsRequired = true
+
+		// set choices
+		profile.Gender.DataType = constants.TYPE_CHOICES
+		profile.Gender.DataChoices = &GenderChoices
+	}
 }
 
 func MapProfileCurrentAcademics(profile *interfaces.ProfileCurrentAcademics, academics *studentModel.Academics, forward bool) {
@@ -262,8 +273,8 @@ func MapRanks(profile *interfaces.ProfilePastAcademics, rank *studentModel.Acade
 }
 
 // 'forward' defines the mapping direction
-// if true, then maps model to profile
-// if false, then maps profile to model
+// if true, then maps model (backend) to profile (frontend)
+// if false, then maps profile (frontend) to model (backend)
 func MapStudentToStudentProfile(profile *interfaces.StudentProfile, student *studentModel.Student, forward bool) {
 	// Profile
 	MapProfilePersonal(&profile.Profile.PersonalProfile, student, forward)
