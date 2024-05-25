@@ -119,9 +119,9 @@ type ProfileSummerTermSPI struct {
 }
 
 type ProfileCurrentAcademics struct {
-	Misc          ProfileCurrentAcademicsMisc `json:"misc,omitempty"`
 	SemesterSPI   ProfileSemesterSPI          `json:"semester_spi,omitempty"`
 	SummerTermSPI ProfileSummerTermSPI        `json:"summer_term_spi,omitempty"`
+	Misc          ProfileCurrentAcademicsMisc `json:"misc,omitempty"`
 }
 
 type StudentProfile struct {

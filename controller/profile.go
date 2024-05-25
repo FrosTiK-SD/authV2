@@ -94,7 +94,7 @@ func AssignNilPossibleValue[V int | float64 | string | constantModel.Course | co
 		if !field.IsNull {
 			field.Value = **value
 		}
-		field.DataType = fmt.Sprintf("%v", reflect.TypeOf(*value))
+		field.DataType = fmt.Sprintf("%v", reflect.TypeOf(*value))[1:]
 		return
 	}
 
