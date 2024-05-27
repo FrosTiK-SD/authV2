@@ -38,16 +38,21 @@ type ProfilePersonal struct {
 	MotherTongue     GenericField[string]               `json:"motherTongue,omitempty"`
 }
 
-type ProfileSocials struct {
-	LinkedIn       GenericField[TYPE_SOCIAL] `json:"linkedIn,omitempty"`
-	Github         GenericField[TYPE_SOCIAL] `json:"github,omitempty"`
-	Kaggle         GenericField[TYPE_SOCIAL] `json:"kaggle,omitempty"`
-	MicrosoftTeams GenericField[TYPE_SOCIAL] `json:"microsoftTeams,omitempty"`
-	Skype          GenericField[TYPE_SOCIAL] `json:"skype,omitempty"`
-	GoogleScholar  GenericField[TYPE_SOCIAL] `json:"googleScholar,omitempty"`
-	Codeforces     GenericField[TYPE_SOCIAL] `json:"codeforces,omitempty"`
-	CodeChef       GenericField[TYPE_SOCIAL] `json:"codechef,omitempty"`
-	Leetcode       GenericField[TYPE_SOCIAL] `json:"leetcode,omitempty"`
+type SocialProfile struct {
+	URL      GenericField[string] `json:"url,omitempty"`
+	Username GenericField[string] `json:"username,omitempty"`
+}
+
+type SocialProfiles struct {
+	LinkedIn       SocialProfile `json:"linkedIn,omitempty"`
+	Github         SocialProfile `json:"github,omitempty"`
+	Kaggle         SocialProfile `json:"kaggle,omitempty"`
+	MicrosoftTeams SocialProfile `json:"microsoftTeams,omitempty"`
+	Skype          SocialProfile `json:"skype,omitempty"`
+	GoogleScholar  SocialProfile `json:"googleScholar,omitempty"`
+	Codeforces     SocialProfile `json:"codeforces,omitempty"`
+	CodeChef       SocialProfile `json:"codechef,omitempty"`
+	Leetcode       SocialProfile `json:"leetcode,omitempty"`
 }
 
 type GenericRank struct {
@@ -71,7 +76,6 @@ type ProfileInstitute struct {
 
 type ProfileDetails struct {
 	PersonalProfile  ProfilePersonal  `json:"personal_profile,omitempty"`
-	SocialProfile    ProfileSocials   `json:"social_profile,omitempty"`
 	InstituteProfile ProfileInstitute `json:"institute_profile,omitempty"`
 }
 
@@ -126,6 +130,7 @@ type ProfileCurrentAcademics struct {
 
 type StudentProfile struct {
 	Profile          ProfileDetails          `json:"profile,omitempty"`
+	SocialProfiles   SocialProfiles          `json:"social_profiles,omitempty"`
 	PastAcademics    ProfilePastAcademics    `json:"past_academics,omitempty"`
 	CurrentAcademics ProfileCurrentAcademics `json:"current_academics,omitempty"`
 }
