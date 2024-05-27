@@ -259,6 +259,13 @@ func MapProfileInstitute(profile *interfaces.ProfileInstitute, institute *studen
 	AssignNilPossibleValue(&profile.Specialisation, &institute.Specialisation, forward)
 	AssignNilPossibleValue(&profile.Honours, &institute.Academics.Honours, forward)
 	AssignNilPossibleValue(&profile.ThesisEndDate, &institute.Academics.ThesisEndDate, forward)
+
+	if forward {
+		profile.RollNumber.IsLocked = true
+		profile.Batch.IsLocked = true
+		profile.InstituteEmail.IsLocked = true
+		profile.Department.IsLocked = true
+	}
 }
 
 func MapPastAcademics(profile *interfaces.ProfilePastAcademics, institute *studentModel.Academics, forward bool) {
