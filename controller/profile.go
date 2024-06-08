@@ -3,7 +3,6 @@ package controller
 import (
 	"fmt"
 	"reflect"
-	"strings"
 
 	"strconv"
 
@@ -54,38 +53,40 @@ func AssignReservationCategory(category *interfaces.GenericField[string], isEWS 
 	(**rc).IsPWD = isPWD.Value
 }
 
-func AssignSocialProfile(field *interfaces.GenericField[interfaces.TYPE_SOCIAL], social **studentModel.SocialProfile, forward bool) {
+func AssignSocialProfile(profile *interfaces.SocialProfile, social **studentModel.SocialProfile, forward bool) {
 	if forward {
-		field.DataType = constants.TYPE_SOCIAL
+		profile.URL.DataType = constants.TYPE_STRING
+		profile.Username.DataType = constants.TYPE_STRING
 
 		if *social != nil {
-			field.IsNull = reflect2.IsNil(*social)
+			profile.URL.IsNull = false
+			profile.Username.IsNull = false
 
-			if !field.IsNull {
-				field.Value = (**social).URL + "|" + (**social).Username
-			}
+			profile.URL.Value = (*social).URL
+			profile.Username.Value = (*social).Username
 
-			field.IsVerified = &(*social).Verification.IsVerified
+			profile.URL.IsVerified = &(*social).Verification.IsVerified
+			profile.Username.IsVerified = &(*social).Verification.IsVerified
 
 			return
 		}
 
-		field.IsNull = true
-		field.Value = ""
+		profile.URL.IsNull = true
+		profile.Username.IsNull = true
+
 		return
 	}
 
 	// backward mapping
 
-	if field.IsNull {
+	if profile.URL.IsNull || profile.Username.IsNull {
 		return
 	}
 
 	*social = new(studentModel.SocialProfile)
 
-	val := field.Value
-	(**social).URL = strings.Split(val, "|")[0]
-	(**social).Username = strings.Split(val, "|")[1]
+	(**social).URL = profile.URL.Value
+	(**social).Username = profile.Username.Value
 }
 
 func AssignNilPossibleValue[V int | float64 | string | constantModel.Course | constantModel.Gender | primitive.DateTime](field *interfaces.GenericField[V], value **V, forward bool) {
@@ -236,7 +237,7 @@ func AssignBatch(profile *interfaces.GenericField[string], institute *studentMod
 	}
 }
 
-func MapProfileSocials(profile *interfaces.ProfileSocials, socials *studentModel.SocialProfiles, forward bool) {
+func MapSocialProfiles(profile *interfaces.SocialProfiles, socials *studentModel.SocialProfiles, forward bool) {
 	AssignSocialProfile(&profile.LinkedIn, &socials.LinkedIn, forward)
 	AssignSocialProfile(&profile.Github, &socials.Github, forward)
 	AssignSocialProfile(&profile.CodeChef, &socials.CodeChef, forward)
@@ -258,6 +259,13 @@ func MapProfileInstitute(profile *interfaces.ProfileInstitute, institute *studen
 	AssignNilPossibleValue(&profile.Specialisation, &institute.Specialisation, forward)
 	AssignNilPossibleValue(&profile.Honours, &institute.Academics.Honours, forward)
 	AssignNilPossibleValue(&profile.ThesisEndDate, &institute.Academics.ThesisEndDate, forward)
+
+	if forward {
+		profile.RollNumber.IsLocked = true
+		profile.Batch.IsLocked = true
+		profile.InstituteEmail.IsLocked = true
+		profile.Department.IsLocked = true
+	}
 }
 
 func MapPastAcademics(profile *interfaces.ProfilePastAcademics, institute *studentModel.Academics, forward bool) {
@@ -278,7 +286,7 @@ func MapRanks(profile *interfaces.ProfilePastAcademics, rank *studentModel.Acade
 func MapStudentToStudentProfile(profile *interfaces.StudentProfile, student *studentModel.Student, forward bool) {
 	// Profile
 	MapProfilePersonal(&profile.Profile.PersonalProfile, student, forward)
-	MapProfileSocials(&profile.Profile.SocialProfile, &student.SocialProfiles, forward)
+	MapSocialProfiles(&profile.SocialProfiles, &student.SocialProfiles, forward)
 	MapProfileInstitute(&profile.Profile.InstituteProfile, student, forward)
 
 	// Past Academics
