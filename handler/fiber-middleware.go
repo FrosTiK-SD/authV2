@@ -31,9 +31,8 @@ func (h *Handler) FiberVerifyStudent(ctx *fiber.Ctx) error {
 	}
 
 	ctx.Locals(constants.SESSION, student)
-	ctx.Next()
 
-	return nil
+	return ctx.Next()
 }
 
 // To be used only after FiberVerifyStudent
@@ -61,7 +60,7 @@ func (h *Handler) FiberGetRoleCheckHandlerForStudent(roles ...string) func(ctx *
 			}
 		}
 
-		return nil
+		return ctx.Next()
 	}
 }
 
