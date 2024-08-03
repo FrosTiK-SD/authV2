@@ -5,12 +5,13 @@ import (
 	"strings"
 
 	"github.com/FrosTiK-SD/auth/constants"
+	"github.com/FrosTiK-SD/auth/interfaces"
 	"github.com/FrosTiK-SD/auth/model"
 	"github.com/FrosTiK-SD/auth/util"
 	"github.com/FrosTiK-SD/models/misc"
 	studentModel "github.com/FrosTiK-SD/models/student"
 	db "github.com/FrosTiK-SD/mongik/db"
-	models "github.com/FrosTiK-SD/mongik/models"
+	mongikModels "github.com/FrosTiK-SD/mongik/models"
 	"github.com/google/go-cmp/cmp"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -25,7 +26,7 @@ func getAliasEmailList(email string) []string {
 	return aliasEmailList
 }
 
-func GetUserByEmail(mongikClient *models.Mongik, email *string, role *string, noCache bool) (*model.StudentPopulated, *string) {
+func GetUserByEmail(mongikClient *mongikModels.Mongik, email *string, role *string, noCache bool) (*model.StudentPopulated, *string) {
 	var studentPopulated model.StudentPopulated
 
 	// Gets the alias emails
@@ -136,7 +137,7 @@ func InvalidateVerifiedFieldsOnChange(updated *studentModel.Student, current *st
 	}
 }
 
-func GetAllStudents(mongikClient *models.Mongik, noCache bool) (*[]model.StudentPopulated, error) {
+func GetAllStudents(mongikClient *mongikModels.Mongik, noCache bool) (*[]model.StudentPopulated, error) {
 	students, err := db.Aggregate[model.StudentPopulated](mongikClient, constants.DB, constants.COLLECTION_STUDENT, []bson.M{
 		{
 			"$lookup": bson.M{
@@ -150,7 +151,7 @@ func GetAllStudents(mongikClient *models.Mongik, noCache bool) (*[]model.Student
 	return &students, err
 }
 
-func GetStudentById(mongikClient *models.Mongik, _id primitive.ObjectID, noCache bool) (*model.StudentPopulated, error) {
+func GetStudentById(mongikClient *mongikModels.Mongik, _id primitive.ObjectID, noCache bool) (*model.StudentPopulated, error) {
 	student, err := db.AggregateOne[model.StudentPopulated](mongikClient, constants.DB, constants.COLLECTION_STUDENT, []bson.M{
 		{
 			"$match": bson.M{
@@ -170,7 +171,7 @@ func GetStudentById(mongikClient *models.Mongik, _id primitive.ObjectID, noCache
 	return &student, err
 }
 
-func GetAllStudentsOfRole(mongikClient *models.Mongik, role string, noCache bool) (*[]model.StudentPopulated, error) {
+func GetAllStudentsOfRole(mongikClient *mongikModels.Mongik, role string, noCache bool) (*[]model.StudentPopulated, error) {
 	roleStudents, err := db.Aggregate[model.StudentPopulated](mongikClient, constants.DB, constants.COLLECTION_STUDENT, []bson.M{
 		{
 			"$lookup": bson.M{
@@ -193,4 +194,34 @@ func GetAllStudentsOfRole(mongikClient *models.Mongik, role string, noCache bool
 		noCache)
 
 	return &roleStudents, err
+}
+
+func GetStudentVerificationListForTPR(mongikClient *mongikModels.Mongik, tpr *model.StudentPopulated) ([]interfaces.StudentMini, error) {
+	pipeline := []bson.M{
+		{
+			"$match": bson.M{
+				"department": tpr.Department,
+				"course":     tpr.Course,
+				"batch":      tpr.Batch,
+			},
+		},
+		{
+			"$project": bson.M{
+				"_id":        1,
+				"batch":      1,
+				"rollNo":     1,
+				"email":      1,
+				"mobile":     1,
+				"department": 1,
+				"course":     1,
+				"firstName":  1,
+				"middleName": 1,
+				"lastName":   1,
+			},
+		},
+	}
+
+	students, err := db.Aggregate[interfaces.StudentMini](mongikClient, constants.DB, constants.COLLECTION_STUDENT, pipeline, false)
+
+	return students, err
 }

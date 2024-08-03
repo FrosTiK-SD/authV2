@@ -66,6 +66,7 @@ func main() {
 		student.GET("/profile", handler.GinVerifyStudent, handler.HandlerGetStudentProfile)
 		student.PUT("/profile", handler.GinVerifyStudent, handler.HandlerUpdateStudentProfile)
 		student.POST("/register", handler.HandlerRegisterStudentDetails)
+		student.GET("/tpr/:tprID/verification/students", handler.GinVerifyStudent, handler.GetRoleCheckHandlerForStudent(constants.ROLE_TPR), handler.HandlerGetStudentVerificationListForTPR)
 	}
 
 	group := r.Group("/api/group", handler.GinVerifyStudent)
@@ -95,6 +96,11 @@ func main() {
 	if port == "" {
 		port = "8080"
 	}
+	if os.Getenv("APP_ENV") == "dev" {
+		port = "localhost:" + port
+	} else {
+		port = ":" + port
+	}
 
-	r.Run(":" + port)
+	r.Run(port)
 }

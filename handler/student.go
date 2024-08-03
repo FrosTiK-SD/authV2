@@ -232,3 +232,28 @@ func (h *Handler) HandlerUpdateStudentProfile(ctx *gin.Context) {
 
 	ctx.JSON(200, gin.H{"student": currentStudent})
 }
+
+func (h *Handler) HandlerGetStudentVerificationListForTPR(ctx *gin.Context) {
+	value, exists := ctx.Get(constants.SESSION)
+
+	tpr, ok := value.(*model.StudentPopulated)
+	tprID := ctx.Param("tprID")
+
+	if !exists || !ok {
+		ctx.AbortWithStatusJSON(401, gin.H{"error": "Cannot get student"})
+		return
+	}
+	if tprID != tpr.Id.Hex() {
+		ctx.AbortWithStatusJSON(400, gin.H{"error": "URL TPR ID and User ID does not match"})
+		return
+	}
+
+	students, err := controller.GetStudentVerificationListForTPR(h.MongikClient, tpr)
+
+	if err != nil {
+		ctx.AbortWithStatusJSON(400, gin.H{"error": err.Error()})
+	}
+
+	ctx.JSON(200, gin.H{"students": students})
+	return
+}
