@@ -10,6 +10,7 @@ import (
 	"github.com/FrosTiK-SD/auth/interfaces"
 	constantModel "github.com/FrosTiK-SD/models/constant"
 	studentModel "github.com/FrosTiK-SD/models/student"
+	// studentModel "github.com/FrosTiK-SD/auth/test"
 	"github.com/modern-go/reflect2"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
@@ -152,6 +153,37 @@ func AssignPastAcademics(field *interfaces.ProfilePastEducation, education **stu
 
 }
 
+func AssignPastDiploma(field *interfaces.DiplomaDetails, education **studentModel.DiplomaDetails, forward bool) {
+	if forward {
+		if *education != nil {
+			AssignNotNilValue(&field.Board, &(*education).Board, forward)
+			AssignNotNilValue(&field.Institute, &(*education).Institute, forward)
+			AssignNotNilValue(&field.Year, &(*education).Year, forward)
+			AssignNotNilValue(&field.Percentage, &(*education).Percentage, forward)
+		}
+
+		// For empty diploma fields
+
+		AssignNilPossibleValue(&field.Board, &PointerToNilString, forward)
+		AssignNilPossibleValue(&field.Institute, &PointerToNilString, forward)
+		AssignNilPossibleValue(&field.Year, &PointerToNilInteger, forward)
+		AssignNilPossibleValue(&field.Percentage, &PointerToNilFloat64, forward)
+		return
+	}
+
+	// backward
+
+	if field.Board.IsNull || field.Institute.IsNull {
+		return
+	}
+
+	*education = new(studentModel.DiplomaDetails)
+	AssignNotNilValue(&field.Board, &(*education).Board, forward)
+	AssignNotNilValue(&field.Institute, &(*education).Institute, forward)
+	AssignNotNilValue(&field.Year, &(*education).Year, forward)
+	AssignNotNilValue(&field.Percentage, &(*education).Percentage, forward)
+}
+
 func AssignRankValue(field *interfaces.GenericRank, rankDetails **studentModel.RankDetails, forward bool) {
 	if forward {
 		if *rankDetails != nil {
@@ -273,6 +305,7 @@ func MapPastAcademics(profile *interfaces.ProfilePastAcademics, institute *stude
 	AssignPastAcademics(&profile.ClassXII, &institute.XIIthClass, forward)
 	AssignPastAcademics(&profile.Undergraduate, &institute.UnderGraduate, forward)
 	AssignPastAcademics(&profile.Postgraduate, &institute.PostGraduate, forward)
+	AssignPastDiploma(&profile.Diploma, &institute.Diploma, forward)
 }
 
 func MapRanks(profile *interfaces.ProfilePastAcademics, rank *studentModel.Academics, forward bool) {
