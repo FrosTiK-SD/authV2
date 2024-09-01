@@ -86,13 +86,6 @@ type ProfilePastEducation struct {
 	Score         GenericField[float64] `json:"score,omitempty"`
 }
 
-type DiplomaDetails struct {
-	Board 		  GenericField[string]  `bson:"diploma_board" json:"diploma_board"`
-	Institute 	  GenericField[string]  `bson:"diploma_from" json:"diploma_from"`
-	Year 		  GenericField[int]     `bson:"diploma_year" json:"diploma_year"`
-	Percentage 	  GenericField[float64] `bson:"diploma_percentage" json:"diploma_percentage"`
-}
-
 type ProfilePastAcademics struct {
 	ClassX        ProfilePastEducation `json:"class_x,omitempty"`
 	ClassXII      ProfilePastEducation `json:"class_xii,omitempty"`
@@ -100,7 +93,7 @@ type ProfilePastAcademics struct {
 	Postgraduate  ProfilePastEducation `json:"postgraduate,omitempty"`
 	JeeRank       GenericRank          `json:"jeeRank,omitempty"`
 	GateRank      GenericRank          `json:"gateRank,omitempty"`
-	Diploma		  DiplomaDetails	   `json:"diploma,omitempty"`
+	Diploma		  ProfilePastEducation `json:"diploma,omitempty"`
 }
 
 type ProfileCurrentAcademicsMisc struct {

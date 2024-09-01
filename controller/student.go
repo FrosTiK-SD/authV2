@@ -9,7 +9,6 @@ import (
 	"github.com/FrosTiK-SD/auth/util"
 	"github.com/FrosTiK-SD/models/misc"
 	studentModel "github.com/FrosTiK-SD/models/student"
-	// studentModel "github.com/FrosTiK-SD/auth/test"
 	db "github.com/FrosTiK-SD/mongik/db"
 	models "github.com/FrosTiK-SD/mongik/models"
 	"github.com/google/go-cmp/cmp"

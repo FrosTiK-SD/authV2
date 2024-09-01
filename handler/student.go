@@ -11,7 +11,6 @@ import (
 	"github.com/FrosTiK-SD/auth/util"
 	"github.com/FrosTiK-SD/models/constant"
 	studentModel "github.com/FrosTiK-SD/models/student"
-	// studentModel "github.com/FrosTiK-SD/auth/test"
 	db "github.com/FrosTiK-SD/mongik/db"
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson"

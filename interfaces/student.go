@@ -3,7 +3,6 @@ package interfaces
 import (
 	Constant "github.com/FrosTiK-SD/models/constant"
 	Student "github.com/FrosTiK-SD/models/student"
-	// Student "github.com/FrosTiK-SD/auth/test"
 )
 
 type StudentRegistration struct {
