@@ -10,16 +10,28 @@ import (
 
 func GetAllCompanies(mongikClient *mongikModels.Mongik, noCache bool, currentPage int, companiesPerPage int) ([]model.Company, int, error) {
 
-	skip := (currentPage - 1) * companiesPerPage
-	limit := companiesPerPage
+	var pipeline []bson.M
 
-	pipeline := []bson.M{
+	pipeline = []bson.M{
 		{"$sort": bson.M{"createdAt": -1}},
-		{"$skip": skip},
-		{"$limit": limit},
+	}
+
+	if currentPage != 0 {
+		skip := (currentPage - 1) * companiesPerPage
+		limit := companiesPerPage
+
+		pipeline = []bson.M{
+			{"$sort": bson.M{"createdAt": -1}},
+			{"$skip": skip},
+			{"$limit": limit},
+		}
 	}
 
 	totalCompaniesArray, err := db.Aggregate[map[string]int](mongikClient, constants.DB, constants.COLLECTION_COMPANY, []bson.M{{"$count": "total"}}, noCache)
+	if err != nil {
+		return nil, 0, err
+	}
+
 	totalCompanies := totalCompaniesArray[0]["total"]
 
 	companies, err := db.Aggregate[model.Company](mongikClient, constants.DB, constants.COLLECTION_COMPANY, pipeline, noCache)

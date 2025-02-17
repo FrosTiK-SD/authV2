@@ -12,6 +12,7 @@ import (
 
 func (h *Handler) GetAllCompanies(ctx *gin.Context) {
 	noCache := util.GetNoCache(ctx)
+	currentPage := 0
 
 	currentPage, err := strconv.Atoi(ctx.Request.URL.Query().Get("page"))
 	companiesPerPage, err := strconv.Atoi(ctx.Request.URL.Query().Get("limit"))
