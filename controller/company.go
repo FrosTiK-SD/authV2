@@ -8,8 +8,21 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-func GetAllCompanies(mongikClient *mongikModels.Mongik, noCache bool) ([]model.Company, error) {
-	companies, err := db.Aggregate[model.Company](mongikClient, constants.DB, constants.COLLECTION_COMPANY, []bson.M{}, noCache)
+func GetAllCompanies(mongikClient *mongikModels.Mongik, noCache bool, currentPage int, companiesPerPage int) ([]model.Company, int, error) {
 
-	return companies, err
+	skip := (currentPage - 1) * companiesPerPage
+	limit := companiesPerPage
+
+	pipeline := []bson.M{
+		{"$sort": bson.M{"createdAt": -1}},
+		{"$skip": skip},
+		{"$limit": limit},
+	}
+
+	totalCompaniesArray, err := db.Aggregate[map[string]int](mongikClient, constants.DB, constants.COLLECTION_COMPANY, []bson.M{{"$count": "total"}}, noCache)
+	totalCompanies := totalCompaniesArray[0]["total"]
+
+	companies, err := db.Aggregate[model.Company](mongikClient, constants.DB, constants.COLLECTION_COMPANY, pipeline, noCache)
+
+	return companies, totalCompanies, err
 }

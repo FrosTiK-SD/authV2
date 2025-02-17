@@ -2,6 +2,7 @@ package handler
 
 import (
 	"net/http"
+	"strconv"
 
 	"github.com/FrosTiK-SD/auth/constants"
 	"github.com/FrosTiK-SD/auth/controller"
@@ -12,7 +13,10 @@ import (
 func (h *Handler) GetAllCompanies(ctx *gin.Context) {
 	noCache := util.GetNoCache(ctx)
 
-	companies, err := controller.GetAllCompanies(h.MongikClient, noCache)
+	currentPage, err := strconv.Atoi(ctx.Request.URL.Query().Get("page"))
+	companiesPerPage, err := strconv.Atoi(ctx.Request.URL.Query().Get("limit"))
+
+	companies, totalCompanies, err := controller.GetAllCompanies(h.MongikClient, noCache, currentPage, companiesPerPage)
 
 	if err != nil {
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
@@ -23,6 +27,7 @@ func (h *Handler) GetAllCompanies(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{
-		"data": companies,
+		"data":           companies,
+		"totalCompanies": totalCompanies,
 	})
 }
